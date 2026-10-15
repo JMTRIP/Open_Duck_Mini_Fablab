@@ -17,6 +17,7 @@
       <li>Expliquer pourquoi on garde un historique au lieu de renommer ses fichiers.</li>
       <li>Distinguer les trois étages : le dépôt d'Antoine, le dépôt du club, votre PC.</li>
       <li>Faire les 5 gestes de base avec un logiciel à boutons, sans aide.</li>
+      <li>Enregistrer une séance ou une pièce depuis la page, et reconnaître ce que GitHub affiche alors.</li>
       <li>Ouvrir une tâche claire et la suivre sur le tableau de l'équipe.</li>
       <li>Éviter, puis résoudre, une collision entre deux modifications.</li>
       <li>Respecter la licence du projet d'origine.</li>
@@ -29,7 +30,7 @@
     <p>Un nom de fichier ne peut pas raconter une histoire. <i class="t" data-t="git">Git</i> est un logiciel qui le fait à sa place : il enregistre l'historique complet d'un dossier, avec pour chaque changement qui l'a fait, quand, et pourquoi. On peut revenir en arrière, comparer deux versions, travailler à plusieurs sans s'écraser.</p>
     <h3>L'image à garder : le cahier de laboratoire</h3>
     <p>Un bon cahier de laboratoire a des pages datées et signées. On n'arrache jamais une page : on écrit une nouvelle entrée qui corrige la précédente. Git tient ce cahier pour chaque fichier du projet. Le fichier garde son nom ; le cahier se souvient de ses versions.</p>
-    <div class="ex"><b>Exemple sur notre canard</b><p>Les 36 fichiers <i class="t" data-t="stl">STL</i> (maillages de triangles qu'on imprime) du projet d'origine gardent leur nom, par exemple <code>foot_bottom_tpu.stl</code>. Si nous retouchons une pièce, sa copie va dans <code>biscalab/print/stl/</code> sous le même nom, et la révision est notée dans la colonne <code>rev</code> de <code>pieces.csv</code> et dans <code>CHANGELOG.md</code>.</p></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Les 36 fichiers <i class="t" data-t="stl">STL</i> (maillages de triangles qu'on imprime) du projet d'origine gardent leur nom, par exemple <code>foot_bottom_tpu.stl</code>. Si nous retouchons une pièce, sa copie va dans <code>biscalab/print/stl/</code> sous le même nom, et la révision est notée dans le champ <code>rev</code> du <a href="#pieces">registre des pièces</a> et dans <code>CHANGELOG.md</code>.</p></div>
     <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Ajouter <code>_v2_final</code> au nom pour marquer une version. Cela sème le doute et casse les projets d'impression, qui gardent le nom du fichier source pour le recharger.</div></div>
   </div>
 
@@ -99,7 +100,7 @@
       </svg>
     </div>
     <h3>Étage 1 : le dépôt d'Antoine, l'original</h3>
-    <p><code>apirrone/Open_Duck_Mini</code> est le dépôt d'Antoine Pirrone, qui a conçu le canard et continue à l'améliorer. <strong>On n'y écrit jamais.</strong> On s'en sert seulement pour récupérer ses corrections, une fois par mois (section 9). On l'appelle aussi l'<i class="t" data-t="amont">amont</i>.</p>
+    <p><code>apirrone/Open_Duck_Mini</code> est le dépôt d'Antoine Pirrone, qui a conçu le canard et continue à l'améliorer. <strong>On n'y écrit jamais.</strong> On s'en sert seulement pour récupérer ses corrections, une fois par mois (section 10). On l'appelle aussi l'<i class="t" data-t="amont">amont</i>.</p>
     <h3>Étage 2 : le dépôt du club, le seul où l'on travaille</h3>
     <p>Jean-Marie a copié une fois pour toutes le dépôt d'Antoine sur son compte GitHub : <code>JMTRIP/Open_Duck_Mini_Fablab</code>. C'est le dossier commun de l'équipe, en ligne. <strong>Tout le monde travaille dedans ; personne n'a besoin d'en créer un autre.</strong> GitHub appelle ce genre de copie un <i class="t" data-t="fork">fork</i> : vous verrez le mot sur la page (« forked from apirrone/Open_Duck_Mini »), mais vous n'aurez jamais à en faire un.</p>
     <p>Pour y écrire, il faut y être invité : Jean-Marie vous ajoute comme collaborateur (<strong>Settings → Collaborators → Add people</strong>). Vous recevez un e-mail « invited you to collaborate » : cliquer <strong>Accept invitation</strong>.</p>
@@ -126,7 +127,7 @@
       <li><div><b>Brancher et proposer.</b> <strong>Current branch → New branch</strong>, nom <code>prenom/sujet</code>, <strong>Create branch</strong>. Commiter normalement, cliquer <strong>Publish branch</strong>, puis <strong>Create Pull Request</strong> : le navigateur s'ouvre sur GitHub. Vérifier en haut que la cible est <code>JMTRIP/Open_Duck_Mini_Fablab</code>, branche <code>v2</code>, et non le dépôt d'Antoine, puis valider.</div></li>
     </ol>
     <p>Une <i class="t" data-t="pull-request">pull request</i> (demande de fusion) propose de fusionner une branche dans une autre : un référent relit les modifications ligne par ligne, commente, puis accepte avec <strong>Merge</strong>.</p>
-    <div class="ex"><b>Exemple sur notre canard</b><p>En arrivant : Fetch origin, Pull origin. On imprime les deux <code>foot_top</code>, on met à jour <code>pieces.csv</code> et le journal du jour. En partant : cocher ces deux fichiers, résumé « Note impression des foot_top », Commit to v2, Push origin. Le soir, Jean-Marie voit l'avancement depuis chez lui.</p></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>En arrivant : Fetch origin, Pull origin. On prépare dans PrusaSlicer le plateau des pieds et on l'enregistre dans <code>biscalab/print/3mf/plateau-pieds.3mf</code>. En partant : cocher ce fichier, résumé « Ajoute plateau des pieds », Commit to v2, Push origin. Le soir, Jean-Marie voit le plateau depuis chez lui. Les pièces sorties de l'imprimante et la séance, elles, s'enregistrent depuis la page, sans GitHub Desktop (section 9) ; le Pull suivant les ramène sur le PC.</p></div>
     <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Sans pull en arrivant, on travaille sur une version périmée et on prépare une collision avec le travail des autres (section 7). Sans push en partant, on obtient le fameux « je croyais que tu l'avais fait ». La règle : <strong>Pull en arrivant, Push en partant.</strong></div></div>
   </div>
 
@@ -146,7 +147,7 @@
     <div class="tw"><table>
       <thead><tr><th>À éviter</th><th>À préférer</th><th>Pourquoi</th></tr></thead>
       <tbody>
-        <tr><td>« modif »</td><td>« Ajoute pieces.csv avec les 51 pièces »</td><td>On sait ce qui a changé sans ouvrir le fichier.</td></tr>
+        <tr><td>« modif »</td><td>« Ajoute plateau 3MF des pieds »</td><td>On sait ce qui a changé sans ouvrir le fichier.</td></tr>
         <tr><td>Issue « Laser »</td><td>« Mesurer le kerf du contreplaqué 3 mm sur la P2S »</td><td>N'importe qui peut la prendre.</td></tr>
         <tr><td>Issue « Servo 11 mort »</td><td>« Le servo 11 ne répond pas à check_motors »</td><td>Le symptôme est un fait ; la cause reste à trouver.</td></tr>
       </tbody>
@@ -176,7 +177,7 @@ Prochaine séance : jeudi, découpe du banc
   <div class="card lesson">
     <h2>8. Écrire pour GitHub : Markdown et CSV</h2>
     <h3>Markdown en 10 symboles</h3>
-    <p>Le <i class="t" data-t="markdown">Markdown</i> est du texte simple avec quelques symboles, que GitHub affiche mis en forme. Nos journaux et fiches de test sont des fichiers <code>.md</code>.</p>
+    <p>Le <i class="t" data-t="markdown">Markdown</i> est du texte simple avec quelques symboles, que GitHub affiche mis en forme. Tous nos enregistrements du suivi (séances, fiches de test, pièces, achats…) sont des fichiers <code>.md</code>.</p>
     <div class="tw"><table>
       <thead><tr><th>On tape</th><th>On obtient</th></tr></thead>
       <tbody>
@@ -200,15 +201,31 @@ Prochaine séance : jeudi, découpe du banc
 &gt; Un insert est entré de travers : issue #12</code></pre>
     <h3>Le CSV, un tableau en texte</h3>
     <p>Un fichier <i class="t" data-t="csv">CSV</i> est un tableau écrit en texte : une ligne par enregistrement, colonnes séparées par des virgules. Il s'ouvre dans un tableur, et GitHub l'affiche en tableau.</p>
-    <pre><code>piece,quantite,materiau,remplissage,rev,etat
-foot_top,2,PLA,15,amont,imprimee
-foot_bottom_tpu,2,TPU,40,amont,a imprimer</code></pre>
-    <div class="ex"><b>Exemple sur notre canard</b><p><code>pieces.csv</code> suit les 51 pièces imprimées, une ligne chacune. À chaque pièce sortie, on change son état et on commite : l'historique du fichier devient celui de la fabrication.</p></div>
-    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Une virgule décimale dans un CSV : « 7,4 » devient deux colonnes. Écrire <code>7.4</code> ou mettre la valeur entre guillemets droits. Un tableur réglé en français enregistre souvent avec des points-virgules : vérifier sur GitHub que le tableau s'affiche bien.</div></div>
+    <pre><code>role,nom
+Maître d'œuvre,Jean-Marie
+Trésorier-acheteur,</code></pre>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le suivi n'utilise pas de CSV : tout, rôles compris, est fait de petits fichiers Markdown créés depuis la page (section 9). Le CSV sert ailleurs : la BOM exportée d'un tableur, une liste de mesures relevées en série, qu'on dépose dans <code>biscalab/</code> et que GitHub affiche en tableau.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Une virgule dans une valeur : « Référent laser, impression » se coupe en deux colonnes. Mettre la valeur entre guillemets droits. Un tableur réglé en français enregistre souvent avec des points-virgules : vérifier sur GitHub que le tableau s'affiche bien avant de s'en servir.</div></div>
   </div>
 
   <div class="card lesson">
-    <h2>9. Suivre l'amont et respecter la licence</h2>
+    <h2>9. Enregistrer depuis la page</h2>
+    <p>Pour le suivi du projet (une séance, une pièce imprimée, un achat, une mesure, une décision, une fiche de test, une case cochée), GitHub Desktop est inutile. Ce dossier est aussi le tableau de bord du projet : chaque bouton « Enregistrer » (ou « Nouvelle séance », « Nouvel achat »…) déplie un petit formulaire dans la page ; sur une rubrique encore vide, il est déjà là. La page en tire un <i class="t" data-t="enregistrement">enregistrement</i>, un fichier Markdown de quelques lignes, puis ouvre GitHub avec ce fichier déjà écrit. Il ne reste qu'à valider. Le principe est détaillé au <a href="#cours-methode">cours 4</a> ; voici ce que l'on voit à l'écran.</p>
+    <h3>Ce que GitHub affiche</h3>
+    <ol class="steps">
+      <li><div><b>Préparer.</b> Remplir le formulaire, cliquer <strong>Préparer l'enregistrement</strong> : la page montre le chemin du fichier et son texte. Cliquer <strong>Enregistrer sur GitHub</strong> : GitHub s'ouvre dans un nouvel onglet, connecté à votre compte.</div></li>
+      <li><div><b>Vérifier.</b> GitHub affiche sa page de création de fichier (l'onglet s'intitule « New File », nouveau fichier). Tout est déjà rempli : en haut, le chemin <code>Open_Duck_Mini_Fablab / biscalab / journal /</code>, une case avec le nom du fichier (par exemple <code>2026-10-14.md</code>) et la mention « in v2 » (dans la branche v2) ; dessous, le contenu. Il commence par l'<i class="t" data-t="en-tete">en-tête</i>, quelques lignes clé : valeur entre deux lignes <code>---</code>, puis vient le texte. On relit ; on peut corriger une faute.</div></li>
+      <li><div><b>Valider.</b> Cliquer le bouton vert <strong>Commit changes…</strong> (valider les modifications), en haut à droite.</div></li>
+      <li><div><b>Confirmer.</b> Une fenêtre s'ouvre : le message du commit (<strong>Commit message</strong>, déjà proposé, du genre « Create 2026-10-14.md »), une description facultative, et le choix <strong>Commit directly to the v2 branch</strong> (enregistrer directement dans v2), à laisser coché. Cliquer le second bouton vert, <strong>Commit changes</strong>.</div></li>
+      <li><div><b>Revenir.</b> Fermer l'onglet GitHub, revenir à la page et cliquer <strong>Actualiser</strong> une minute plus tard : l'enregistrement apparaît, pour tout le monde.</div></li>
+    </ol>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Les deux <code>foot_top</code> sortent de l'imprimante. Dans le <a href="#pieces">registre des pièces</a>, bouton « Enregistrer » de la ligne <code>foot_top</code> : exemplaire 1, état « imprimée » ; on recommence pour l'exemplaire 2. Deux petits fichiers arrivent dans <code>biscalab/pieces/</code>, chacun avec un commit à votre nom. Aucun PC à synchroniser.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Fermer l'onglet après le premier bouton vert : sans le second <strong>Commit changes</strong>, rien n'est enregistré. Autre piège : si GitHub parle de « fork » ou affiche <strong>Propose changes</strong> (proposer des modifications), c'est que vous n'êtes pas connecté, ou pas encore collaborateur du dépôt du club. Ne pas continuer : se connecter, ou demander l'invitation à Jean-Marie.</div></div>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi un fichier par enregistrement.</strong> Chaque enregistrement est un fichier neuf, au nom daté. Deux membres qui enregistrent en même temps créent deux fichiers distincts : aucun ne peut écraser le travail de l'autre, et l'historique dit qui a enregistré quoi.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>10. Suivre l'amont et respecter la licence</h2>
     <h3>Récupérer les nouveautés d'Antoine : Sync fork</h3>
     <p>Le dépôt du club ne se met pas à jour seul quand Antoine publie une correction. Sur la page du dépôt du club, un bandeau le dit : « This branch is up to date with apirrone/Open_Duck_Mini:v2 » (à jour) ou « … commits behind » (en retard). En retard, on clique <strong>Sync fork</strong> (synchroniser), puis <strong>Update branch</strong> (mettre à jour la branche). Jean-Marie ou le référent outillage numérique le fait une fois par mois, puis chacun fait un Pull. Comme tout notre travail est dans <code>biscalab/</code>, cela ne crée jamais de conflit.</p>
     <h3>La licence Apache-2.0 en 4 obligations</h3>
@@ -216,7 +233,7 @@ foot_bottom_tpu,2,TPU,40,amont,a imprimer</code></pre>
     <ol>
       <li>fournir une copie de la licence (le fichier <code>LICENSE</code> reste dans le dépôt du club) ;</li>
       <li>conserver les mentions de droit d'auteur et d'attribution ;</li>
-      <li>signaler de façon visible les fichiers modifiés (<code>CHANGELOG.md</code>, colonne <code>rev</code>) ;</li>
+      <li>signaler de façon visible les fichiers modifiés (<code>CHANGELOG.md</code>, champ <code>rev</code> du registre des pièces) ;</li>
       <li>reprendre le fichier <code>NOTICE</code> s'il existe.</li>
     </ol>
     <p>Aucune garantie n'est donnée, et aucun droit sur les marques (Disney, BDX). Notre <code>biscalab/CREDITS.md</code> rassemble ces mentions ; le <a href="#cours-methode">cours 4</a> y revient.</p>
@@ -225,25 +242,26 @@ foot_bottom_tpu,2,TPU,40,amont,a imprimer</code></pre>
 
   <div class="card lesson-exo">
     <h2>Exercice pratique au FabLab</h2>
-    <p>Matériel : un PC par binôme avec GitHub Desktop, un compte GitHub par personne, invité comme collaborateur du dépôt du club. Le fichier d'essai <code>biscalab/journal/essais.md</code> est préparé par le référent outillage numérique. Durée : environ 25 min.</p>
+    <p>Matériel : un PC par binôme avec GitHub Desktop, un compte GitHub par personne, invité comme collaborateur du dépôt du club. Le fichier d'essai <code>biscalab/docs/essais.md</code> est préparé par le référent outillage numérique, hors des dossiers du suivi que la page lit. Durée : environ 30 min.</p>
     <ol class="steps">
       <li><div><b>Créer son compte</b> GitHub avec une appli d'authentification sur le téléphone, envoyer son nom d'utilisateur à Jean-Marie, puis accepter son invitation (e-mail « invited you to collaborate »).</div></li>
       <li><div><b>Se connecter</b> dans GitHub Desktop : <strong>File → Options → Accounts → Sign in</strong> (Fichier → Options → Comptes → Se connecter).</div></li>
       <li><div><b>Télécharger</b> le dépôt du club (page du dépôt → Code → Open with GitHub Desktop), en répondant « For my own purposes » si la question apparaît.</div></li>
-      <li><div><b>Modifier</b> <code>biscalab/journal/essais.md</code> avec le Bloc-notes : ajouter une ligne <code>- date · prénom · mon premier commit</code>, enregistrer.</div></li>
-      <li><div><b>Commiter</b> : Summary « Ajoute ma ligne au journal d'essai », Commit to v2.</div></li>
+      <li><div><b>Modifier</b> <code>biscalab/docs/essais.md</code> avec le Bloc-notes : ajouter une ligne <code>- date · prénom · mon premier commit</code>, enregistrer.</div></li>
+      <li><div><b>Commiter</b> : Summary « Ajoute ma ligne au fichier d'essai », Commit to v2.</div></li>
       <li><div><b>Pousser et vérifier</b> : Push origin, puis <strong>Repository → View on GitHub</strong> (voir sur GitHub). Ouvrir le fichier, trouver sa ligne, puis son nom dans l'historique.</div></li>
       <li><div><b>Provoquer un conflit à deux.</b> A et B font un pull, puis modifient chacun différemment la <strong>même</strong> ligne « Prochaine séance : ». A commite et pousse. B commite et tente de pousser : refusé, le logiciel demande de récupérer d'abord.</div></li>
       <li><div><b>Résoudre.</b> B fait Fetch origin puis Pull origin : le conflit s'annonce. B ouvre le fichier, choisit le texte avec A, supprime les marqueurs, enregistre, clique Continue merge, puis Push origin. A fait un pull.</div></li>
+      <li><div><b>Enregistrer la séance depuis la page.</b> Un binôme ouvre le <a href="#journal">Journal des séances</a>, bouton « Nouvelle séance » : présents, et dans « Fait » une ligne « exercice Git du cours 1 ». Suivre la section 9 jusqu'au second Commit changes, puis Actualiser.</div></li>
     </ol>
-    <p><strong>Résultat attendu :</strong> l'historique de <code>biscalab/journal/essais.md</code> montre le commit de chacun et un commit de fusion, sans texte perdu.</p>
+    <p><strong>Résultat attendu :</strong> l'historique de <code>biscalab/docs/essais.md</code> montre le commit de chacun et un commit de fusion, sans texte perdu ; la séance du jour apparaît dans le journal de la page.</p>
   </div>
 
   <div class="card">
     <h2>Auto-contrôle</h2>
     <details class="quiz"><summary>Dans quel dépôt GitHub l'équipe travaille-t-elle, et faut-il en créer un à son nom ?</summary><p>Dans le dépôt du club, <code>JMTRIP/Open_Duck_Mini_Fablab</code>, et nulle part ailleurs. Non : on demande à Jean-Marie d'être ajouté comme collaborateur, puis on le télécharge sur son PC avec GitHub Desktop.</p></details>
     <details class="quiz"><summary>Quels sont les trois étages, de haut en bas ?</summary><p>Le dépôt d'Antoine (l'original, on n'y écrit pas), le dépôt du club (sur GitHub, partagé), la copie de travail sur chaque PC.</p></details>
-    <details class="quiz"><summary>J'ai commité, mais mon collègue ne voit rien sur GitHub. Pourquoi ?</summary><p>Il manque le Push origin : le commit est resté sur votre PC.</p></details>
+    <details class="quiz"><summary>J'ai commité, mais mon collègue ne voit rien sur GitHub. Pourquoi ? Et si c'était une séance enregistrée depuis la page ?</summary><p>Avec GitHub Desktop, il manque le Push origin : le commit est resté sur votre PC. Depuis la page, il manque sans doute le second <strong>Commit changes</strong> : le premier bouton vert ouvre seulement la fenêtre de confirmation. Recommencer depuis la page.</p></details>
     <details class="quiz"><summary>Pourquoi deux personnes ne doivent-elles pas modifier le même FCStd en même temps ?</summary><p>C'est un fichier binaire : Git ne sait pas fusionner deux versions, l'une serait perdue. Règle : un éditeur par fichier, celui qui s'est assigné l'issue.</p></details>
     <details class="quiz"><summary>À quoi sert Sync fork, et pourquoi ne crée-t-il pas de conflit chez nous ?</summary><p>Il récupère dans le dépôt du club les nouveautés du dépôt d'Antoine. Pas de conflit, car nous ne modifions jamais ses fichiers : notre travail est dans <code>biscalab/</code>.</p></details>
     <details class="quiz"><summary>Citez deux des quatre obligations de la licence Apache-2.0.</summary><p>Fournir la licence ; conserver les mentions d'auteur ; signaler les fichiers modifiés ; reprendre le fichier NOTICE s'il existe.</p></details>
@@ -255,8 +273,8 @@ foot_bottom_tpu,2,TPU,40,amont,a imprimer</code></pre>
       <li>Un fichier garde son nom ; Git se souvient de ses versions, avec qui, quand et pourquoi.</li>
       <li>Dépôt = le cahier ; commit = une photo datée avec légende ; branche = un chemin parallèle.</li>
       <li>Trois étages : le dépôt d'Antoine (l'original), le dépôt du club <code>JMTRIP/Open_Duck_Mini_Fablab</code> (le seul où l'on travaille), votre PC (copie de travail). Seul <code>biscalab/</code> est à nous.</li>
-      <li>Chez nous, la ligne principale s'appelle <code>v2</code> : « Commit to v2 ».</li>
-      <li>Pull en arrivant, Push en partant.</li>
+      <li>Chez nous, la ligne principale s'appelle <code>v2</code> : « Commit to v2 ». Pull en arrivant, Push en partant.</li>
+      <li>Le suivi (séances, pièces, achats…) s'enregistre depuis la page : GitHub s'ouvre pré-rempli, on clique deux fois Commit changes.</li>
       <li>Une issue par tâche, avec un responsable, des étiquettes et un jalon.</li>
       <li>STL, FCStd et 3MF ne se fusionnent pas : un éditeur par fichier.</li>
       <li>Messages au verbe : « Ajoute… », « Corrige… ». Titres d'issues qui disent quoi faire.</li>

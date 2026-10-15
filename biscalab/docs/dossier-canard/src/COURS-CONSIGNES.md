@@ -75,7 +75,7 @@ Classes disponibles : `.card`, `.lesson`, `.lesson-objectives`, `.lesson-exo`, `
 Icônes disponibles pour `<use href="#i-…">` : i-warn, i-info, i-check, i-zap, i-cpu, i-git, i-cube, i-printer, i-cart, i-code, i-walk, i-cal, i-shield, i-book, i-link, i-users, i-flag.
 
 ## Ancres internes existantes (liens `<a href="#…">` autorisés)
-accueil, projet, equipe, github, cao, fabrication, bom, electronique, logiciel, marche, planning, risques, parcours, glossaire, references,
+accueil, journal, planning, pieces, achats, tests, mesures, decisions, projet, equipe, github, cao, fabrication, bom, electronique, logiciel, marche, risques, parcours, glossaire, references,
 cours-git, cours-raspberry, cours-python, cours-methode, cours-cao, cours-impression, cours-laser, cours-assemblage, cours-electronique, cours-servos, cours-capteurs, cours-securite, cours-marche, cours-rl, cours-calibration, cours-depannage.
 
 ## Slugs de termes (data-t) disponibles
@@ -89,4 +89,4 @@ raspberry-pi, pi-zero-2w, os, raspberry-pi-os, carte-sd, flasher, ssh, terminal,
 imu, bno055, accelerometre, gyroscope, magnetometre, fusion, quaternion, derive, contact-pied, ndof, clock-stretching,
 ddl, cinematique, centre-de-masse, polygone-sustentation, phase-appui, periode-marche, inertie,
 simulation, mujoco, mjcf, urdf, placo, mouvement-reference, rl, politique, recompense, ppo, reseau-neurones, observation, action, onnx, sim2real, domain-randomization, gpu, bam, frequence-controle, runtime, duck-config, home-pose, action-scale, crc,
-fiche-de-test, dod, go-no-go, journal-de-bord, bom, fablab.
+fiche-de-test, dod, go-no-go, journal-de-bord, bom, fablab, enregistrement, en-tete.

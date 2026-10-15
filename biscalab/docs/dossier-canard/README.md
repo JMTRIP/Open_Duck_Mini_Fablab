@@ -1,8 +1,11 @@
-# Dossier Canard BiscaLab (v1.2)
+# Dossier Canard BiscaLab (v2.0)
 
-Dossier de travail du projet Open Duck Mini V2 au BiscaLab : 16 cours, glossaire cliquable, pages
-opérationnelles (équipe, dépôt GitHub, CAO, fabrication, nomenclature, électronique, logiciel, marche,
-planning, risques). Tout tient dans une seule page web, `index.html`, installable comme une application.
+Outil de suivi du projet Open Duck Mini V2 au BiscaLab, et dossier de référence : tableau de bord,
+travaux par phase, registres (séances, pièces, achats, fiches de test, mesures, décisions, équipe),
+pages du dossier, 16 cours, glossaire cliquable. Tout tient dans une seule page web, `index.html`,
+installable comme une application. Les enregistrements du suivi sont des petits fichiers texte dans
+`biscalab/` (voir `../../README.md`) ; la page les lit dans le dépôt du club et les y écrit via
+l'éditeur GitHub.
 
 ## Comment le lire
 
@@ -24,8 +27,14 @@ En attendant l'activation, cette adresse affiche déjà la page (sans le mode «
 
 Clic droit sur `index.html` → *Ouvrir avec* → un navigateur (Chrome, Edge, Firefox, Safari). Un
 double-clic peut ouvrir le fichier dans un éditeur de code au lieu du navigateur : on voit alors du code,
-c'est normal, passer par *Ouvrir avec*. Les polices demandent une connexion ; sans elle la page reste
-lisible avec une police de remplacement.
+c'est normal, passer par *Ouvrir avec*. Le suivi a besoin d'une connexion à GitHub pour lire les
+enregistrements ; les cours et les pages du dossier se lisent sans.
+
+## Pour agir sur le suivi
+
+Un compte GitHub et une invitation de Jean-Marie comme collaborateur du dépôt. Chaque bouton
+« Enregistrer… » de la page prépare un fichier et ouvre l'éditeur GitHub déjà rempli : il reste à
+cliquer *Commit changes*. Une minute plus tard, *Actualiser* dans la page.
 
 ## Pour l'administrateur du dépôt (Jean-Marie) : activer GitHub Pages, une fois
 
@@ -40,12 +49,23 @@ le fichier `index.html` à la racine ne fait que rediriger vers ce dossier.
 |---|---|
 | `index.html` | La page complète, **générée** : ne pas la modifier à la main |
 | `manifest.webmanifest`, `sw.js`, `icons/` | Ce qui rend la page installable (application web) |
-| `src/` | Les sources : une partie par rubrique (`01-head.html` … `09-footer.html`), le glossaire `terms.json`, les consignes de rédaction des cours et la fiche de faits |
+| `src/` | Les sources : une partie par rubrique (`01-head.html` … `10-app.html`), le glossaire `terms.json`, les contours du canard `duck.json`, les consignes de rédaction des cours et la fiche de faits |
+| `src/10-app.html` | Le suivi : lecture du dépôt, plan (`PLAN` : phases, tâches, pièces, commandes, fiches et mesures attendues), avancement calculé (`TASK_AUTO`), actions (`TASK_DO`), formulaires (`FORMS`) |
 | `build.py` | Assemble `src/` en `index.html` : `python build.py` |
+| `duck_views.py` | Régénère `src/duck.json` (vues de côté et de face du robot, pièce par pièce) depuis le modèle de simulation du dépôt ; à relancer seulement si le modèle change (`pip install numpy trimesh shapely`) |
 | `mark_terms.py` | Souligne automatiquement la première occurrence de chaque terme du glossaire dans une page |
 | `icons.py` | Régénère les icônes |
 | `../recherche/` | Les trois rapports de recherche (dépôts et BOM, marche et sim2real, organisation) dont le dossier est tiré |
 | `Open_Duck_Mini_Runtime_Fablab.code-workspace` | Espace de travail VS Code ouvrant ce dépôt et celui du code du Pi |
+
+## Où la page lit et écrit
+
+- Lecture : l'API GitHub (`/repos/JMTRIP/Open_Duck_Mini_Fablab/git/trees/v2`, 60 appels par heure et par
+  connexion, mémorisé 5 minutes dans le navigateur), puis les fichiers bruts de `biscalab/`.
+- Écriture : `https://github.com/JMTRIP/Open_Duck_Mini_Fablab/new/v2/biscalab/<dossier>?filename=…&value=…`
+  (éditeur pré-rempli). Une correction est un nouvel enregistrement sur le même objet : le plus récent l'emporte.
+- Le dépôt lu se change pour tester, dans la console du navigateur :
+  `localStorage.setItem('canard.repo.v1', '{"owner":"…","repo":"…","branch":"…","base":"biscalab"}')`.
 
 ## Modifier le dossier
 

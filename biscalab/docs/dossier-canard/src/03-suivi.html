@@ -1,0 +1,112 @@
+<!-- ═══════════════════════════ TABLEAU DE BORD ═══════════════════════════ -->
+<section class="page" id="page-accueil" data-title="Tableau de bord" data-sub="Open Duck Mini V2 × BiscaLab">
+  <div class="page-head">
+    <div class="eyebrow">Suivi du projet · BiscaLab · Sanguinet</div>
+    <h1>Où en est le canard</h1>
+    <p class="lead">Tout ce qui est enregistré ici vient du dépôt du club : séances, pièces, achats, tests, mesures, décisions. Chacun peut enregistrer depuis cette page ; tout le monde voit la même chose.</p>
+    <div class="data-status"></div>
+  </div>
+  <div data-view="accueil"></div>
+  <div class="grid c2">
+<div class="card big">
+      <h2><svg><use href="#i-zap"/></svg>Ce qui ne se négocie pas</h2>
+      <p class="sub">La politique de marche fournie suppose exactement ceci. Tout écart impose un réentraînement.</p>
+      <ul class="tight">
+        <li><strong>Servos <i class="t" data-t="sts3215">STS3215</i> 7,4 V, rapport 1/345</strong> (réf. C001, « 19 <i class="t" data-t="kg-cm">kg·cm</i> ») — pas la 12 V, pas les rapports 1/191 ni 1/147.</li>
+        <li><strong>Batterie <i class="t" data-t="2s">2S</i></strong> (2 × <i class="t" data-t="18650">18650</i> haute décharge ≥ 25 A) — jamais 3S.</li>
+        <li><strong>Semelles en <i class="t" data-t="tpu">TPU</i></strong> à 40 % : c'est le seul contact modélisé avec le sol.</li>
+        <li><strong>Géométrie identique</strong> aux <i class="t" data-t="stl">STL</i> <i class="t" data-t="amont">amont</i>, masses à ±10 % près.</li>
+        <li><strong>Gain P = 30</strong>, boucle <i class="t" data-t="frequence-controle">50 Hz</i>, <code>action_scale</code> 0,25.</li>
+      </ul>
+      <a class="btn" href="#marche"><svg><use href="#i-arrow"/></svg>Comprendre pourquoi</a>
+    </div>
+<div class="card big">
+      <h2><svg><use href="#i-check"/></svg>Les 5 règles d'or</h2>
+      <ol class="rules">
+        <li>Si ce n'est pas sur <i class="t" data-t="github">GitHub</i> (<i class="t" data-t="issue">issue</i> ou journal), ça n'existe pas. Signal sert à discuter, GitHub à décider.</li>
+        <li><em>Pull</em> en arrivant, <em>Push</em> en partant. Un fichier <i class="t" data-t="cao">CAO</i> n'a qu'un éditeur à la fois : celui qui s'est assigné l'issue.</li>
+        <li>On ne modifie jamais un fichier amont : on le copie dans <code>biscalab/</code>, puis on le modifie.</li>
+        <li>Pas de phase suivante, ni d'achat suivant, sans <i class="t" data-t="fiche-de-test">fiche de test</i> validée.</li>
+        <li>Sécurité non négociable : batterie jamais en charge sans surveillance, laser jamais seul, matériaux interdits affichés.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="card flat">
+    <h3><svg><use href="#i-info"/></svg>Comment ça marche</h3>
+    <p class="tight">Le travail se fait dans <a href="#planning">Travaux par phase</a> (une tâche, un bouton) et dans les registres (pièces, achats, tests, mesures, décisions), qui listent ce que le plan attend. Chaque formulaire, directement dans la page, prépare un petit fichier texte et ouvre l'éditeur de GitHub déjà rempli ; il ne reste qu'à cliquer <strong>Commit changes</strong>. Le fichier arrive dans <code>biscalab/</code> du dépôt du club et cette page le lit à la prochaine actualisation. Il faut un compte GitHub membre du dépôt (<a href="#cours-git">cours 1</a>). Les cases « cours terminé » du parcours, elles, restent personnelles à chaque appareil.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ JOURNAL ═══════════════════════════ -->
+<section class="page" id="page-journal" data-title="Journal des séances" data-sub="La mémoire du projet" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Suivi</div>
+    <h1>Journal des séances</h1>
+    <p class="lead">Une entrée par séance de travail, cinq rubriques : présents, fait, mesures, problèmes, décisions. Ce qui n'y est pas n'a pas existé. Les tâches cochées dans une séance comptent dans le planning.</p>
+  </div>
+  <div data-view="journal"></div>
+</section>
+
+<!-- ═══════════════════════════ PLANNING ═══════════════════════════ -->
+<section class="page" id="page-planning" data-title="Travaux par phase" data-sub="47 tâches, 7 phases en parallèle" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Travail</div>
+    <h1>Les sept phases et leurs tâches</h1>
+    <p class="lead">C'est ici qu'on travaille. Chaque tâche dit où elle en est, d'où vient son avancement, et porte le bouton qui l'enregistre : la commande de la phase, la pièce imprimée, la mesure, la <i class="t" data-t="fiche-de-test">fiche de test</i> déjà rédigée… Les phases avancent en parallèle ; seule la phase 2 porte un <i class="t" data-t="go-no-go">GO / NO-GO</i>, avant l'achat des 12 servos restants.</p>
+  </div>
+  <div data-view="planning"></div>
+</section>
+
+<!-- ═══════════════════════════ PIÈCES ═══════════════════════════ -->
+<section class="page" id="page-pieces" data-title="Registre des pièces" data-sub="51 pièces, 36 fichiers STL" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Suivi</div>
+    <h1>Registre des pièces imprimées</h1>
+    <p class="lead">Les 51 exemplaires à imprimer, un par ligne, à cocher au fil de l'impression : imprimé, contrôlé, monté, à refaire. Le dessin du canard se colore avec le registre. La pesée de chaque pièce se compare à la masse annoncée par le <i class="t" data-t="slicer">slicer</i> et au modèle de simulation (±10 % tolérés).</p>
+    <div class="read-first"><span>Pour comprendre cette page, lire d'abord :</span> <a href="#cours-impression"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>6 · Impression 3D</a> <a href="#fabrication"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-printer"/></svg>Fabrication</a></div>
+  </div>
+  <div data-view="pieces"></div>
+</section>
+
+<!-- ═══════════════════════════ ACHATS ═══════════════════════════ -->
+<section class="page" id="page-achats" data-title="Achats et budget" data-sub="Engagé contre prévu" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Suivi</div>
+    <h1>Achats et budget</h1>
+    <p class="lead">Une entrée par commande, du « prévu » au « remboursé ». Le budget engagé se compare au plan d'achats par phase (socle 476,25 €). Les factures restent sur le Nextcloud, jamais dans le dépôt public.</p>
+    <div class="read-first"><span>Le plan et les fournisseurs :</span> <a href="#bom"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-cart"/></svg>BOM et plan d'achats</a></div>
+  </div>
+  <div data-view="achats"></div>
+</section>
+
+<!-- ═══════════════════════════ TESTS ═══════════════════════════ -->
+<section class="page" id="page-tests" data-title="Fiches de test" data-sub="Critère chiffré, résultat, décision" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Suivi</div>
+    <h1>Fiches de test</h1>
+    <p class="lead">Une fiche par essai : objectif, montage, procédure, critère de réussite chiffré écrit avant l'essai, résultat, décision. La fiche « GO / NO-GO » d'une phase ouvre la suivante.</p>
+    <div class="read-first"><span>Le modèle expliqué :</span> <a href="#cours-methode"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>4 · Mener le projet</a></div>
+  </div>
+  <div data-view="tests"></div>
+</section>
+
+<!-- ═══════════════════════════ MESURES ═══════════════════════════ -->
+<section class="page" id="page-mesures" data-title="Mesures" data-sub="Masses, offsets, courants, tensions" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Suivi</div>
+    <h1>Mesures du robot</h1>
+    <p class="lead">Tout ce qu'on mesure sur notre canard, avec la date et l'instrument : masses des sous-ensembles, <i class="t" data-t="offset">offsets</i> des servos, courants, tensions, températures, jeu. Ce sont ces chiffres qui diront si la marche fournie peut servir telle quelle.</p>
+    <div class="read-first"><span>Pourquoi ces mesures comptent :</span> <a href="#marche"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-walk"/></svg>Marche et calibration</a> <a href="#cours-calibration"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>15 · Calibration</a></div>
+  </div>
+  <div data-view="mesures"></div>
+</section>
+
+<!-- ═══════════════════════════ DÉCISIONS ═══════════════════════════ -->
+<section class="page" id="page-decisions" data-title="Décisions" data-sub="Prises et à trancher" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Suivi</div>
+    <h1>Décisions</h1>
+    <p class="lead">Ce qui a été décidé, par qui, pourquoi, et ce qui reste à trancher. Une décision « à trancher » s'affiche sur le tableau de bord jusqu'à ce qu'elle soit prise.</p>
+  </div>
+  <div data-view="decisions"></div>
+</section>

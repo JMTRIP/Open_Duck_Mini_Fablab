@@ -1,120 +1,3 @@
-<!-- ═══════════════════════════ PLANNING ═══════════════════════════ -->
-<section class="page" id="page-planning" data-title="Planning et jalons" data-sub="7 phases, listes de contrôle" hidden>
-  <div class="page-head">
-    <div class="eyebrow">Feuille de route</div>
-    <h1>Sept phases, un jalon testable à chaque fois</h1>
-    <p class="lead">Le plan d'achats de septembre fixait six phases ; nous ajoutons une phase 0 d'organisation. Les mois sont indicatifs : ce qui compte, c'est que chaque phase se ferme par une <i class="t" data-t="fiche-de-test">fiche de test</i> lue en réunion. Les cases ci-dessous sont mémorisées sur cet appareil ; l'état de référence reste le tableau <i class="t" data-t="github">GitHub</i>.</p>
-    <div class="read-first"><span>Pour comprendre cette page, lire d'abord :</span> <a href="#cours-methode"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>4 · Mener le projet</a></div>
-  </div>
-
-  <div class="phases">
-    <div class="phase" style="--ph: var(--color-primary)"><div class="n">Phase 0</div><div class="t">Organisation</div><div class="m">oct. 2026</div><div class="amt">0 €</div><div class="m">GitHub, rôles, outils, sécurité</div></div>
-    <div class="phase" style="--ph: var(--color-consumption)"><div class="n">Phase 1</div><div class="t">Structure imprimée</div><div class="m">oct. 2026</div><div class="amt">55,70 €</div><div class="m">Pièces imprimées, assemblage à blanc</div></div>
-    <div class="phase" style="--ph: var(--color-cyan)"><div class="n">Phase 2</div><div class="t">Cerveau + banc servo</div><div class="m">nov. 2026</div><div class="amt">99,55 €</div><div class="m">IMU + bus validés · GO/NO-GO</div></div>
-    <div class="phase" style="--ph: var(--color-battery)"><div class="n">Phase 3</div><div class="t">Jambe 1</div><div class="m">déc. 2026</div><div class="amt">63,10 €</div><div class="m">Jambe pilotée, contacts lus</div></div>
-    <div class="phase" style="--ph: var(--color-lime)"><div class="n">Phase 4</div><div class="t">Jambe 2</div><div class="m">janv. 2027</div><div class="amt">99,50 €</div><div class="m">Bas du corps debout sur banc</div></div>
-    <div class="phase" style="--ph: var(--color-solar)"><div class="n">Phase 5</div><div class="t">Tête + calibration</div><div class="m">févr. 2027</div><div class="amt">95,25 €</div><div class="m">14 servos, offsets, 1re marche filaire</div></div>
-    <div class="phase" style="--ph: var(--color-hp)"><div class="n">Phase 6</div><div class="t">Énergie embarquée</div><div class="m">mars 2027</div><div class="amt">63,15 €</div><div class="m">Marche autonome sur batterie</div></div>
-  </div>
-
-  <div class="grid c2">
-    <div class="card">
-      <h3><svg><use href="#i-cal"/></svg>Phase 0 · Organisation <span class="pill p" id="pct-p0">0 %</span></h3>
-      <div class="chklist">
-        <label class="chk"><input type="checkbox" data-k="p0.1"><span class="t">Rôles attribués et notés dans <code>biscalab/README.md</code></span></label>
-        <label class="chk"><input type="checkbox" data-k="p0.2"><span class="t">Dépôt du club <code>JMTRIP/Open_Duck_Mini_Fablab</code> créé (fait le 5 oct.), chaque membre ajouté comme collaborateur, 2FA activée pour tous</span></label>
-        <label class="chk"><input type="checkbox" data-k="p0.3"><span class="t">Second dépôt du club (copie de <code>Open_Duck_Mini_Runtime</code>) créé ; Issues activées, labels, 7 jalons, tableau Projects</span></label>
-        <label class="chk"><input type="checkbox" data-k="p0.4"><span class="t">Arborescence <code>biscalab/</code>, <code>.gitattributes</code>, <code>.gitignore</code>, <code>CREDITS.md</code> poussés</span></label>
-        <label class="chk"><input type="checkbox" data-k="p0.5"><span class="t">GitHub Desktop installé sur chaque PC, 5 gestes répétés en séance</span></label>
-        <label class="chk"><input type="checkbox" data-k="p0.6"><span class="t">Copie Onshape BiscaLab créée ; FreeCAD réglé (compression 0, auteur)</span></label>
-        <label class="chk"><input type="checkbox" data-k="p0.7"><span class="t">Groupe Signal/WhatsApp, dossier Nextcloud « Canard », référents inscrits au Discord amont</span></label>
-        <label class="chk"><input type="checkbox" data-k="p0.8"><span class="t"><code>securite.md</code> rédigé et affiché (batteries, laser, banc)</span></label>
-        <label class="chk"><input type="checkbox" data-k="p0.9"><span class="t">Décisions tranchées : chargeur 2S, politique CAO, GPU disponible, hébergement du dossier</span></label>
-        <label class="chk"><input type="checkbox" data-k="p0.10"><span class="t">Issues de la phase 1 créées, issue « Achat phase 1 » validée</span></label>
-      </div>
-    </div>
-    <div class="card">
-      <h3><svg><use href="#i-printer"/></svg>Phase 1 · Structure imprimée <span class="pill p" id="pct-p1">0 %</span></h3>
-      <div class="chklist">
-        <label class="chk"><input type="checkbox" data-k="p1.1"><span class="t">Filament, inserts M3 (réf. BOM), 3 × 608ZZ, consommables reçus</span></label>
-        <label class="chk"><input type="checkbox" data-k="p1.2"><span class="t">Lot de profils PrusaSlicer exporté et commité ; pièce test inserts validée</span></label>
-        <label class="chk"><input type="checkbox" data-k="p1.3"><span class="t">36 STL amont vérifiés (branche v2), <code>pieces.csv</code> initialisé avec les 51 lignes</span></label>
-        <label class="chk"><input type="checkbox" data-k="p1.4"><span class="t">Plateaux 3MF créés par sous-ensemble (orientation et supports figés)</span></label>
-        <label class="chk"><input type="checkbox" data-k="p1.5"><span class="t">Pieds (8 pièces, dont 2 TPU 40 %) imprimés et contrôlés</span></label>
-        <label class="chk"><input type="checkbox" data-k="p1.6"><span class="t">Jambes (18 pièces) imprimées ; gauche/droite identifiées au marqueur</span></label>
-        <label class="chk"><input type="checkbox" data-k="p1.7"><span class="t">Tronc, cou, tête (9 pièces) imprimés ; roulements et inserts posés</span></label>
-        <label class="chk"><input type="checkbox" data-k="p1.8"><span class="t">Carrosserie (9 pièces) imprimée</span></label>
-        <label class="chk"><input type="checkbox" data-k="p1.9"><span class="t">Chaque sous-ensemble pesé et comparé aux masses du MJCF (fiche de test)</span></label>
-        <label class="chk"><input type="checkbox" data-k="p1.10"><span class="t">Assemblage à blanc sans servos (cales de la taille d'un STS3215) ; photos dans <code>docs/photos/</code></span></label>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid c2">
-    <div class="card">
-      <h3><svg><use href="#i-cpu"/></svg>Phase 2 · Cerveau + banc servo <span class="pill p" id="pct-p2">0 %</span></h3>
-      <div class="chklist">
-        <label class="chk"><input type="checkbox" data-k="p2.1"><span class="t">Pi Zero 2 W, microSD 32 Go, Waveshare, BNO055, 2 × STS3215 7,4 V C001 reçus (référence vérifiée à la réception)</span></label>
-        <label class="chk"><input type="checkbox" data-k="p2.2"><span class="t">Socle de banc découpé au laser (servos + carte + Pi), alimentation labo 7,4 V limitée</span></label>
-        <label class="chk"><input type="checkbox" data-k="p2.3"><span class="t">Image v0.2.3 flashée, identifiants changés, SSH et Wi-Fi fonctionnels</span></label>
-        <label class="chk"><input type="checkbox" data-k="p2.4"><span class="t">Checklist « banc servo » de la rubrique Électronique entièrement verte</span></label>
-        <label class="chk"><input type="checkbox" data-k="p2.5"><span class="t">Manette Xbox appairée, <code>pygame</code> voit les axes</span></label>
-        <label class="chk"><input type="checkbox" data-k="p2.6"><span class="t"><code>mujoco_infer.py</code> lancé sur un PC avec le MJCF corrigé par nos masses réelles : le canard simulé marche</span></label>
-        <label class="chk"><input type="checkbox" data-k="p2.7"><span class="t"><strong>GO / NO-GO</strong> noté dans le journal → commande des 12 servos restants (même lot)</span></label>
-      </div>
-    </div>
-    <div class="card">
-      <h3><svg><use href="#i-walk"/></svg>Phases 3 et 4 · Jambes <span class="pill p" id="pct-p3">0 %</span></h3>
-      <div class="chklist">
-        <label class="chk"><input type="checkbox" data-k="p3.1"><span class="t">Servos 12-14 configurés avant montage (jambe droite), palonniers alignés au gabarit</span></label>
-        <label class="chk"><input type="checkbox" data-k="p3.2"><span class="t">Jambe droite montée ; orientation du hip_pitch vérifiée (position zéro)</span></label>
-        <label class="chk"><input type="checkbox" data-k="p3.3"><span class="t">4 contacts SS-10 pressés dans les semelles, lus par <code>feet_contacts.py</code></span></label>
-        <label class="chk"><input type="checkbox" data-k="p3.4"><span class="t">Jambe droite pilotée joint par joint sur le banc, jeu mesuré à chaque articulation</span></label>
-        <label class="chk"><input type="checkbox" data-k="p3.5"><span class="t">Servos 20-24 configurés, jambe gauche montée (pièces miroir : ne pas inverser)</span></label>
-        <label class="chk"><input type="checkbox" data-k="p3.6"><span class="t">Tronc + deux jambes : posture debout tenue sur le banc avec <code>turn_on.py</code> (servos 10, 11, 20, 21 configurés)</span></label>
-        <label class="chk"><input type="checkbox" data-k="p3.7"><span class="t">Câblage du bus en chaîne, gaine spirale, aucun câble pincé sur toute l'amplitude</span></label>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid c2">
-    <div class="card">
-      <h3><svg><use href="#i-zap"/></svg>Phase 5 · Tête, calibration, première marche <span class="pill p" id="pct-p5">0 %</span></h3>
-      <div class="chklist">
-        <label class="chk"><input type="checkbox" data-k="p5.1"><span class="t">Servos 30-33 configurés, cou et tête montés (roulements, inserts), micro-servos des antennes</span></label>
-        <label class="chk"><input type="checkbox" data-k="p5.2"><span class="t">IMU montée, orientation vérifiée avec <code>imu_client.py</code>, calibrée</span></label>
-        <label class="chk"><input type="checkbox" data-k="p5.3"><span class="t">Offsets mesurés avec <code>find_soft_offsets.py</code>, <code>duck_config.json</code> commité</span></label>
-        <label class="chk"><input type="checkbox" data-k="p5.4"><span class="t">Potence/harnais découpé et installé au-dessus du centre de masse</span></label>
-        <label class="chk"><input type="checkbox" data-k="p5.5"><span class="t">Checklist « Calibration » de la rubrique Marche entièrement verte</span></label>
-        <label class="chk"><input type="checkbox" data-k="p5.6"><span class="t">Courant crête mesuré sur alimentation labo → calibre du BMS décidé</span></label>
-        <label class="chk"><input type="checkbox" data-k="p5.7"><span class="t">Première marche filaire filmée, fiche de test rédigée, démo au FabLab</span></label>
-      </div>
-    </div>
-    <div class="card">
-      <h3><svg><use href="#i-shield"/></svg>Phase 6 · Énergie embarquée <span class="pill p" id="pct-p6">0 %</span></h3>
-      <div class="chklist">
-        <label class="chk"><input type="checkbox" data-k="p6.1"><span class="t">2 × P30B, support, BMS (calibre validé), UBEC, interrupteur, chargeur 2S, jacks, XT30 reçus</span></label>
-        <label class="chk"><input type="checkbox" data-k="p6.2"><span class="t">Pack assemblé hors robot, cellules à la même tension, BMS testé (coupure basse, équilibrage), sac ignifuge pour la charge</span></label>
-        <label class="chk"><input type="checkbox" data-k="p6.3"><span class="t"><code>check_voltage.py</code> sous batterie : tension vue par les servos en charge, pas d'erreur CRC</span></label>
-        <label class="chk"><input type="checkbox" data-k="p6.4"><span class="t">Marche sur batterie, potence puis libre ; autonomie mesurée (minutes de marche) et notée</span></label>
-        <label class="chk"><input type="checkbox" data-k="p6.5"><span class="t">Carrosserie fermée, <code>battery_pack_lid</code> en place, interrupteur accessible</span></label>
-        <label class="chk"><input type="checkbox" data-k="p6.6"><span class="t">Release GitHub « canard-biscalab v1.0 » : STL modifiés, 3MF, config, fiches de test, vidéo</span></label>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3><svg><use href="#i-copy"/></svg>Partager l'état des listes</h3>
-    <p class="sub">Les cases sont enregistrées dans ce navigateur seulement. Pour synchroniser avec un collègue : copier l'export, le coller dans l'import de l'autre appareil.</p>
-    <div class="row">
-      <button class="btn primary" type="button" id="btn-export"><svg><use href="#i-copy"/></svg>Exporter (copier)</button>
-      <button class="btn" type="button" id="btn-import">Importer depuis le texte ci-dessous</button>
-      <button class="btn" type="button" id="btn-reset">Tout décocher</button>
-    </div>
-    <textarea class="io" id="io" placeholder="L'export apparaît ici. Pour importer, coller un export puis cliquer « Importer »."></textarea>
-  </div>
-</section>
-
 <!-- ═══════════════════════════ RISQUES ═══════════════════════════ -->
 <section class="page" id="page-risques" data-title="Risques et sécurité" data-sub="Registre, parades" hidden>
   <div class="page-head">
@@ -181,7 +64,7 @@
   <div class="page-head">
     <div class="eyebrow">Apprendre avant de faire</div>
     <h1>Le parcours d'apprentissage</h1>
-    <p class="lead">Seize cours, écrits pour quelqu'un qui part de zéro. Chacun dure entre 30 et 90 minutes, se lit seul ou en petit groupe, et se termine par un exercice à faire au <i class="t" data-t="fablab">FabLab</i>. Les cases cochées sont mémorisées sur cet appareil. Un mot souligné en pointillé, n'importe où dans ce dossier, s'ouvre d'un clic pour donner sa définition.</p>
+    <p class="lead">Seize cours, écrits pour quelqu'un qui part de zéro. Chacun dure entre 30 et 90 minutes, se lit seul ou en petit groupe, et se termine par un exercice à faire au <i class="t" data-t="fablab">FabLab</i>. Les cases « cours terminé » sont personnelles et mémorisées sur cet appareil ; celles du <a href="#planning">planning</a> et des listes de travail, elles, sont partagées avec toute l'équipe. Un mot souligné en pointillé, n'importe où dans ce dossier, s'ouvre d'un clic pour donner sa définition.</p>
   </div>
 
   <div class="kpis">
@@ -200,7 +83,7 @@
       <li><strong>Choisir sa filière</strong> selon son rôle. Personne n'a besoin de tout lire ; chaque référent lit sa filière en entier.</li>
       <li><strong>Faire l'exercice</strong> de chaque cours au FabLab, de préférence à deux, et noter dans le journal ce qui a surpris.</li>
       <li><strong>Répondre à l'auto-contrôle</strong> sans regarder la réponse d'abord. Si une question résiste, relire la section correspondante.</li>
-      <li><strong>Cocher le cours</strong> ici quand l'exercice est fait, pas quand la lecture est finie.</li>
+      <li><strong>Cocher le cours</strong> ici quand l'exercice est fait, pas quand la lecture est finie. Cette case ne concerne que vous : elle reste sur cet appareil.</li>
     </ol>
   </div>
 

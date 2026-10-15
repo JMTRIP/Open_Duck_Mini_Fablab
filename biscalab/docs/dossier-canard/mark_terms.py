@@ -4,7 +4,7 @@
 import re, json, sys
 from pathlib import Path
 
-SRC = Path(__file__).resolve().parent / 'src'
+SRC = Path(__file__).parent / 'src'
 TERMS = json.loads((SRC / 'terms.json').read_text())
 
 # (regex, slug) — ordre : du plus spécifique au plus général

@@ -133,8 +133,9 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-anchor="banc">
     <h2><svg><use href="#i-check"/></svg>Banc servo (phase 2) : ce qu'on valide avant d'acheter 12 servos</h2>
+    <p class="sub">Liste partagée : cocher une case l'enregistre dans le dépôt du club au nom de celui qui coche.</p>
     <div class="chklist">
       <label class="chk"><input type="checkbox" data-k="b.1"><span class="t">Socle laser pour 2 servos + carte Waveshare + Pi, alimentation labo 7,4 V limitée à 3 A</span></label>
       <label class="chk"><input type="checkbox" data-k="b.2"><span class="t">Tension d'entrée de la Waveshare mesurée en 2S : la carte et le bus fonctionnent à 7,4 V (fiche : 9 à 12,6 V)</span></label>
@@ -265,7 +266,7 @@
     <ul class="tight">
       <li><code>biscalab/duck_config.json</code> : la configuration de <strong>notre</strong> robot (offsets, IMU), commitée après chaque calibration avec la date dans le message.</li>
       <li><code>biscalab/INSTALL-biscalab.md</code> : ce qui a marché chez nous (version d'image, pilote udev réel, réglage I²C retenu, commandes exactes).</li>
-      <li><code>biscalab/tests/</code> : résultats de <code>check_motors</code>, <code>check_voltage</code>, courant mesuré, fréquence réelle de la boucle.</li>
+      <li>Pas de résultats d'essai ici : sorties de <code>check_motors</code> et <code>check_voltage</code>, courant mesuré et fréquence réelle de la boucle s'enregistrent depuis la page, en <a href="#tests">fiche de test</a> et en <a href="#mesures">mesures</a>, dans <code>biscalab/</code> du dépôt du club.</li>
       <li>Aucun fichier amont modifié. Une correction utile à tous est proposée en <i class="t" data-t="pull-request">pull request</i> à Antoine Pirrone.</li>
     </ul>
   </div>

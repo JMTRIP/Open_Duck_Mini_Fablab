@@ -21,91 +21,11 @@
     <symbol id="i-menu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></g></symbol>
     <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></g></symbol>
     <symbol id="i-zap" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></g></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></g></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></g></symbol>
   </defs>
 </svg>
-
-<!-- ═══════════════════════════ ACCUEIL ═══════════════════════════ -->
-<section class="page" id="page-accueil" data-title="Tableau de bord" data-sub="Open Duck Mini V2 × BiscaLab">
-  <div class="page-head">
-    <div class="eyebrow">Dossier de travail · BiscaLab · Sanguinet</div>
-    <h1>Reproduire l'Open Duck Mini V2 au FabLab</h1>
-    <p class="lead">Un robot bipède open-source de 42 cm, 14 <i class="t" data-t="servo">servos</i>, qui marche grâce à une <i class="t" data-t="politique">politique</i> d'<i class="t" data-t="rl">apprentissage par renforcement</i>, conçu à Bordeaux par Antoine Pirrone. Ce dossier organise tout ce qu'il faut savoir et faire pour le construire en équipe, avec nos moyens.</p>
-  </div>
-
-  <div class="kpis">
-    <div class="kpi"><div class="v">14</div><div class="l">Servos</div><div class="d">Feetech STS3215 7,4 V</div></div>
-    <div class="kpi"><div class="v">51</div><div class="l">Pièces imprimées</div><div class="d">36 STL · PLA 15 % + TPU</div></div>
-    <div class="kpi"><div class="v">2,1<small>kg</small></div><div class="l">Masse (modèle)</div><div class="d">dont tête + cou 28 %</div></div>
-    <div class="kpi"><div class="v">398<small>€</small></div><div class="l">BOM officielle</div><div class="d">476 € plan BiscaLab</div></div>
-    <div class="kpi"><div class="v">50<small>Hz</small></div><div class="l">Boucle de marche</div><div class="d">Pi Zero 2 W · ONNX</div></div>
-    <div class="kpi"><div class="v">7</div><div class="l">Phases</div><div class="d">oct. 2026 → mars 2027</div></div>
-  </div>
-
-  <div class="hero">
-    <div class="card big">
-      <h2><svg><use href="#i-flag"/></svg>Où en est-on</h2>
-      <div class="row">
-        <span class="pill p"><span class="dot"></span>Phase 0 · Organisation</span>
-        <span class="pill mute">Maître d'œuvre : Jean-Marie</span>
-        <span class="pill mute">Outillage numérique : Laurent (proposé)</span>
-      </div>
-      <div class="prog-row"><span class="lab">Avancement global des listes de contrôle</span><span class="n" id="prog-all-n">0 %</span></div>
-      <div class="bar"><span id="prog-all"></span></div>
-      <div id="prog-phases" style="display:flex; flex-direction:column; gap:6px; margin-top:4px"></div>
-      <p class="muted" style="font-size:0.85rem">Les cases cochées sont mémorisées sur cet appareil uniquement. Pour partager l'état, utiliser « Exporter » dans Planning.</p>
-    </div>
-    <div class="card big">
-      <h2><svg><use href="#i-zap"/></svg>Ce qui ne se négocie pas</h2>
-      <p class="sub">La politique de marche fournie suppose exactement ceci. Tout écart impose un réentraînement.</p>
-      <ul class="tight">
-        <li><strong>Servos <i class="t" data-t="sts3215">STS3215</i> 7,4 V, rapport 1/345</strong> (réf. C001, « 19 <i class="t" data-t="kg-cm">kg·cm</i> ») — pas la 12 V, pas les rapports 1/191 ni 1/147.</li>
-        <li><strong>Batterie <i class="t" data-t="2s">2S</i></strong> (2 × <i class="t" data-t="18650">18650</i> haute décharge ≥ 25 A) — jamais 3S.</li>
-        <li><strong>Semelles en <i class="t" data-t="tpu">TPU</i></strong> à 40 % : c'est le seul contact modélisé avec le sol.</li>
-        <li><strong>Géométrie identique</strong> aux <i class="t" data-t="stl">STL</i> <i class="t" data-t="amont">amont</i>, masses à ±10 % près.</li>
-        <li><strong>Gain P = 30</strong>, boucle <i class="t" data-t="frequence-controle">50 Hz</i>, <code>action_scale</code> 0,25.</li>
-      </ul>
-      <a class="btn" href="#marche"><svg><use href="#i-arrow"/></svg>Comprendre pourquoi</a>
-    </div>
-  </div>
-
-  <div class="grid c2">
-    <div class="card">
-      <h2><svg><use href="#i-check"/></svg>Les 5 règles d'or</h2>
-      <ol class="rules">
-        <li>Si ce n'est pas sur <i class="t" data-t="github">GitHub</i> (<i class="t" data-t="issue">issue</i> ou journal), ça n'existe pas. Signal sert à discuter, GitHub à décider.</li>
-        <li><em>Pull</em> en arrivant, <em>Push</em> en partant. Un fichier <i class="t" data-t="cao">CAO</i> n'a qu'un éditeur à la fois : celui qui s'est assigné l'issue.</li>
-        <li>On ne modifie jamais un fichier amont : on le copie dans <code>biscalab/</code>, puis on le modifie.</li>
-        <li>Pas de phase suivante, ni d'achat suivant, sans <i class="t" data-t="fiche-de-test">fiche de test</i> validée.</li>
-        <li>Sécurité non négociable : batterie jamais en charge sans surveillance, laser jamais seul, matériaux interdits affichés.</li>
-      </ol>
-    </div>
-    <div class="card">
-      <h2><svg><use href="#i-warn"/></svg>Décisions à trancher</h2>
-      <ul class="tight">
-        <li><strong>Chargeur « TP4056 2S »</strong> du plan d'achats : le TP4056 est un chargeur 1S. Choisir un vrai chargeur 2S équilibré (ou charger hors robot via le <i class="t" data-t="bms">BMS</i> et un chargeur 8,4 V).</li>
-        <li><strong>Calibre du BMS</strong> : à fixer après la mesure du <i class="t" data-t="courant">courant</i> crête en phase 5.</li>
-        <li><strong>Carte <i class="t" data-t="waveshare">Waveshare</i></strong> : sa fiche annonce une entrée 9 à 12,6 V ; le canard l'alimente en 2S (7,4 V). Vérifier sur le banc avant d'acheter les 12 servos restants.</li>
-        <li><strong>Outil CAO</strong> : retouches de pièces amont dans une copie <i class="t" data-t="onshape">Onshape</i>, pièces nouvelles dans <i class="t" data-t="freecad">FreeCAD</i> — à valider en réunion.</li>
-        <li><strong><i class="t" data-t="gpu">GPU</i> pour réentraîner</strong> : qui dispose d'une carte NVIDIA (CUDA 12) ? Sinon, location cloud ponctuelle.</li>
-        <li><strong>Hébergement de ce dossier</strong> : lien partagé ou PWA installable sur un sous-domaine.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2><svg><use href="#i-arrow"/></svg>Par où commencer</h2>
-    <div class="mini-nav">
-      <a href="#equipe"><svg><use href="#i-users"/></svg>Attribuer les rôles</a>
-      <a href="#github"><svg><use href="#i-git"/></svg>Rejoindre le dépôt du club</a>
-      <a href="#planning"><svg><use href="#i-cal"/></svg>Checklist de la phase 0</a>
-      <a href="#bom"><svg><use href="#i-cart"/></svg>Lancer les achats de la phase 1</a>
-      <a href="#fabrication"><svg><use href="#i-printer"/></svg>Imprimer la pièce test</a>
-      <a href="#projet"><svg><use href="#i-flag"/></svg>Lire la présentation</a>
-    </div>
-  </div>
-</section>
 
 <!-- ═══════════════════════════ PROJET ═══════════════════════════ -->
 <section class="page" id="page-projet" data-title="Le projet" data-sub="Open Duck Mini V2" hidden>
@@ -232,22 +152,8 @@
 
   <div class="card">
     <h2><svg><use href="#i-users"/></svg>Rôles</h2>
-    <p class="sub">Une même personne peut en cumuler plusieurs. L'important est que chaque rôle ait un nom le jour de la première réunion.</p>
-    <div class="tw">
-      <table>
-        <thead><tr><th>Rôle</th><th>Mission</th><th>Qui</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Maître d'œuvre</strong></td><td>Porte le projet, arbitre les choix techniques, anime le point hebdomadaire, valide le passage de phase.</td><td><span class="pill p">Jean-Marie</span></td></tr>
-          <tr><td><strong>Référent outillage numérique</strong></td><td>Dépôt <i class="t" data-t="github">GitHub</i> du club, ce dossier, structure du dépôt, formation aux 5 gestes, Sync fork mensuel, lien avec le Discord <i class="t" data-t="amont">amont</i>.</td><td><span class="pill p">Laurent</span> <span class="pill mute">proposé</span></td></tr>
-          <tr><td><strong>Administrateur du dépôt</strong></td><td>Propriétaire du dépôt du club <code>JMTRIP/Open_Duck_Mini_Fablab</code> : ajoute les membres comme collaborateurs, active les Issues. Si le dépôt passe un jour dans une organisation « biscalab », prévoir un second administrateur.</td><td><span class="pill p">Jean-Marie</span></td></tr>
-          <tr><td><strong>Trésorier-acheteur</strong></td><td>Seul acheteur. Une <i class="t" data-t="issue">issue</i> « Achat » par commande, validation du bureau, factures sur le Nextcloud, remboursement par note de frais.</td><td><span class="pill mute">à attribuer</span></td></tr>
-          <tr><td><strong>Référent impression 3D</strong></td><td>Profils <i class="t" data-t="prusaslicer">PrusaSlicer</i> partagés, projets <i class="t" data-t="3mf">3MF</i> par plateau, suivi <code>pieces.csv</code>, <i class="t" data-t="insert">inserts</i>.</td><td><span class="pill mute">à attribuer</span></td></tr>
-          <tr><td><strong>Référent laser</strong></td><td>Outillage découpé (banc, gabarits, <i class="t" data-t="potence">potence</i>), <i class="t" data-t="kerf">kerf</i>, matériaux autorisés, sécurité machine.</td><td><span class="pill mute">à attribuer</span></td></tr>
-          <tr><td><strong>Référent électronique et code</strong></td><td>Banc <i class="t" data-t="servo">servo</i>, configuration des moteurs, image du Pi, calibration, <i class="t" data-t="script">scripts</i>.</td><td><span class="pill mute">à attribuer</span></td></tr>
-          <tr><td><strong>Référent sécurité</strong></td><td>Batteries <i class="t" data-t="li-ion">Li-ion</i>, laser, banc d'essai. Rédige et affiche <code>securite.md</code>.</td><td><span class="pill mute">à attribuer</span></td></tr>
-        </tbody>
-      </table>
-    </div>
+    <p class="sub">Une même personne peut en cumuler plusieurs. L'important est que chaque rôle ait un nom le jour de la première réunion. La liste s'enregistre depuis cette page (bouton « Attribuer les rôles ») et vit dans le dépôt du club (<code>biscalab/equipe/</code>) : tout le monde voit la même, et on la ré-enregistre quand elle change.</p>
+    <div data-view="equipe"></div>
   </div>
 
   <div class="grid c3">
@@ -261,7 +167,7 @@
     </div>
     <div class="card">
       <h3><svg><use href="#i-book"/></svg>Journal de bord</h3>
-      <p>Un fichier par séance : <code>biscalab/journal/AAAA-MM-JJ.md</code>. Cinq rubriques, jamais plus :</p>
+      <p>Une entrée par séance, saisie depuis la page <a href="#journal">Journal des séances</a> (bouton « Nouvelle séance ») et rangée dans <code>biscalab/journal/AAAA-MM-JJ.md</code>. Cinq rubriques, jamais plus :</p>
       <ol class="tight">
         <li>Présents</li>
         <li>Fait</li>
@@ -273,8 +179,8 @@
     </div>
     <div class="card">
       <h3><svg><use href="#i-check"/></svg>Fiche de test et « fini »</h3>
-      <p><strong>Fiche de test</strong> (<code>biscalab/tests/</code>) : objectif, montage, procédure, critère de réussite chiffré, résultat, photo ou vidéo, décision.</p>
-      <p><strong>Une pièce est finie</strong> quand elle est imprimée, contrôlée, inserts posés, ligne <i class="t" data-t="csv">CSV</i> à jour, photo prise.</p>
+      <p><strong>Fiche de test</strong>, saisie depuis la page <a href="#tests">Fiches de test</a> et rangée dans <code>biscalab/tests/</code> : objectif, montage, procédure, critère de réussite chiffré, résultat (GO, NO-GO ou partiel), décision. Photo ou vidéo sur le Nextcloud.</p>
+      <p><strong>Une pièce est finie</strong> quand elle est imprimée, contrôlée, inserts posés, état enregistré dans le <a href="#pieces">registre des pièces</a>, photo prise.</p>
       <p><strong>Une tâche est finie</strong> quand l'issue est fermée avec une preuve : photo, mesure ou <i class="t" data-t="commit">commit</i>.</p>
     </div>
   </div>
@@ -294,8 +200,9 @@
         </table>
       </div>
     </div>
-    <div class="card">
+    <div class="card" data-anchor="reunion">
       <h3><svg><use href="#i-check"/></svg>Première réunion (≈ 1 h 30)</h3>
+      <p class="sub">Liste partagée : cocher une case l'enregistre dans le dépôt du club au nom de celui qui coche, et tout le monde la voit cochée.</p>
       <div class="chklist">
         <label class="chk"><input type="checkbox" data-k="m.1"><span class="t">Présenter l'objectif, le plan en 7 phases et le budget du socle (≈ 476 €)</span></label>
         <label class="chk"><input type="checkbox" data-k="m.2"><span class="t">Attribuer les rôles du tableau ci-dessus</span></label>

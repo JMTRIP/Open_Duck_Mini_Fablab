@@ -76,12 +76,12 @@
   },
   "markdown": {
     "t": "Markdown",
-    "d": "Façon d'écrire du texte avec des symboles simples (# pour un titre, - pour une liste, ** pour du gras) que GitHub affiche mis en forme. Nos journaux et fiches sont en Markdown.",
+    "d": "Façon d'écrire du texte avec des symboles simples (# pour un titre, - pour une liste, ** pour du gras) que GitHub affiche mis en forme. Nos enregistrements (séances, fiches de test, pièces, achats…) sont en Markdown.",
     "c": "cours-git"
   },
   "csv": {
     "t": "CSV",
-    "d": "Fichier texte de tableau : une ligne par enregistrement, les colonnes séparées par des virgules. S'ouvre dans un tableur et s'affiche en tableau sur GitHub.",
+    "d": "Fichier texte de tableau : une ligne par enregistrement, les colonnes séparées par des virgules. S'ouvre dans un tableur et s'affiche en tableau sur GitHub. Chez nous, seul biscalab/equipe.csv (la liste des rôles) est un CSV.",
     "c": "cours-git"
   },
   "licence-apache": {
@@ -696,7 +696,7 @@
   },
   "fiche-de-test": {
     "t": "Fiche de test",
-    "d": "Un document court qui dit ce qu'on a voulu vérifier, comment, avec quel critère chiffré, et ce qu'on a obtenu. Sans fiche validée, pas de phase suivante.",
+    "d": "Un document court qui dit ce qu'on a voulu vérifier, comment, avec quel critère chiffré, et ce qu'on a obtenu (GO, NO-GO ou partiel). Elle se saisit depuis la page (Fiches de test) et arrive dans biscalab/tests/. Sans fiche validée, pas de phase suivante.",
     "c": "cours-methode"
   },
   "dod": {
@@ -711,7 +711,17 @@
   },
   "journal-de-bord": {
     "t": "Journal de bord",
-    "d": "Un fichier par séance de travail : présents, fait, mesures, problèmes, décisions. C'est la mémoire du projet ; ce qui n'y est pas n'a pas existé.",
+    "d": "Une entrée par séance de travail, saisie depuis la page (Journal des séances) et rangée dans biscalab/journal/ du dépôt du club : présents, fait, mesures, problèmes, décisions. C'est la mémoire du projet ; ce qui n'y est pas n'a pas existé.",
+    "c": "cours-methode"
+  },
+  "enregistrement": {
+    "t": "Enregistrement",
+    "d": "Un enregistrement = un petit fichier texte dans biscalab/ du dépôt du club, créé depuis un bouton de cette page : une séance, une pièce, un achat, une mesure, une décision, une fiche de test ou une case cochée. La page prépare le fichier et ouvre l'éditeur de GitHub déjà rempli ; on clique « Commit changes » (deux fois), et tout le monde le voit.",
+    "c": "cours-methode"
+  },
+  "en-tete": {
+    "t": "En-tête (clé : valeur)",
+    "d": "En-tête clé : valeur entre deux lignes --- en haut d'un enregistrement : une information par ligne (type: piece, statut: imprimee, par: prénom…). La page lit ces lignes pour remplir ses tableaux ; le texte libre vient dessous.",
     "c": "cours-methode"
   },
   "bom": {

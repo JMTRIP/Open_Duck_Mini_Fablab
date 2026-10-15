@@ -18,7 +18,7 @@
       <li>Expliquer comment l'imprimante dépose le plastique, et ce qui rend une pièce solide.</li>
       <li>Choisir matière, orientation et supports pour une pièce du canard.</li>
       <li>Préparer un plateau dans le logiciel d'impression et l'enregistrer comme documentation.</li>
-      <li>Contrôler, peser et noter une pièce imprimée, et savoir quand la refaire.</li>
+      <li>Contrôler, peser et enregistrer une pièce imprimée depuis la page, et savoir quand la refaire.</li>
       <li>Poser un écrou fileté à chaud proprement.</li>
       <li>Imprimer les 51 pièces dans un ordre qui limite les risques.</li>
     </ul>
@@ -71,7 +71,7 @@
     <p>Deux idées à retenir. D'abord, la solidité vient surtout des périmètres, là où passent les efforts, et pas du remplissage : doubler le remplissage alourdit beaucoup la pièce pour un gain modeste. Ensuite, les couches se décollent plus facilement que le fil ne casse. Une pièce imprimée ressemble à un mille-feuille : solide dans le plan des feuilles, fragile quand on tire pour les séparer. On oriente donc chaque pièce pour que l'effort principal passe dans le plan des couches.</p>
     <h3>Pourquoi 15 % compte pour le canard</h3>
     <p>L'<i class="t" data-t="amont">amont</i>, le projet d'origine d'Antoine Pirrone, imprime tout en <i class="t" data-t="pla">PLA</i> (le filament le plus courant, rigide et facile) à 15 %, sauf les semelles en <i class="t" data-t="tpu">TPU</i> (un caoutchouc imprimable) à 40 %. Les masses du modèle de <i class="t" data-t="simulation">simulation</i>, le robot virtuel sur lequel la marche a été apprise, sont celles qu'estime le slicer avec ces réglages. Pendant l'apprentissage, ces masses ont varié de ±10 % : imprimer à 30 % « pour la solidité » peut sortir de cette plage.</p>
-    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Ajouter du remplissage ou des périmètres à une pièce de jambe sans le noter. La pièce s'alourdit, le robot réel s'éloigne du robot simulé, et personne ne comprend plus tard pourquoi la marche est moins stable. Tout écart à l'amont se note dans <code>pieces.csv</code> et reste visible dans le projet <i class="t" data-t="3mf">3MF</i>, le fichier qui rejoue un plateau d'impression (section 6).</div></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Ajouter du remplissage ou des périmètres à une pièce de jambe sans le noter. La pièce s'alourdit, le robot réel s'éloigne du robot simulé, et personne ne comprend plus tard pourquoi la marche est moins stable. Tout écart à l'amont se note dans l'enregistrement de la pièce (<a href="#pieces">registre des pièces</a>) et reste visible dans le projet <i class="t" data-t="3mf">3MF</i>, le fichier qui rejoue un plateau d'impression (section 6).</div></div>
     <div class="ex"><b>Exemple sur notre canard</b><p>Un constructeur tiers a consommé 990 g de PLA et 34 g de TPU pour l'ensemble des pièces. C'est l'ordre de grandeur que nos pesées devront retrouver.</p></div>
   </div>
 
@@ -134,8 +134,8 @@
     <div class="note bad"><svg><use href="#i-warn"/></svg><div><strong>Jamais la variante « with Physical Printers ».</strong> Elle contient les adresses réseau et les clés d'accès de l'imprimante : publiée sur <i class="t" data-t="github">GitHub</i>, le site qui héberge notre dossier partagé, elle les donne à tout le monde. Toujours la variante simple.</div></div>
     <h3>Un projet 3MF par plateau</h3>
     <p>Le 3MF enregistre tout : pièces, positions, orientation, supports peints, réglages. Le rouvrir rejoue exactement l'impression. Un 3MF par plateau, nommé par sous-ensemble (<code>plateau-pieds.3mf</code>, <code>plateau-jambe-gauche.3mf</code>), rangé dans <code>biscalab/print/3mf/</code> : c'est notre documentation d'orientation et de supports. Le G-code, lui, n'est pas versionné puisqu'il se régénère.</p>
-    <h3>Le suivi dans pieces.csv</h3>
-    <p>Chaque pièce sortie de la machine fait avancer sa ligne dans <code>biscalab/print/pieces.csv</code> (colonnes au <a href="#cours-cao">cours 5</a>) : <code>a_imprimer</code>, <code>imprimee</code>, <code>controlee</code>, <code>montee</code>, ou <code>a_refaire</code>. Une pièce n'est finie que contrôlée, inserts posés, ligne à jour et photo prise : c'est notre <i class="t" data-t="dod">définition de « fini »</i>, qui évite les « c'est presque fait ».</p>
+    <h3>Le suivi dans le registre des pièces</h3>
+    <p>Chaque pièce sortie de la machine s'enregistre depuis la page <a href="#pieces">Registre des pièces</a> : bouton « Enregistrer » sur sa ligne, numéro d'exemplaire, nouvel état (<code>a_imprimer</code>, <code>imprimee</code>, <code>controlee</code>, <code>montee</code> ou <code>a_refaire</code>), masse pesée. Un enregistrement par exemplaire et par changement d'état ; le plus récent fait foi (champs au <a href="#cours-cao">cours 5</a>, mécanisme au <a href="#cours-methode">cours 4</a>). Une pièce n'est finie que contrôlée, inserts posés, état enregistré et photo prise : c'est notre <i class="t" data-t="dod">définition de « fini »</i>, qui évite les « c'est presque fait ».</p>
   </div>
 
   <div class="card lesson">
@@ -210,10 +210,21 @@
       <li><div><b>Contrôler</b> Pièces refroidies : cotes, trous, planéité, délaminage.</div></li>
       <li><div><b>Peser</b> <code>leg_spacer</code> nue, à comparer à l'estimation du slicer.</div></li>
       <li><div><b>Inserts</b> D'abord dans la pièce test, en ajustant la température si besoin ; puis les 4 inserts de <code>leg_spacer</code>. Vérifier chacun avec une vis.</div></li>
-      <li><div><b>Remplir la ligne</b> Dans <code>pieces.csv</code>, puis enregistrer dans <i class="t" data-t="git">Git</i> (l'historique du projet), avec une photo dans le <i class="t" data-t="journal-de-bord">journal de bord</i> de la séance :</div></li>
+      <li><div><b>Enregistrer la pièce</b> Page <a href="#pieces">Registre des pièces</a>, bouton « Enregistrer » de la ligne <code>leg_spacer</code> : exemplaire 1, état « contrôlée », masse pesée, note. « Préparer l'enregistrement », « Enregistrer sur GitHub », puis Commit changes deux fois. Le 3MF, lui, part dans <i class="t" data-t="git">Git</i> (l'historique du projet) par GitHub Desktop, et une photo est citée dans le <i class="t" data-t="journal-de-bord">journal de bord</i> de la séance. La page prépare ce fichier :</div></li>
     </ol>
-<pre><code>leg_spacer,print/leg_spacer.stl,amont,4,PLA,15%,0.2,non,biscalab/print/3mf/plateau-test-inserts.3mf,prenom,2026-10-15,controlee,"1 sur 4 imprimée ; masse slicer … g, pesée … g ; 4 inserts OK"</code></pre>
-    <p><strong>Résultat attendu :</strong> une <code>leg_spacer</code> contrôlée avec 4 inserts droits, l'écart de masse connu, un 3MF et une ligne de suivi versionnés, et une température de fer validée pour toute l'équipe.</p>
+<pre><code>---
+type: piece
+piece: leg_spacer
+exemplaire: 1
+statut: controlee
+masse_g: …
+rev: amont
+date: 2026-10-15
+par: prénom
+---
+1 sur 4 imprimée ; plateau biscalab/print/3mf/plateau-test-inserts.3mf ;
+masse slicer … g ; 4 inserts OK</code></pre>
+    <p><strong>Résultat attendu :</strong> une <code>leg_spacer</code> contrôlée avec 4 inserts droits, l'écart de masse connu, un 3MF versionné, un enregistrement « contrôlée » dans le registre des pièces, et une température de fer validée pour toute l'équipe.</p>
   </div>
 
   <div class="card">
@@ -233,7 +244,7 @@
       <li>La solidité vient des périmètres ; l'effort principal se place dans le plan des couches.</li>
       <li>PLA à 15 %, semelles TPU à 40 % : ces réglages fixent la masse, donc le robot simulé.</li>
       <li>Surplomb au-delà de 45° : support. Trou précis : vertical.</li>
-      <li>Un lot de profils partagé (jamais « with Physical Printers »), un 3MF par plateau, une ligne <code>pieces.csv</code> par pièce.</li>
+      <li>Un lot de profils partagé (jamais « with Physical Printers »), un 3MF par plateau, un enregistrement par exemplaire dans le registre des pièces.</li>
       <li>Chaque pièce est contrôlée et pesée ; plus de 10 % d'écart avec le slicer s'explique.</li>
       <li>Insert : trou 1 mm plus profond, fer 10 à 20 °C au-dessus de l'impression, 90 % au fer, fin à plat.</li>
       <li>Ordre : pieds, jambes, tronc, cou et tête, carrosserie.</li>

@@ -187,7 +187,7 @@
     <h3>Rechanges et marquage</h3>
     <ul>
       <li><strong>Rechanges imprimées d'avance</strong> : les pièces « sheet » des tibias et du cou et les <code>leg_spacer</code>, fines et sollicitées, celles qu'on casse lors d'une chute ou d'une calibration ratée. Une rechange prête, et l'essai reprend le jour même.</li>
-      <li><strong>Marquage</strong> au marqueur fin, sur une face cachée : la révision (<code>amont</code>, <code>b1</code>…), la même que dans la colonne <code>rev</code> de <code>pieces.csv</code>, et G ou D pour les pièces asymétriques. Sur chaque servo, son ID.</li>
+      <li><strong>Marquage</strong> au marqueur fin, sur une face cachée : la révision (<code>amont</code>, <code>b1</code>…), la même que dans le champ <code>rev</code> du <a href="#pieces">registre des pièces</a>, et G ou D pour les pièces asymétriques. Sur chaque servo, son ID.</li>
     </ul>
   </div>
 
@@ -195,13 +195,13 @@
     <h2>Exercice pratique au FabLab</h2>
     <p>Matériel : <code>foot_top</code> et <code>foot_bottom_pla</code> avec leurs inserts posés, <code>foot_side</code>, <code>foot_bottom_tpu</code>, 2 contacts SS-10, 2 vis M3×6, l'assortiment M3, tournevis, pied à coulisse, balance, multimètre, une cale de STS3215 si elle existe. Durée : 30 min.</p>
     <ol class="steps">
-      <li><div><b>Vérifier les pièces</b> Statut <code>controlee</code> dans <code>pieces.csv</code> ; une vis entre à la main dans chaque insert.</div></li>
-      <li><div><b>Peser</b> Chaque pièce seule ; noter.</div></li>
+      <li><div><b>Vérifier les pièces</b> État « contrôlée » dans le registre des pièces de la page ; une vis entre à la main dans chaque insert.</div></li>
+      <li><div><b>Peser</b> Chaque pièce seule ; noter la masse.</div></li>
       <li><div><b>Contacts</b> Presser les 2 contacts dans la semelle, bien droits. Au multimètre, en continuité, chacun doit s'ouvrir et se fermer quand on appuie.</div></li>
       <li><div><b>Semelle</b> Visser <code>foot_bottom_tpu</code> sur <code>foot_bottom_pla</code> avec les 2 M3×6, sans écraser le TPU.</div></li>
       <li><div><b>Pied</b> Assembler <code>foot_top</code> et <code>foot_side</code> ; longueur de chaque vis vérifiée avant serrage. Si la cale existe, la présenter « driver side » côté <code>foot_top</code>.</div></li>
       <li><div><b>Contrôler</b> Aucun flottement entre les pièces ; posé sur une surface plane, le pied ne bascule pas ; chargé à la main, les contacts se ferment, et ils s'ouvrent quand on le soulève.</div></li>
-      <li><div><b>Peser et noter</b> Masse du pied complet, comparée à la somme des pièces, vis et contacts. Statut <code>montee</code>, longueurs de vis utilisées et photo dans le journal de bord.</div></li>
+      <li><div><b>Peser et enregistrer</b> Masse du pied complet, comparée à la somme des pièces, vis et contacts, enregistrée depuis la page <a href="#mesures">Mesures</a> (grandeur « masse »). Chaque pièce passe à l'état « montée » dans le registre des pièces ; longueurs de vis utilisées et photo dans le journal de la séance.</div></li>
     </ol>
     <p><strong>Résultat attendu :</strong> un pied complet aux contacts fonctionnels et sa masse, qui n'est publiée nulle part : elle devient notre référence pour le second pied. La liste des vis utilisées commence à combler ce que le guide amont ne dit pas.</p>
   </div>
@@ -213,7 +213,7 @@
     <details class="quiz"><summary>Pourquoi configurer chaque servo avant de le monter, et un seul à la fois ?</summary><p>Ils sortent tous d'usine avec l'ID 1 : il faut leur donner leur ID et les mettre à 0 avant de poser le palonnier. Deux servos branchés ensemble répondraient en même temps.</p></details>
     <details class="quiz"><summary>Quel jeu la simulation suppose-t-elle, et que se passe-t-il au-delà ?</summary><p>±0,5° par articulation. Avec nettement plus, le robot réel ne répond plus comme le robot simulé et la marche devient instable.</p></details>
     <details class="quiz"><summary>Imaginons que le canard complet pèse 2,4 kg. Que faire ?</summary><p>Environ 14 % de plus que les 2,107 kg du modèle : hors de la plage de ±10 %. Peser les sous-ensembles pour trouver l'origine, puis corriger la pièce ou mettre le modèle à jour avant d'essayer la marche.</p></details>
-    <details class="quiz"><summary>Que note-t-on au marqueur sur une pièce ?</summary><p>Sa révision (celle de la colonne <code>rev</code> de <code>pieces.csv</code>) et G ou D si elle est asymétrique, sur une face cachée.</p></details>
+    <details class="quiz"><summary>Que note-t-on au marqueur sur une pièce ?</summary><p>Sa révision (celle du champ <code>rev</code> du registre des pièces) et G ou D si elle est asymétrique, sur une face cachée.</p></details>
   </div>
 
   <div class="card lesson-recap">

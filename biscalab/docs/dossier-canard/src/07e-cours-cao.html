@@ -19,7 +19,7 @@
       <li>Ouvrir le document de conception du canard, en faire une copie et exporter une pièce.</li>
       <li>Dessiner une pièce simple dans notre logiciel libre, puis l'exporter.</li>
       <li>Importer une pièce du canard pour la mesurer, la percer ou y emboîter une pièce nouvelle.</li>
-      <li>Appliquer les règles d'équipe : réglages, un éditeur par fichier, nommage, suivi des pièces.</li>
+      <li>Appliquer les règles d'équipe : réglages, un éditeur par fichier, nommage, suivi des pièces depuis la page.</li>
       <li>Reconnaître quand une modification de pièce change aussi le robot virtuel.</li>
     </ul>
   </div>
@@ -142,22 +142,32 @@
     <h3>Nommer les fichiers</h3>
     <ul>
       <li>Minuscules, sans accents ni espaces, tirets entre les mots, même nom de base pour toutes les déclinaisons : <code>gabarit-zero-servo.FCStd</code>, <code>.step</code>, <code>.stl</code>, <code>.svg</code>.</li>
-      <li>Jamais de <code>_v2_final</code> : Git garde l'historique, et les projets d'impression retrouvent les pièces par leur nom. La révision se note dans <code>pieces.csv</code> (colonne <code>rev</code>) et <code>CHANGELOG.md</code>.</li>
+      <li>Jamais de <code>_v2_final</code> : Git garde l'historique, et les projets d'impression retrouvent les pièces par leur nom. La révision se note dans le registre des pièces (champ <code>rev</code>, en enregistrant la pièce depuis la page) et dans <code>CHANGELOG.md</code>.</li>
       <li>Les fichiers amont gardent leur nom d'origine, tirets bas compris (<code>leg_spacer.stl</code>).</li>
       <li>Rangement : <code>biscalab/cad/freecad/</code>, <code>biscalab/cad/step/</code>, <code>biscalab/print/stl/</code>, <code>biscalab/laser/svg-dxf/</code>.</li>
     </ul>
-    <h3>Le fichier pieces.csv</h3>
-    <p>Un fichier <i class="t" data-t="csv">CSV</i> est un tableau écrit en texte : une ligne par enregistrement, colonnes séparées par des virgules ; GitHub l'affiche en tableau. <code>biscalab/print/pieces.csv</code> suit les 51 pièces et nos pièces nouvelles. Chemins écrits depuis la racine du dépôt.</p>
+    <h3>Le registre des pièces</h3>
+    <p>Le suivi des pièces du robot se tient dans la page <a href="#pieces">Registre des pièces</a>. Elle connaît les 51 pièces (36 fichiers STL) et affiche, pour chaque exemplaire, son dernier état. Quand un exemplaire change d'état, on clique « Enregistrer » sur sa ligne : la page prépare un petit fichier texte, un <i class="t" data-t="enregistrement">enregistrement</i>, rangé dans <code>biscalab/pieces/</code> du dépôt (mécanisme au <a href="#cours-methode">cours 4</a>). Ses champs :</p>
     <dl class="def">
-      <dt><code>piece</code>, <code>fichier</code></dt><dd>nom de la pièce, chemin du STL</dd>
+      <dt><code>piece</code>, <code>exemplaire</code></dt><dd>nom de la pièce, celui du STL amont, et numéro de l'exemplaire (de 1 à 4 pour les plaques de tibia, par exemple)</dd>
+      <dt><code>statut</code></dt><dd><code>a_imprimer</code>, <code>imprimee</code>, <code>controlee</code>, <code>montee</code> ou <code>a_refaire</code></dd>
+      <dt><code>masse_g</code></dt><dd>la masse pesée, en grammes, que la page compare au modèle de simulation</dd>
       <dt><code>rev</code></dt><dd><code>amont</code> pour une pièce d'origine, sinon notre révision (<code>b1</code>, <code>b2</code>…)</dd>
-      <dt><code>qte</code> … <code>3mf</code></dt><dd>quantité, réglages d'impression, projet de plateau</dd>
-      <dt><code>imprimee_par</code>, <code>date</code>, <code>statut</code></dt><dd><code>a_imprimer</code>, <code>imprimee</code>, <code>controlee</code>, <code>montee</code> ou <code>a_refaire</code></dd>
-      <dt><code>remarque</code></dt><dd>inserts, masse, défaut constaté</dd>
+      <dt><code>date</code>, <code>par</code></dt><dd>quand, et qui</dd>
+      <dt>texte libre</dt><dd>sous l'en-tête : réglages particuliers, défaut constaté</dd>
     </dl>
-<pre><code>piece,fichier,rev,qte,matiere,remplissage,couche,supports,3mf,imprimee_par,date,statut,remarque
-trunk_bottom,print/trunk_bottom.stl,amont,1,PLA,15%,0.2,oui,biscalab/print/3mf/plateau-tronc.3mf,,,a_imprimer,inserts M3 + roulements
-cale-sts3215,biscalab/print/stl/cale-sts3215.stl,b1,14,PLA,15%,0.2,non,biscalab/print/3mf/plateau-cales.3mf,,,a_imprimer,cotes relevées sur le modèle du servo</code></pre>
+<pre><code>---
+type: piece
+piece: foot_top
+exemplaire: 1
+statut: imprimee
+masse_g:
+rev: b1
+date: 2026-10-…
+par: prénom
+---
+Passage de câble élargi, voir CHANGELOG.md.</code></pre>
+    <p>Les réglages d'impression (matière, remplissage, supports) restent dans le projet 3MF du plateau. Une pièce nouvelle qui n'appartient pas au robot (gabarit, cale, support d'atelier) n'a pas de ligne dans le registre : on la signale dans <code>CHANGELOG.md</code> et dans le journal de la séance.</p>
   </div>
 
   <div class="card lesson">
@@ -203,9 +213,9 @@ cale-sts3215,biscalab/print/stl/cale-sts3215.stl,b1,14,PLA,15%,0.2,non,biscalab/
       <li><div><b>Enregistrer et exporter</b> <code>biscalab/cad/freecad/gabarit-zero-servo.FCStd</code> ; STEP dans <code>biscalab/cad/step/</code>, STL dans <code>biscalab/print/stl/</code>.</div></li>
       <li><div><b>SVG pour la laser</b> Vue de dessus (touche <kbd>2</kbd>). Atelier Draft, corps sélectionné, « Vue 2D de forme » (Shape 2D view). Sélectionner l'objet obtenu, « Fichier → Exporter », type « Flattened SVG », dans <code>biscalab/laser/svg-dxf/</code>.</div></li>
       <li><div><b>Contrôler</b> Le STL ouvert dans PrusaSlicer mesure 60 × 40 × 3 mm ; le SVG ouvert dans XCS, 60 × 40 mm. Passer le trou à 10 mm : toute la pièce se recalcule. Remettre 8 mm.</div></li>
-      <li><div><b>Documenter</b> Ajouter la ligne dans <code>pieces.csv</code>, enregistrer dans Git (« Ajoute gabarit zéro servo ») et envoyer sur GitHub.</div></li>
+      <li><div><b>Documenter</b> Le gabarit est un outil, pas une pièce du robot : il n'entre pas dans le registre des pièces. Ajouter une ligne « pièce ajoutée » dans <code>biscalab/CHANGELOG.md</code>, enregistrer dans Git (« Ajoute gabarit zéro servo ») et envoyer sur GitHub. Le citer dans la séance du jour, enregistrée depuis la page.</div></li>
     </ol>
-    <p><strong>Résultat attendu :</strong> quatre fichiers de même nom de base (FCStd, STEP, STL, SVG) aux bonnes cotes et une ligne de suivi. Trou et fente sont des cotes d'exercice : celles du gabarit définitif seront relevées au pied à coulisse sur un vrai servo et son <i class="t" data-t="palonnier">palonnier</i> (la pièce vissée sur l'axe du servo). Le SVG servira au <a href="#cours-laser">cours 7</a>.</p>
+    <p><strong>Résultat attendu :</strong> quatre fichiers de même nom de base (FCStd, STEP, STL, SVG) aux bonnes cotes, une ligne dans <code>CHANGELOG.md</code> et une mention au journal de la séance. Trou et fente sont des cotes d'exercice : celles du gabarit définitif seront relevées au pied à coulisse sur un vrai servo et son <i class="t" data-t="palonnier">palonnier</i> (la pièce vissée sur l'axe du servo). Le SVG servira au <a href="#cours-laser">cours 7</a>.</p>
   </div>
 
   <div class="card">
@@ -214,7 +224,7 @@ cale-sts3215,biscalab/print/stl/cale-sts3215.stl,b1,14,PLA,15%,0.2,non,biscalab/
     <details class="quiz"><summary>Que peut-on faire d'un STEP importé dans FreeCAD, et que ne peut-on pas faire ?</summary><p>On peut le mesurer, le couper, s'appuyer dessus, ajouter ou retirer de la matière. On ne peut pas modifier proprement une opération d'origine : l'historique n'a pas suivi.</p></details>
     <details class="quiz"><summary>Deux personnes ont modifié le même FCStd la même semaine. Que se passe-t-il ?</summary><p>Git ne sait pas fusionner une archive zip : on gardera une version et on perdra l'autre. D'où la règle « un éditeur par fichier », avec l'issue assignée comme verrou.</p></details>
     <details class="quiz"><summary>Pourquoi exporter le STL en millimètres ?</summary><p>Le STL n'a pas d'unité et le logiciel d'impression suppose des millimètres. En pouces, la pièce arriverait 25,4 fois trop petite.</p></details>
-    <details class="quiz"><summary>On veut élargir un passage de câble dans <code>foot_top</code>. Avec quel outil, et que faut-il noter ?</summary><p>Dans la copie Onshape BiscaLab, qui garde l'historique. STL exporté dans <code>biscalab/print/stl/</code> sous le nom d'origine, révision <code>b1</code> dans <code>pieces.csv</code> et <code>CHANGELOG.md</code>, et vérification que la masse reste proche de l'originale.</p></details>
+    <details class="quiz"><summary>On veut élargir un passage de câble dans <code>foot_top</code>. Avec quel outil, et que faut-il noter ?</summary><p>Dans la copie Onshape BiscaLab, qui garde l'historique. STL exporté dans <code>biscalab/print/stl/</code> sous le nom d'origine, révision <code>b1</code> enregistrée dans le registre des pièces (champ <code>rev</code>) et notée dans <code>CHANGELOG.md</code>, et vérification que la masse reste proche de l'originale.</p></details>
   </div>
 
   <div class="card lesson-recap">
@@ -225,7 +235,7 @@ cale-sts3215,biscalab/print/stl/cale-sts3215.stl,b1,14,PLA,15%,0.2,non,biscalab/
       <li>Pièce amont à retoucher : copie Onshape. Pièce nouvelle : FreeCAD.</li>
       <li>Exports en millimètres, esquisses entièrement contraintes, congés en dernier.</li>
       <li>Un éditeur par fichier de CAO, réservé par l'issue. Compression à 0, <code>.FCBak</code> jamais envoyés.</li>
-      <li>Noms en minuscules avec tirets, jamais de <code>_v2_final</code> ; la révision vit dans <code>pieces.csv</code>.</li>
+      <li>Noms en minuscules avec tirets, jamais de <code>_v2_final</code> ; la révision vit dans le registre des pièces et <code>CHANGELOG.md</code>.</li>
       <li>À l'impression : trous + 0,2 mm, emboîtements 0,2 à 0,3 mm de jeu.</li>
       <li>Une pièce qui change de masse change le robot simulé : au-delà de ±10 %, on corrige le modèle.</li>
     </ul>

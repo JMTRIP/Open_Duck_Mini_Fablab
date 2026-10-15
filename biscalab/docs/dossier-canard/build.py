@@ -4,7 +4,8 @@
 Lancer :  python3 build.py   (depuis n'importe où)
 
 Entrées : src/*.html (une partie par rubrique, assemblées par ordre de nom),
-          src/terms.json (le glossaire, injecté à la place de __TERMS__).
+          src/terms.json (le glossaire, injecté à la place de __TERMS__),
+          src/duck.json (les contours du canard, injectés à la place de __DUCK__ ; produit par duck_views.py).
 Sorties, à côté de ce script : index.html (la PWA complète), manifest.webmanifest,
           sw.js, et _fragment.html (la même page sans en-tête, pour l'outil
           de publication Claude ; ignoré par git).
@@ -15,12 +16,14 @@ import re
 
 ROOT = Path(__file__).resolve().parent   # = biscalab/docs/dossier-canard/
 SRC = ROOT / "src"
-VERSION = "1.2.0"
+VERSION = "2.0.0"
 
 parts = sorted(SRC.glob("*.html"))
 body = "\n".join(p.read_text(encoding="utf-8") for p in parts)
 terms = json.loads((SRC / "terms.json").read_text(encoding="utf-8"))
 body = body.replace("__TERMS__", json.dumps(terms, ensure_ascii=False, separators=(",", ":")))
+duck = json.loads((SRC / "duck.json").read_text(encoding="utf-8")) if (SRC / "duck.json").exists() else None
+body = body.replace("__DUCK__", json.dumps(duck, ensure_ascii=False, separators=(",", ":")))
 
 # 1) Fragment (le viewer d'artifacts ajoute lui-même doctype/head/body)
 (ROOT / "_fragment.html").write_text(body, encoding="utf-8")

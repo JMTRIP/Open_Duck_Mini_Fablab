@@ -173,9 +173,10 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-anchor="calibration">
     <h2><svg><use href="#i-check"/></svg>Calibration du robot réel, dans l'ordre</h2>
     <p class="sub">Phase 5. Robot sur son support, batterie remplacée par l'<i class="t" data-t="alim-labo">alimentation de laboratoire</i>, mains libres pendant les scripts qui bougent.</p>
+    <p class="sub">Liste partagée : cocher une case l'enregistre dans le dépôt du club au nom de celui qui coche.</p>
     <div class="chklist">
       <label class="chk"><input type="checkbox" data-k="c.1"><span class="t"><strong>Configurer chaque servo avant montage</strong> : <code>configure_motor.py --id N</code> (10-14 jambe droite, 20-24 jambe gauche, 30-33 cou/tête). Palonnier monté aligné sur la position 0.<small>Ordre dans chaque jambe : hip_yaw, hip_roll, hip_pitch, knee, ankle. Tête : 30 neck_pitch, 31 head_pitch, 32 head_yaw, 33 head_roll.</small></span></label>
       <label class="chk"><input type="checkbox" data-k="c.2"><span class="t"><strong>Vérifier les servos</strong> : <code>check_motors.py</code> (tous répondent, bougent de 0,1 rad), <code>check_voltage.py</code>.</span></label>

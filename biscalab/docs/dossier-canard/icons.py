@@ -3,7 +3,7 @@
 from PIL import Image, ImageDraw
 from pathlib import Path
 
-OUT = Path(__file__).resolve().parent / "icons"
+OUT = Path(__file__).parent / "pwa" / "icons"
 OUT.mkdir(parents=True, exist_ok=True)
 
 def gradient(size, c1, c2):

@@ -1,0 +1,1028 @@
+<script>
+(function () {
+  'use strict';
+
+  /* ══════════════════════════════════════════════════════════════════════
+     Canard BiscaLab — application
+     1. Navigation (barre, rail, onglets, feuille ☰), thème, termes, glossaire
+     2. Données partagées : lecture du dépôt du club (API GitHub) → état du projet
+     3. Vues de suivi : tableau de bord, journal, planning, registres, formulaires
+     ══════════════════════════════════════════════════════════════════════ */
+
+  // ─── Dépôt du club (UNE source : changer ici si le dépôt déménage) ───────
+  var REPO = { owner: 'JMTRIP', repo: 'Open_Duck_Mini_Fablab', branch: 'v2', base: 'biscalab' };
+  try { var ov = JSON.parse(localStorage.getItem('canard.repo.v1') || 'null'); if (ov && ov.owner) REPO = ov; } catch (e) {}
+
+  // ─── Le plan du projet (ce qu'on a PRÉVU ; le RÉALISÉ vient des fichiers) ──
+  var PLAN = {
+    budget: 476.25,
+    phases: [
+      { n: 0, id: 'p0', titre: 'Organisation', mois: 'oct. 2026', montant: 0, jalon: 'Dépôt, rôles, outils et sécurité en place ; issues de la phase 1 créées', tint: 'var(--color-primary)', taches: [
+        ['p0.1', 'Rôles attribués et enregistrés depuis la page Équipe'],
+        ['p0.2', 'Dépôt du club JMTRIP/Open_Duck_Mini_Fablab créé (fait le 5 oct.), chaque membre ajouté comme collaborateur, 2FA activée pour tous'],
+        ['p0.3', 'Second dépôt du club (copie de Open_Duck_Mini_Runtime) créé ; Issues activées, labels, 7 jalons, tableau Projects'],
+        ['p0.4', 'Arborescence biscalab/, .gitattributes, .gitignore, CREDITS.md poussés'],
+        ['p0.5', 'GitHub Desktop installé sur chaque PC, 5 gestes répétés en séance'],
+        ['p0.6', 'Copie Onshape BiscaLab créée ; FreeCAD réglé (compression 0, auteur)'],
+        ['p0.7', 'Groupe Signal/WhatsApp, dossier Nextcloud « Canard », référents inscrits au Discord amont'],
+        ['p0.8', 'securite.md rédigé et affiché (batteries, laser, banc)'],
+        ['p0.9', 'Décisions tranchées : chargeur 2S, politique CAO, GPU disponible, hébergement du dossier'],
+        ['p0.10', 'Issues de la phase 1 créées, issue « Achat phase 1 » validée']
+      ] },
+      { n: 1, id: 'p1', titre: 'Structure imprimée', mois: 'oct. 2026', montant: 55.70, jalon: 'Pièces imprimées, assemblage à blanc', tint: 'var(--color-consumption)', taches: [
+        ['p1.1', 'Filament, inserts M3 (réf. BOM), 3 × 608ZZ, consommables reçus'],
+        ['p1.2', 'Lot de profils PrusaSlicer exporté et commité ; pièce test inserts validée'],
+        ['p1.3', '36 STL amont vérifiés (branche v2) ; registre des pièces initialisé dans la page'],
+        ['p1.4', 'Plateaux 3MF créés par sous-ensemble (orientation et supports figés)'],
+        ['p1.5', 'Pieds (8 pièces, dont 2 TPU 40 %) imprimés et contrôlés'],
+        ['p1.6', 'Jambes (18 pièces) imprimées ; gauche/droite identifiées au marqueur'],
+        ['p1.7', 'Tronc, cou, tête (9 pièces) imprimés ; roulements et inserts posés'],
+        ['p1.8', 'Carrosserie (9 pièces) imprimée'],
+        ['p1.9', 'Chaque sous-ensemble pesé et comparé aux masses du MJCF (fiche de test)'],
+        ['p1.10', 'Assemblage à blanc sans servos (cales de la taille d\'un STS3215) ; photos dans docs/photos/']
+      ] },
+      { n: 2, id: 'p2', titre: 'Cerveau + banc servo', mois: 'nov. 2026', montant: 99.55, jalon: 'IMU et bus servo validés → GO / NO-GO pour les 12 servos restants', tint: 'var(--color-cyan)', gonogo: true, taches: [
+        ['p2.1', 'Pi Zero 2 W, microSD 32 Go, Waveshare, BNO055, 2 × STS3215 7,4 V C001 reçus (référence vérifiée à la réception)'],
+        ['p2.2', 'Socle de banc découpé au laser (servos + carte + Pi), alimentation labo 7,4 V limitée'],
+        ['p2.3', 'Image v0.2.3 flashée, identifiants changés, SSH et Wi-Fi fonctionnels'],
+        ['p2.4', 'Checklist « banc servo » de la rubrique Électronique entièrement verte'],
+        ['p2.5', 'Manette Xbox appairée, pygame voit les axes'],
+        ['p2.6', 'mujoco_infer.py lancé sur un PC avec le MJCF corrigé par nos masses réelles : le canard simulé marche'],
+        ['p2.7', 'GO / NO-GO noté dans le journal → commande des 12 servos restants (même lot)']
+      ] },
+      { n: 3, id: 'p3', titre: 'Jambe 1', mois: 'déc. 2026', montant: 63.10, jalon: 'Jambe droite pilotée, contacts de pied lus', tint: 'var(--color-battery)', taches: [
+        ['p3.1', 'Servos 12-14 configurés avant montage (jambe droite), palonniers alignés au gabarit'],
+        ['p3.2', 'Jambe droite montée ; orientation du hip_pitch vérifiée (position zéro)'],
+        ['p3.3', '4 contacts SS-10 pressés dans les semelles, lus par feet_contacts.py'],
+        ['p3.4', 'Jambe droite pilotée joint par joint sur le banc, jeu mesuré à chaque articulation']
+      ] },
+      { n: 4, id: 'p4', titre: 'Jambe 2', mois: 'janv. 2027', montant: 99.50, jalon: 'Bas du corps complet, posture debout sur le banc', tint: 'var(--color-lime)', taches: [
+        ['p3.5', 'Servos 20-24 configurés, jambe gauche montée (pièces miroir : ne pas inverser)'],
+        ['p3.6', 'Tronc + deux jambes : posture debout tenue sur le banc avec turn_on.py (servos 10, 11, 20, 21 configurés)'],
+        ['p3.7', 'Câblage du bus en chaîne, gaine spirale, aucun câble pincé sur toute l\'amplitude']
+      ] },
+      { n: 5, id: 'p5', titre: 'Tête + calibration', mois: 'févr. 2027', montant: 95.25, jalon: '14 servos, offsets calibrés, courant crête mesuré, première marche filaire', tint: 'var(--color-solar)', taches: [
+        ['p5.1', 'Servos 30-33 configurés, cou et tête montés (roulements, inserts), micro-servos des antennes'],
+        ['p5.2', 'IMU montée, orientation vérifiée avec imu_client.py, calibrée'],
+        ['p5.3', 'Offsets mesurés avec find_soft_offsets.py, duck_config.json commité'],
+        ['p5.4', 'Potence/harnais découpé et installé au-dessus du centre de masse'],
+        ['p5.5', 'Checklist « Calibration » de la rubrique Marche entièrement verte'],
+        ['p5.6', 'Courant crête mesuré sur alimentation labo → calibre du BMS décidé'],
+        ['p5.7', 'Première marche filaire filmée, fiche de test rédigée, démo au FabLab']
+      ] },
+      { n: 6, id: 'p6', titre: 'Énergie embarquée', mois: 'mars 2027', montant: 63.15, jalon: 'Marche autonome sur batterie', tint: 'var(--color-hp)', taches: [
+        ['p6.1', '2 × P30B, support, BMS (calibre validé), UBEC, interrupteur, chargeur 2S, jacks, XT30 reçus'],
+        ['p6.2', 'Pack assemblé hors robot, cellules à la même tension, BMS testé (coupure basse, équilibrage), sac ignifuge pour la charge'],
+        ['p6.3', 'check_voltage.py sous batterie : tension vue par les servos en charge, pas d\'erreur CRC'],
+        ['p6.4', 'Marche sur batterie, potence puis libre ; autonomie mesurée (minutes de marche) et notée'],
+        ['p6.5', 'Carrosserie fermée, battery_pack_lid en place, interrupteur accessible'],
+        ['p6.6', 'Release GitHub « canard-biscalab v1.0 » : STL modifiés, 3MF, config, fiches de test, vidéo']
+      ] }
+    ],
+    // Les 51 pièces à imprimer (36 fichiers STL de l'amont)
+    pieces: [
+      ['Pieds', 'foot_top', 2, 'PLA'], ['Pieds', 'foot_side', 2, 'PLA'], ['Pieds', 'foot_bottom_pla', 2, 'PLA'], ['Pieds', 'foot_bottom_tpu', 2, 'TPU 40 %'],
+      ['Jambes', 'knee_to_ankle_left_sheet', 4, 'PLA'], ['Jambes', 'knee_to_ankle_right_sheet', 4, 'PLA'], ['Jambes', 'leg_spacer', 4, 'PLA'],
+      ['Jambes', 'left_roll_to_pitch', 1, 'PLA'], ['Jambes', 'right_roll_to_pitch', 1, 'PLA'], ['Jambes', 'roll_motor_bottom', 2, 'PLA'], ['Jambes', 'roll_motor_top', 2, 'PLA'],
+      ['Tronc, cou, tête', 'trunk_bottom', 1, 'PLA'], ['Tronc, cou, tête', 'trunk_top', 1, 'PLA'], ['Tronc, cou, tête', 'neck_left_sheet', 1, 'PLA'], ['Tronc, cou, tête', 'neck_right_sheet', 1, 'PLA'],
+      ['Tronc, cou, tête', 'head_pitch_to_yaw', 1, 'PLA'], ['Tronc, cou, tête', 'head_yaw_to_roll', 1, 'PLA'], ['Tronc, cou, tête', 'head_roll_mount', 1, 'PLA'], ['Tronc, cou, tête', 'head', 1, 'PLA'], ['Tronc, cou, tête', 'head_bot_sheet', 1, 'PLA'],
+      ['Carrosserie', 'left_antenna_holder', 1, 'PLA'], ['Carrosserie', 'right_antenna_holder', 1, 'PLA'], ['Carrosserie', 'left_cache', 1, 'PLA'], ['Carrosserie', 'right_cache', 1, 'PLA'],
+      ['Carrosserie', 'body_front', 1, 'PLA'], ['Carrosserie', 'body_middle_bottom', 1, 'PLA'], ['Carrosserie', 'body_middle_top', 1, 'PLA'], ['Carrosserie', 'body_back', 1, 'PLA'], ['Carrosserie', 'battery_pack_lid', 1, 'PLA'],
+      ['Expression (option)', 'bulb', 1, 'PLA'], ['Expression (option)', 'flash_light_module', 1, 'PLA'], ['Expression (option)', 'flash_reflector_interface', 1, 'PLA'],
+      ['Expression (option)', 'left_eye', 1, 'PLA'], ['Expression (option)', 'right_eye', 1, 'PLA'], ['Expression (option)', 'speaker_interface', 1, 'PLA'], ['Expression (option)', 'speaker_stand', 1, 'PLA']
+    ],
+    roles: [
+      ['Maître d\'œuvre', 'Jean-Marie'], ['Référent outillage numérique', 'Laurent'], ['Administrateur du dépôt', 'Jean-Marie'],
+      ['Trésorier-acheteur', ''], ['Référent impression 3D', ''], ['Référent laser', ''], ['Référent électronique et code', 'Laurent'], ['Référent sécurité', '']
+    ]
+  };
+  // Où se fait chaque tâche : la ou les pages de ce dossier qui servent à la faire (la première = le lieu de l'action)
+  var TASK_LINKS = {
+    'p0.1': 'equipe', 'p0.2': 'github cours-git', 'p0.3': 'github', 'p0.4': 'github cao', 'p0.5': 'cours-git', 'p0.6': 'cao cours-cao', 'p0.7': 'equipe', 'p0.8': 'risques cours-securite', 'p0.9': 'decisions', 'p0.10': 'github planning',
+    'p1.1': 'achats bom', 'p1.2': 'fabrication cours-impression', 'p1.3': 'pieces cao', 'p1.4': 'fabrication cours-impression', 'p1.5': 'pieces fabrication', 'p1.6': 'pieces fabrication', 'p1.7': 'pieces fabrication', 'p1.8': 'pieces fabrication', 'p1.9': 'mesures tests', 'p1.10': 'cours-assemblage pieces',
+    'p2.1': 'achats bom', 'p2.2': 'cours-laser electronique', 'p2.3': 'logiciel cours-raspberry', 'p2.4': 'electronique', 'p2.5': 'logiciel', 'p2.6': 'marche cours-rl', 'p2.7': 'tests journal',
+    'p3.1': 'electronique cours-servos', 'p3.2': 'cours-assemblage', 'p3.3': 'electronique cours-capteurs', 'p3.4': 'tests mesures', 'p3.5': 'cours-assemblage cours-servos', 'p3.6': 'logiciel tests', 'p3.7': 'cours-assemblage electronique',
+    'p5.1': 'cours-assemblage cours-servos', 'p5.2': 'cours-capteurs logiciel', 'p5.3': 'cours-calibration marche', 'p5.4': 'cours-laser risques', 'p5.5': 'marche', 'p5.6': 'mesures decisions', 'p5.7': 'tests journal',
+    'p6.1': 'achats bom', 'p6.2': 'cours-electronique risques', 'p6.3': 'logiciel cours-depannage', 'p6.4': 'mesures tests', 'p6.5': 'pieces cours-assemblage', 'p6.6': 'github cours-git'
+  };
+  // Les six commandes du plan d'achats (une par phase), prêtes à enregistrer
+  PLAN.achats = [
+    { phase: 1, titre: 'Achat phase 1 : filament, inserts, roulements', montant: '55,70', servos: 0, lignes: '- Filament PLA ≈ 1 kg + TPU (plan : 1,3 kg)\n- Inserts filetés M3, lot de 100 (référence BOM)\n- 3 × roulements 608ZZ\n- Consommables (colle, adhésif)' },
+    { phase: 2, titre: 'Achat phase 2 : cerveau et banc servo', montant: '99,55', servos: 2, lignes: '- Raspberry Pi Zero 2 W\n- Carte microSD 32 Go (U3 / A1)\n- Waveshare Bus Servo Adapter (A)\n- IMU BNO055\n- 2 × Feetech STS3215 7,4 V 1/345 (C001), étiquette vérifiée à la réception' },
+    { phase: 3, titre: 'Achat phase 3 : jambe 1', montant: '63,10', servos: 3, lignes: '- 3 × STS3215 7,4 V 1/345 (C001), même lot que les premiers\n- 4 × contacts Omron SS-10' },
+    { phase: 4, titre: 'Achat phase 4 : jambe 2', montant: '99,50', servos: 5, lignes: '- 5 × STS3215 7,4 V 1/345 (C001), même lot' },
+    { phase: 5, titre: 'Achat phase 5 : tête et finitions', montant: '95,25', servos: 4, lignes: '- 4 × STS3215 7,4 V 1/345 (C001), même lot\n- 2 × micro-servos 9 g (antennes)\n- Gaine spirale 6 mm, 3 m' },
+    { phase: 6, titre: 'Achat phase 6 : énergie', montant: '63,15', servos: 0, lignes: '- 2 × Molicel P30B 18650\n- Support 2S avec câbles\n- BMS 2S (calibre validé en phase 5)\n- UBEC 5 V 8 A\n- Interrupteur à verrouillage lumineux\n- Chargeur Li-ion 2S (selon la décision prise)\n- 2 × jacks DC 2,1 mm\n- 4 × paires XT30' }
+  ];
+  // Les fiches de test que le plan attend, avec leur critère écrit d'avance (chiffres du dossier)
+  PLAN.tests = [
+    { id: 'masses', phase: 1, titre: 'Masses des sous-ensembles vs simulation', objectif: 'Vérifier que notre robot a les masses du modèle de simulation : c\'est la condition pour réutiliser la marche fournie sans réentraînement.', montage: 'Balance (précision 1 g). Sous-ensembles assemblés à blanc, sans servos : tronc, cou + tête, jambe droite, jambe gauche.', procedure: 'Peser chaque sous-ensemble et le noter dans Mesures (grandeur masse). Ajouter la masse des servos prévus pour comparer au modèle.', critere: 'Chaque sous-ensemble à ±10 % du modèle : tronc 0,699 kg ; cou + tête 0,582 kg ; chaque jambe ≈ 0,41 kg ; total 2,107 kg.' },
+    { id: 'banc', phase: 2, titre: 'Banc servo : bus, IMU, contacts', objectif: 'Valider la chaîne Pi → carte Waveshare → 2 servos STS3215 en 2S, l\'IMU BNO055 et les contacts de pied, avant d\'acheter les 12 servos restants.', montage: 'Socle découpé au laser, alimentation de laboratoire 7,4 V limitée à 3 A, 2 servos, carte Waveshare, Pi Zero 2 W (image v0.2.3), BNO055, 2 contacts SS-10.', procedure: 'Dérouler la liste de contrôle « banc servo » de la rubrique Électronique (b.1 à b.9) ; relever le courant à vide, en mouvement et en butée.', critere: 'Les 9 points de la liste verts : carte et bus fonctionnent à 7,4 V, les deux servos répondent (check_motors.py, 0,1 rad), firmware identique, IMU stable 10 min sans erreur, contacts lus, protection 2 A / 2 s observée.' },
+    { id: 'gonogo-2', phase: 2, titre: 'GO / NO-GO phase 2', objectif: 'Décider l\'achat des 12 servos restants (même lot).', montage: 'Résultats de la fiche « banc servo » et de la simulation sur PC (mujoco_infer.py avec nos masses réelles).', procedure: 'Relire la fiche banc servo et le résultat de simulation ; décider GO, NO-GO ou partiel ; noter la décision dans le journal de la séance.', critere: 'GO si : banc servo entièrement vert, le canard simulé marche avec nos masses réelles, référence C001 7,4 V 1/345 lue sur l\'étiquette des deux servos.' },
+    { id: 'jambe-droite', phase: 3, titre: 'Jambe droite pilotée', objectif: 'Chaque articulation de la jambe droite répond, sans point dur, et les contacts du pied droit sont lus.', montage: 'Jambe droite montée (servos 10 à 14), sur le banc, alimentation de laboratoire 7,4 V.', procedure: 'check_motors.py, puis pilotage articulation par articulation ; mesurer le jeu à chacune ; feet_contacts.py pour les deux contacts du pied droit.', critere: 'Les 5 servos répondent et bougent de 0,1 rad ; position zéro du hip_pitch conforme ; jeu mesuré et noté à chaque articulation ; les 2 contacts du pied droit répondent.' },
+    { id: 'debout', phase: 4, titre: 'Posture debout sur le banc', objectif: 'Bas du corps complet : le robot tient la posture home sans chauffer ni perdre le bus.', montage: 'Tronc + deux jambes, servos 10-14 et 20-24 configurés, alimentation de laboratoire, potence ou support.', procedure: 'turn_on.py (P = 2 puis montée du gain) ; posture home tenue 2 min ; température des servos au toucher ; aucune erreur CRC.', critere: 'Posture tenue 2 min, servos tièdes (jamais brûlants), aucune erreur CRC, aucun câble pincé sur toute l\'amplitude.' },
+    { id: 'premiere-marche', phase: 5, titre: 'Première marche filaire', objectif: 'Le canard marche avec la politique fournie, alimenté par le laboratoire, retenu par la potence.', montage: '14 servos, offsets dans duck_config.json, IMU calibrée, potence au-dessus du centre de masse, sol plat et propre, manette appairée.', procedure: 'v2_rl_walk_mujoco.py avec start_paused : true ; bouton A ; consigne nulle (piétinement) puis vitesse faible ; filmer ; relever le courant crête et la température après 5 min.', critere: 'Piétinement stable puis quelques pas sans chute ni message « Policy control budget exceeded » ; courant crête noté (calibre du BMS) ; vidéo déposée sur le Nextcloud.' },
+    { id: 'batterie', phase: 6, titre: 'Pack batterie hors robot', objectif: 'Le pack 2S et son BMS sont sûrs avant d\'entrer dans le robot.', montage: 'Pack assemblé (2 × P30B, support, BMS, interrupteur, XT30), multimètre, sac ignifuge pour la charge.', procedure: 'Mesurer la tension de chaque cellule puis du pack ; tester la coupure basse et l\'équilibrage ; charger sous surveillance dans le sac.', critere: 'Cellules à la même tension, pack entre 6,0 et 8,4 V, coupure basse effective, aucune chauffe anormale pendant la charge.' },
+    { id: 'autonomie', phase: 6, titre: 'Marche sur batterie et autonomie', objectif: 'Marche autonome, puis durée de marche sur une charge.', montage: 'Robot complet, carrosserie fermée, batterie chargée, check_voltage.py prêt.', procedure: 'Marche sous potence puis libre ; check_voltage.py pour la tension vue par les servos en charge ; chronométrer jusqu\'à la coupure basse ou la première erreur CRC.', critere: 'Marche libre sans chute ; aucune erreur CRC sous batterie ; autonomie mesurée en minutes et notée dans Mesures.' }
+  ];
+  // Les mesures que le plan attend (clé, grandeur, objet, unité, référence du dossier)
+  PLAN.mesures = [
+    { key: 'masse-tronc', phase: 1, grandeur: 'masse', objet: 'tronc', unite: 'g', ref: 'modèle 699 g', match: ['tronc'] },
+    { key: 'masse-tete', phase: 1, grandeur: 'masse', objet: 'cou + tête', unite: 'g', ref: 'modèle 582 g', match: ['tete'] },
+    { key: 'masse-jambe-d', phase: 1, grandeur: 'masse', objet: 'jambe droite', unite: 'g', ref: 'modèle ≈ 410 g', match: ['jambe', 'droit'] },
+    { key: 'masse-jambe-g', phase: 1, grandeur: 'masse', objet: 'jambe gauche', unite: 'g', ref: 'modèle ≈ 410 g', match: ['jambe', 'gauche'] },
+    { key: 'tension-waveshare', phase: 2, grandeur: 'tension', objet: 'entrée de la carte Waveshare en 2S', unite: 'V', ref: 'fiche 9 à 12,6 V ; 2S = 6,0 à 8,4 V', match: ['waveshare'] },
+    { key: 'courant-banc', phase: 2, grandeur: 'courant', objet: 'banc : à vide, en mouvement, en butée', unite: 'A', ref: 'protection > 2 A pendant 2 s', match: ['banc'] },
+    { key: 'jeu-jambe-d', phase: 3, grandeur: 'jeu', objet: 'jambe droite : hanche, genou, cheville', unite: '°', ref: 'modèle ±0,5°', match: ['jambe'] },
+    { key: 'courant-crete', phase: 5, grandeur: 'courant', objet: 'crête en marche', unite: 'A', ref: 'dimensionne le BMS', match: ['crete'] },
+    { key: 'temperature-servos', phase: 5, grandeur: 'temperature', objet: 'servos après 5 min de marche', unite: '°C', ref: 'coupure firmware à 70 °C', match: ['servo'] },
+    { key: 'tension-batterie', phase: 6, grandeur: 'tension', objet: 'bus servo sous batterie en marche', unite: 'V', ref: '2S : 6,0 à 8,4 V', match: ['batterie'] },
+    { key: 'autonomie', phase: 6, grandeur: 'autonomie', objet: 'marche sur une charge', unite: 'min', ref: 'à noter dans la fiche de test', match: [] }
+  ];
+  [[10, 'hip_yaw', 'droite'], [11, 'hip_roll', 'droite'], [12, 'hip_pitch', 'droite'], [13, 'knee', 'droite'], [14, 'ankle', 'droite'], [20, 'hip_yaw', 'gauche'], [21, 'hip_roll', 'gauche'], [22, 'hip_pitch', 'gauche'], [23, 'knee', 'gauche'], [24, 'ankle', 'gauche'], [30, 'neck_pitch', 'cou'], [31, 'head_pitch', 'tête'], [32, 'head_yaw', 'tête'], [33, 'head_roll', 'tête']].forEach(function (o) {
+    PLAN.mesures.push({ key: 'offset-' + o[0], phase: 5, group: 'offsets', grandeur: 'offset', objet: 'servo ' + o[0] + ' ' + o[1] + ' (' + o[2] + ')', unite: 'rad', ref: 'find_soft_offsets.py → duck_config.json', match: ['servo ' + o[0]] });
+  });
+  var PIECE_STATUTS = ['a_imprimer', 'imprimee', 'controlee', 'montee', 'a_refaire'];
+  var NEXT_STATUT = { a_imprimer: 'imprimee', imprimee: 'controlee', controlee: 'montee', montee: 'montee', a_refaire: 'imprimee' };
+  var DUCK = __DUCK__;   // contours des pièces du modèle de simulation (vue de côté, vue de face), générés par duck_views.py
+  function piecePre(piece, ex, ev, statut) { return { piece: piece, exemplaire: ex, statut: statut || NEXT_STATUT[ev ? ev.statut : 'a_imprimer'] || 'imprimee', rev: ev ? ev.rev : '', masse_g: ev && !isNaN(ev.masse) ? ev.masse : '' }; }
+  function duckSvg(st, view, h) {
+    var V = DUCK && DUCK.views && DUCK.views[view]; if (!V) return '';
+    var b = V.box, w = Math.round(h * b[2] / b[3]), out = '<svg class="duck" viewBox="' + b.join(' ') + '" width="' + w + '" height="' + h + '" role="img" aria-label="Le canard vu de ' + (view === 'side' ? 'côté' : 'face') + ' : pièces imprimées en couleur, les autres en transparence">';
+    V.parts.forEach(function (p) {
+      if (p.hw) { out += '<path class="dk hw" d="' + p.d + '"/>'; return; }
+      var ev = st.pieces[p.piece + '#' + p.ex], st2 = ev ? ev.statut : 'a_imprimer', nxt = NEXT_STATUT[st2] || 'imprimee';
+      out += '<path class="dk ' + st2 + '" d="' + p.d + '" fill-rule="evenodd" data-act="form" data-form="piece"' + preAttr(piecePre(p.piece, p.ex, ev)) + '><title>' + esc(p.piece + ' n° ' + p.ex + ' : ' + PIECE_LABELS[st2] + (ev && ev.par ? ' · ' + ev.par : '') + (ev && ev.date ? ' · ' + frDate(ev.date) : '') + (ev && !isNaN(ev.masse) ? ' · ' + ev.masse + ' g' : '') + ' — cliquer : ' + PIECE_LABELS[nxt]) + '</title></path>';
+    });
+    return out + '</svg>';
+  }
+  function duckLegend() { return '<div class="legend duck-legend"><span><i class="sw" style="background:var(--color-fg);opacity:.25;border:1px dashed var(--color-border-strong)"></i>à imprimer</span><span><i class="sw" style="background:var(--color-consumption)"></i>imprimée</span><span><i class="sw" style="background:var(--color-battery)"></i>contrôlée</span><span><i class="sw" style="background:var(--color-primary)"></i>montée</span><span><i class="sw" style="background:var(--color-alert)"></i>à refaire</span><span><i class="sw" style="background:var(--color-muted-fg);opacity:.3"></i>servos, cartes, batterie</span></div>'; }
+  // ─── Progression calculée depuis les registres (une tâche « automatique » se termine quand les enregistrements le prouvent) ───
+  function pctOf(n, d) { return d ? Math.round(100 * Math.max(0, Math.min(n, d)) / d) : 0; }
+  function piecesGroup(st, group) { var tot = 0, sum = 0; PLAN.pieces.filter(function (p) { return p[0] === group; }).forEach(function (p) { for (var e = 1; e <= p[2]; e++) { tot++; var ev = st.pieces[p[1] + '#' + e]; if (ev) sum += ev.statut === 'imprimee' ? 0.5 : (ev.statut === 'controlee' || ev.statut === 'montee') ? 1 : 0; } }); return { pct: pctOf(sum, tot), info: Math.floor(sum) + '/' + tot + ' pièces au registre' }; }
+  function achatPhase(st, n) { var best = 0, lab = 'commande non enregistrée'; st.achats.filter(function (a) { return a.phase === n; }).forEach(function (a) { var v = { recu: 100, rembourse: 100, commande: 50, prevu: 20 }[a.statut] || 0; if (v >= best) { best = v; lab = 'commande ' + (ACHAT_LABELS[a.statut] || a.statut); } }); return { pct: best, info: lab }; }
+  function testOf(st, id) { var T = PLAN.tests.filter(function (t) { return t.id === id; })[0]; if (!T) return null; var k = slug(T.titre); return st.tests.filter(function (t) { return slug(t.titre) === k; })[0] || null; }
+  function testPct(st, id) { var t = testOf(st, id); if (!t) return { pct: 0, info: 'fiche de test à rédiger' }; var r = t.resultat === 'NOGO' ? 'NO-GO' : t.resultat; return { pct: r === 'GO' ? 100 : r === 'PARTIEL' ? 50 : r === 'NO-GO' ? 25 : 10, info: 'fiche de test : ' + (r ? r.toLowerCase() : 'sans résultat') }; }
+  function mesureOf(st, M) { var want = norm(M.objet); return st.mesures.filter(function (m) { if (m.grandeur !== M.grandeur) return false; var o = norm(m.objet); return o === want || (M.match && M.match.length && M.match.every(function (w) { return o.indexOf(w) >= 0; })); })[0] || null; }
+  function mesuresPct(st, filterFn) { var exp = PLAN.mesures.filter(filterFn), n = 0; exp.forEach(function (M) { if (mesureOf(st, M)) n++; }); return { pct: pctOf(n, exp.length), info: n + '/' + exp.length + ' mesure' + (exp.length > 1 ? 's' : '') + ' notée' + (n > 1 ? 's' : '') }; }
+  function checklistPct(st, prefix, label) { var ks = Object.keys(st.allTasks || {}).filter(function (k) { return k.indexOf(prefix) === 0; }); var sum = 0, done = 0; ks.forEach(function (k) { var t = st.taches[k], v = t ? (t.pct != null ? t.pct : (t.fait ? 100 : 0)) : 0; sum += v; if (v >= 100) done++; }); return { pct: ks.length ? Math.round(sum / ks.length) : 0, info: label + ' : ' + done + '/' + ks.length + ' cases' }; }
+  function decisionsPct(st, kws) { var n = 0; kws.forEach(function (kw) { if (st.decisions.some(function (d) { return d.statut === 'prise' && norm(d.titre).indexOf(kw) >= 0; })) n++; }); return { pct: pctOf(n, kws.length), info: n + '/' + kws.length + ' décisions prises' }; }
+  var TASK_AUTO = {
+    'p0.1': function (st) { var r = st.roles || PLAN.roles, f = r.filter(function (x) { return x[1]; }).length; return { pct: st.rolesRec ? pctOf(f, r.length || 1) : 0, info: st.rolesRec ? f + '/' + r.length + ' rôles attribués' : 'rôles non enregistrés' }; },
+    'p0.9': function (st) { return decisionsPct(st, ['chargeur', 'cao', 'gpu', 'hebergement']); },
+    'p1.1': function (st) { return achatPhase(st, 1); }, 'p2.1': function (st) { return achatPhase(st, 2); }, 'p6.1': function (st) { return achatPhase(st, 6); },
+    'p1.5': function (st) { return piecesGroup(st, 'Pieds'); }, 'p1.6': function (st) { return piecesGroup(st, 'Jambes'); }, 'p1.7': function (st) { return piecesGroup(st, 'Tronc, cou, tête'); }, 'p1.8': function (st) { return piecesGroup(st, 'Carrosserie'); },
+    'p1.9': function (st) { var m = mesuresPct(st, function (M) { return M.grandeur === 'masse'; }), t = testPct(st, 'masses'); return t.pct > m.pct ? t : m; },
+    'p2.4': function (st) { return checklistPct(st, 'b.', 'liste banc servo'); },
+    'p2.7': function (st) { return testPct(st, 'gonogo-2'); },
+    'p3.4': function (st) { return testPct(st, 'jambe-droite'); },
+    'p3.6': function (st) { return testPct(st, 'debout'); },
+    'p5.3': function (st) { return mesuresPct(st, function (M) { return M.grandeur === 'offset'; }); },
+    'p5.5': function (st) { return checklistPct(st, 'c.', 'liste calibration'); },
+    'p5.6': function (st) { var m = mesuresPct(st, function (M) { return M.key === 'courant-crete'; }), d = decisionsPct(st, ['bms']); return { pct: Math.round((m.pct + d.pct) / 2), info: m.info + ' · ' + d.info }; },
+    'p5.7': function (st) { return testPct(st, 'premiere-marche'); },
+    'p6.2': function (st) { return testPct(st, 'batterie'); },
+    'p6.3': function (st) { return mesuresPct(st, function (M) { return M.key === 'tension-batterie'; }); },
+    'p6.4': function (st) { var m = mesuresPct(st, function (M) { return M.key === 'autonomie'; }), t = testPct(st, 'autonomie'); return t.pct > m.pct ? t : m; }
+  };
+  function taskAuto(st, k) { var f = TASK_AUTO[k]; if (!f) return null; try { return f(st); } catch (e) { return null; } }
+  // ─── Le bouton de chaque tâche : le formulaire qui produit la preuve, déjà rempli ───
+  function achatPre(n) { var A = PLAN.achats.filter(function (a) { return a.phase === n; })[0]; return A ? { titre: A.titre, montant: A.montant, phase: n, statut: 'commande', servos: A.servos, lignes: A.lignes } : { phase: n }; }
+  function testPre(id) { var T = PLAN.tests.filter(function (t) { return t.id === id; })[0]; return T ? { titre: T.titre, phase: T.phase, objectif: T.objectif, montage: T.montage, procedure: T.procedure, critere: T.critere } : {}; }
+  function mesurePre(key) { var M = PLAN.mesures.filter(function (m) { return m.key === key; })[0]; return M ? { grandeur: M.grandeur, objet: M.objet, unite: M.unite, note: M.ref ? 'Référence : ' + M.ref : '' } : {}; }
+  var TASK_DO = {
+    'p0.1': { form: 'equipe', label: 'Attribuer les rôles' },
+    'p0.9': { form: 'decision', pre: { titre: 'Chargeur 2S', statut: 'prise' }, label: 'Enregistrer une décision' },
+    'p1.1': { form: 'achat', pre: achatPre(1), label: 'Enregistrer la commande' }, 'p2.1': { form: 'achat', pre: achatPre(2), label: 'Enregistrer la commande' }, 'p6.1': { form: 'achat', pre: achatPre(6), label: 'Enregistrer la commande' },
+    'p1.5': { form: 'piece', pre: { piece: 'foot_top' }, label: 'Pièce imprimée' }, 'p1.6': { form: 'piece', pre: { piece: 'knee_to_ankle_left_sheet' }, label: 'Pièce imprimée' }, 'p1.7': { form: 'piece', pre: { piece: 'trunk_bottom' }, label: 'Pièce imprimée' }, 'p1.8': { form: 'piece', pre: { piece: 'body_front' }, label: 'Pièce imprimée' },
+    'p1.9': { form: 'mesure', pre: mesurePre('masse-tronc'), label: 'Noter une masse' },
+    'p2.4': { goto: 'electronique', anchor: 'banc', label: 'Liste de contrôle banc servo' },
+    'p2.7': { form: 'test', pre: testPre('gonogo-2'), label: 'Fiche GO / NO-GO' },
+    'p3.4': { form: 'test', pre: testPre('jambe-droite'), label: 'Fiche de test' },
+    'p3.6': { form: 'test', pre: testPre('debout'), label: 'Fiche de test' },
+    'p5.3': { form: 'mesure', pre: mesurePre('offset-10'), label: 'Noter un offset' },
+    'p5.5': { goto: 'marche', anchor: 'calibration', label: 'Liste de contrôle calibration' },
+    'p5.6': { form: 'mesure', pre: mesurePre('courant-crete'), label: 'Noter le courant crête' },
+    'p5.7': { form: 'test', pre: testPre('premiere-marche'), label: 'Fiche de test' },
+    'p6.2': { form: 'test', pre: testPre('batterie'), label: 'Fiche de test' },
+    'p6.3': { form: 'mesure', pre: mesurePre('tension-batterie'), label: 'Noter la tension' },
+    'p6.4': { form: 'mesure', pre: mesurePre('autonomie'), label: 'Noter l\'autonomie' }
+  };
+  var PIECE_LABELS = { a_imprimer: 'à imprimer', imprimee: 'imprimée', controlee: 'contrôlée', montee: 'montée', a_refaire: 'à refaire' };
+  var ACHAT_STATUTS = ['prevu', 'commande', 'recu', 'rembourse', 'annule'];
+  var ACHAT_LABELS = { prevu: 'prévu', commande: 'commandé', recu: 'reçu', rembourse: 'remboursé', annule: 'annulé' };
+
+  // ─── Registre de navigation (une source : barre, rail, onglets, feuille) ───
+  var NAV = [
+    { id: 'accueil',      label: 'Tableau de bord',       short: 'Tableau', group: 'Travail', icon: 'i-home',  tint: 'oklch(0.546 0.215 262)', kw: 'accueil état du projet avancement résumé', live: true },
+    { id: 'journal',      label: 'Journal des séances',   short: 'Journal', group: 'Travail', icon: 'i-book',  tint: 'oklch(0.541 0.281 293)', kw: 'séance compte rendu présents fait problèmes décisions', live: true },
+    { id: 'planning',     label: 'Travaux par phase',     short: 'Travaux', group: 'Travail', icon: 'i-cal',  tint: 'oklch(0.546 0.215 262)', kw: 'phases jalons tâches listes go no-go', live: true },
+    { id: 'pieces',       label: 'Registre des pièces',   group: 'Travail', icon: 'i-printer', tint: 'oklch(0.8 0.2 60)',      kw: 'pièces imprimées statut pesée stl', live: true },
+    { id: 'achats',       label: 'Achats et budget',      group: 'Travail', icon: 'i-cart',    tint: 'oklch(0.74 0.19 30)',    kw: 'commandes dépenses budget factures', live: true },
+    { id: 'tests',        label: 'Fiches de test',        group: 'Travail', icon: 'i-check',   tint: 'oklch(0.627 0.194 149)', kw: 'tests go no-go critères résultats', live: true },
+    { id: 'mesures',      label: 'Mesures',               group: 'Travail', icon: 'i-zap',     tint: 'oklch(0.82 0.15 200)',   kw: 'masses offsets courant tension température jeu', live: true },
+    { id: 'decisions',    label: 'Décisions',             group: 'Travail', icon: 'i-flag',    tint: 'oklch(0.58 0.21 300)',   kw: 'décisions à trancher prises', live: true },
+    { id: 'equipe',       label: 'Équipe et méthode',     group: 'Travail', icon: 'i-users',   tint: 'oklch(0.627 0.194 149)', kw: 'rôles rituels journal fiche de test réunion communication signal', live: true },
+    { id: 'projet',       label: 'Le projet',             group: 'Dossier', icon: 'i-flag',    tint: 'oklch(0.541 0.281 293)', kw: 'open duck mini v2 présentation dépôts communauté licence microduck' },
+    { id: 'github',       label: 'Dépôt GitHub',          group: 'Dossier', icon: 'i-git',     tint: 'oklch(0.3 0.03 286)',    kw: 'fork clone commit push pull desktop conventions labels licence apache' },
+    { id: 'cao',          label: 'CAO et fichiers',       group: 'Dossier', icon: 'i-cube',    tint: 'oklch(0.58 0.21 300)',   kw: 'onshape freecad step stl 3mf mjcf urdf robotcad onshape-to-robot' },
+    { id: 'fabrication',  label: 'Fabrication',           group: 'Dossier', icon: 'i-printer', tint: 'oklch(0.8 0.2 60)',      kw: 'impression 3d prusa prusaslicer laser xtool p2s inserts pla tpu pièces' },
+    { id: 'bom',          label: 'BOM et plan d\'achats', group: 'Dossier', icon: 'i-cart',    tint: 'oklch(0.74 0.19 30)',    kw: 'nomenclature prix fournisseurs servo budget phases commandes' },
+    { id: 'electronique', label: 'Électronique',          group: 'Dossier', icon: 'i-cpu',     tint: 'oklch(0.82 0.15 200)',   kw: 'câblage gpio sts3215 waveshare bno055 imu batterie bms ubec banc', live: true },
+    { id: 'logiciel',     label: 'Logiciel embarqué',     group: 'Dossier', icon: 'i-code',    tint: 'oklch(0.435 0.042 286)', kw: 'runtime raspberry pi image scripts duck_config manette xbox python' },
+    { id: 'marche',       label: 'Marche et calibration', group: 'Dossier', icon: 'i-walk',    tint: 'oklch(0.627 0.194 149)', kw: 'rl ppo mujoco sim2real onnx offsets réentraînement gpu bam kp', live: true },
+    { id: 'risques',      label: 'Risques et sécurité',   group: 'Dossier', icon: 'i-shield',  tint: 'oklch(0.577 0.245 27.3)', kw: 'registre parades li-ion laser incendie' },
+    { id: 'parcours',     label: "Parcours d'apprentissage", short: 'Cours', group: 'Apprendre', icon: 'i-book', tint: 'oklch(0.84 0.18 78)', kw: 'cours leçons formation débuter apprendre filières' },
+    { id: 'cours-git',    label: '1 · Git et GitHub',     group: 'Apprendre', icon: 'i-git',     tint: 'oklch(0.3 0.03 286)',    kw: 'cours git github desktop commit fork clone pull push issue', lesson: true },
+    { id: 'cours-raspberry', label: '2 · Raspberry Pi et Linux', group: 'Apprendre', icon: 'i-cpu', tint: 'oklch(0.546 0.215 262)', kw: 'cours raspberry pi linux ssh terminal flasher carte sd', lesson: true },
+    { id: 'cours-python', label: '3 · Lire le logiciel',  group: 'Apprendre', icon: 'i-code',    tint: 'oklch(0.435 0.042 286)', kw: 'cours python script json erreur venv pip runtime', lesson: true },
+    { id: 'cours-methode', label: '4 · Mener le projet',  group: 'Apprendre', icon: 'i-users',   tint: 'oklch(0.627 0.194 149)', kw: 'cours méthode rôles phases fiche de test journal issue', lesson: true },
+    { id: 'cours-cao',    label: '5 · CAO',               group: 'Apprendre', icon: 'i-cube',    tint: 'oklch(0.58 0.21 300)',   kw: 'cours cao freecad onshape stl step', lesson: true },
+    { id: 'cours-impression', label: '6 · Impression 3D', group: 'Apprendre', icon: 'i-printer', tint: 'oklch(0.8 0.2 60)',      kw: 'cours impression 3d prusaslicer pla tpu inserts', lesson: true },
+    { id: 'cours-laser',  label: '7 · Découpe laser',     group: 'Apprendre', icon: 'i-zap',     tint: 'oklch(0.74 0.19 30)',    kw: 'cours laser xtool p2s kerf xcs', lesson: true },
+    { id: 'cours-assemblage', label: '8 · Assemblage',    group: 'Apprendre', icon: 'i-cube',    tint: 'oklch(0.8 0.2 60)',      kw: 'cours assemblage vis inserts roulements jeu montage', lesson: true },
+    { id: 'cours-electronique', label: '9 · Électronique', group: 'Apprendre', icon: 'i-cpu',  tint: 'oklch(0.82 0.15 200)',   kw: 'cours électronique tension courant batterie bms ubec multimètre', lesson: true },
+    { id: 'cours-servos', label: '10 · Servomoteurs',     group: 'Apprendre', icon: 'i-zap',     tint: 'oklch(0.82 0.15 200)',   kw: 'cours servos sts3215 bus série id couple pid', lesson: true },
+    { id: 'cours-capteurs', label: '11 · Capteurs',       group: 'Apprendre', icon: 'i-walk',    tint: 'oklch(0.82 0.15 200)',   kw: 'cours capteurs imu bno055 contacts gyroscope', lesson: true },
+    { id: 'cours-securite', label: '12 · Sécurité',       group: 'Apprendre', icon: 'i-shield',  tint: 'oklch(0.577 0.245 27.3)', kw: 'cours sécurité li-ion batterie laser banc incendie', lesson: true },
+    { id: 'cours-marche', label: '13 · Marche bipède',    group: 'Apprendre', icon: 'i-walk',    tint: 'oklch(0.627 0.194 149)', kw: 'cours marche équilibre centre de masse phases', lesson: true },
+    { id: 'cours-rl',     label: '14 · Simulation et RL', group: 'Apprendre', icon: 'i-walk',    tint: 'oklch(0.627 0.194 149)', kw: 'cours simulation mujoco apprentissage renforcement politique onnx sim2real', lesson: true },
+    { id: 'cours-calibration', label: '15 · Calibration', group: 'Apprendre', icon: 'i-check',   tint: 'oklch(0.627 0.194 149)', kw: 'cours calibration offsets imu première marche', lesson: true },
+    { id: 'cours-depannage', label: '16 · Dépannage',     group: 'Apprendre', icon: 'i-warn',    tint: 'oklch(0.577 0.245 27.3)', kw: 'cours dépannage panne symptôme erreur crc', lesson: true },
+    { id: 'glossaire',    label: 'Glossaire',             group: 'Référence', icon: 'i-book',    tint: 'oklch(0.84 0.18 78)',    kw: 'vocabulaire définitions termes' },
+    { id: 'references',   label: 'Références',            group: 'Référence', icon: 'i-link',    tint: 'oklch(0.708 0.012 280)', kw: 'sources bibliographie origine des faits' }
+  ];
+  var TABS = ['accueil', 'journal', 'planning', 'parcours'];
+  var GROUPS = ['Travail', 'Dossier', 'Apprendre', 'Référence'];
+  var NAV_BY_ID = {}; NAV.forEach(function (n) { NAV_BY_ID[n.id] = n; });
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  function norm(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function svgUse(id, cls) { return '<svg' + (cls ? ' class="' + cls + '"' : '') + ' aria-hidden="true"><use href="#' + id + '"/></svg>'; }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function todayISO() { var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+  function nowHHMM() { var d = new Date(); return pad2(d.getHours()) + pad2(d.getMinutes()); }
+  function frDate(iso) { if (!iso) return ''; var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso); if (!m) return iso; return parseInt(m[3], 10) + ' ' + ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'][parseInt(m[2], 10) - 1] + ' ' + m[1]; }
+  function eur(n) { return (Math.round(n * 100) / 100).toFixed(2).replace('.', ',') + ' €'; }
+  function slug(s) { return norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'entree'; }
+  function lsGet(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+  // ─── Thème ───
+  var THEME_KEY = 'canard.theme.v1';
+  function applyTheme(t) { var root = document.documentElement; if (t === 'dark' || t === 'light') root.setAttribute('data-theme', t); else root.removeAttribute('data-theme'); try { if (t) localStorage.setItem(THEME_KEY, t); else localStorage.removeItem(THEME_KEY); } catch (e) {} }
+  function currentDark() { var t = document.documentElement.getAttribute('data-theme'); if (t) return t === 'dark'; return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+  try { var savedTheme = localStorage.getItem(THEME_KEY); if (savedTheme) applyTheme(savedTheme); } catch (e) {}
+  function toggleTheme() { applyTheme(currentDark() ? 'light' : 'dark'); }
+  $('#theme-btn').addEventListener('click', toggleTheme);
+  $('#tb-theme').addEventListener('click', toggleTheme);
+
+  // ─── Progression des cours (locale à l'appareil : c'est personnel) ───
+  var LKEY = 'canard.progress.v1';
+  var lstate = lsGet(LKEY, {});
+  function lsave() { lsSet(LKEY, lstate); }
+
+  // ─── Navigation ───
+  var sbList = $('#sb-list'), tabRow = $('#tabbar-row'), sheetBody = $('#sheet-body');
+  function navItemsFor(g, f) { return NAV.filter(function (n) { return n.group === g && (!f || norm(n.label + ' ' + n.kw).indexOf(f) >= 0); }); }
+  function renderSidebar(q) {
+    var f = norm(q), html = '';
+    GROUPS.forEach(function (g) {
+      var items = navItemsFor(g, f); if (!items.length) return;
+      html += '<div class="sb-sec">' + g + '</div>';
+      items.forEach(function (n) {
+        var done = n.lesson && lstate['l.' + n.id] ? ' sb-done' : '';
+        html += '<a class="sb-item' + (n.lesson ? ' sb-lesson' : '') + done + '" href="#' + n.id + '" data-nav="' + n.id + '" title="' + esc(n.label) + '">' + svgUse(n.icon) + '<span>' + esc(n.label) + '</span><span class="sb-pct" data-pct="' + n.id + '"></span></a>';
+      });
+    });
+    sbList.innerHTML = html || '<div class="sb-sec">Aucune rubrique</div>';
+    markActive();
+  }
+  function renderTabs() {
+    var html = '';
+    TABS.forEach(function (id) { var n = NAV_BY_ID[id]; html += '<a class="tabbar-item" href="#' + n.id + '" data-nav="' + n.id + '">' + svgUse(n.icon) + '<span>' + esc(n.short || n.label) + '</span></a>'; });
+    html += '<button class="tabbar-item" type="button" id="tab-menu" aria-haspopup="dialog">' + svgUse('i-menu') + '<span>Menu</span></button>';
+    tabRow.innerHTML = html;
+    $('#tab-menu').addEventListener('click', openSheet);
+  }
+  function renderSheet(q) {
+    var f = norm(q), html = '';
+    GROUPS.forEach(function (g) {
+      var items = navItemsFor(g, f); if (!items.length) return;
+      html += '<div class="sheet-sec">' + g + '</div>';
+      items.forEach(function (n) { html += '<a class="sheet-item" href="#' + n.id + '" data-nav="' + n.id + '"><span class="ico" style="background:' + n.tint + '">' + svgUse(n.icon) + '</span><span>' + esc(n.label) + '</span><span class="sb-pct" data-pct="' + n.id + '"></span></a>'; });
+    });
+    sheetBody.innerHTML = html || '<p class="muted" style="padding:12px 4px">Aucune rubrique ne correspond.</p>';
+    markActive(); updateLessonProgress();
+  }
+  var sheet = $('#sheet'), backdrop = $('#sheet-backdrop'), lastFocus = null;
+  function openSheet() { lastFocus = document.activeElement; sheet.hidden = false; backdrop.hidden = false; $('#sheet-q').value = ''; renderSheet(''); setTimeout(function () { $('#sheet-q').focus(); }, 30); }
+  function closeSheet() { if (sheet.hidden) return; sheet.hidden = true; backdrop.hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  $('#sheet-close').addEventListener('click', closeSheet);
+  backdrop.addEventListener('click', closeSheet);
+  $('#sheet-q').addEventListener('input', function (e) { renderSheet(e.target.value); });
+  $('#sb-q').addEventListener('input', function (e) { renderSidebar(e.target.value); });
+
+  var pages = $$('.page'), current = null;
+  function show(id, noScroll) {
+    if (!NAV_BY_ID[id]) id = 'accueil';
+    pages.forEach(function (p) { p.hidden = p.id !== 'page-' + id; });
+    current = id;
+    var p = $('#page-' + id);
+    $('#tb-title').textContent = p.getAttribute('data-title') || 'Canard BiscaLab';
+    $('#tb-sub').textContent = p.getAttribute('data-sub') || '';
+    document.title = (p.getAttribute('data-title') || 'Canard BiscaLab') + ' · Canard BiscaLab';
+    markActive(); closeSheet();
+    if (NAV_BY_ID[id].live) renderLive(id);
+    if (!noScroll && !pendingAnchor) window.scrollTo({ top: 0, behavior: 'instant' });
+    if (pendingForm && FORMS[pendingForm.kind] && FORMS[pendingForm.kind].page === id) { var pf = pendingForm; pendingForm = null; openForm(pf.kind, pf.pre, null); }
+    if (pendingAnchor) setTimeout(scrollToAnchor, 30);
+  }
+  function markActive() { $$('[data-nav]').forEach(function (a) { if (a.getAttribute('data-nav') === current) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); }); }
+  function route() { show((location.hash || '#accueil').replace('#', '')); }
+  window.addEventListener('hashchange', route);
+
+  // ─── Cours : cases « terminé » (locales) ───
+  $$('input[type=checkbox][data-k^="l."]').forEach(function (b) {
+    b.checked = !!lstate[b.getAttribute('data-k')];
+    b.addEventListener('change', function () { var k = b.getAttribute('data-k'); if (b.checked) lstate[k] = true; else delete lstate[k]; lsave(); updateLessonProgress(); });
+  });
+  function updateLessonProgress() {
+    var ldone = 0; $$('.path li').forEach(function (li) { var d = !!lstate['l.' + li.getAttribute('data-l')]; li.classList.toggle('done', d); if (d) ldone++; });
+    var pd = $('#parc-done'); if (pd) pd.textContent = ldone;
+    $$('.sb-lesson').forEach(function (a) { a.classList.toggle('sb-done', !!lstate['l.' + a.getAttribute('data-nav')]); });
+    var tot = $$('.path li').length; $$('[data-pct="parcours"]').forEach(function (el) { el.textContent = ldone ? Math.round(100 * ldone / tot) + ' %' : ''; });
+  }
+
+  // ─── Toast ───
+  var toastEl = $('#toast'), toastT = null;
+  function toast(msg) { toastEl.textContent = msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { toastEl.classList.remove('on'); }, 2600); }
+  function copyText(t, okMsg) {
+    var done = function () { toast(okMsg || 'Copié'); };
+    var fail = function () { var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) { toast('Copie impossible : sélectionner le texte à la main'); } ta.remove(); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, fail); else fail();
+  }
+
+  // ─── Termes : popover + glossaire ───
+  var TERMS = __TERMS__;
+  var gc = $('#gloss-count'); if (gc) gc.textContent = Object.keys(TERMS).length;
+  var pop = null;
+  function closePop() { if (pop) { pop.remove(); pop = null; } }
+  function openPop(el) {
+    closePop();
+    var t = TERMS[el.getAttribute('data-t')]; if (!t) return;
+    pop = document.createElement('div'); pop.className = 'pop'; pop.setAttribute('role', 'dialog');
+    var course = t.c && NAV_BY_ID[t.c] ? '<a href="#' + t.c + '">Voir le cours : ' + esc(NAV_BY_ID[t.c].label.replace(/^\d+ · /, '')) + ' →</a>' : '';
+    pop.innerHTML = '<button class="pop-x" type="button" aria-label="Fermer">' + svgUse('i-x') + '</button><b>' + esc(t.t) + '</b><span>' + esc(t.d) + '</span>' + course + '<a href="#glossaire" style="font-weight:500">Tout le glossaire</a>';
+    document.body.appendChild(pop);
+    var r = el.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight, pw = Math.min(380, W * 0.92);
+    pop.style.left = Math.max(8, Math.min(r.left, W - pw - 8)) + 'px'; pop.style.width = pw + 'px';
+    var ph = pop.offsetHeight, top = r.bottom + 8; if (top + ph > H - 8) top = Math.max(8, r.top - ph - 8);
+    pop.style.top = top + 'px';
+    pop.querySelector('.pop-x').addEventListener('click', closePop);
+    pop.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closePop); });
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('.t');
+    if (t) { e.preventDefault(); openPop(t); return; }
+    if (pop && !e.target.closest('.pop')) closePop();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePop(); closeSheet(); } });
+  window.addEventListener('scroll', closePop, { passive: true });
+  $$('.t').forEach(function (el) { el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPop(el); } }); });
+  function renderGloss(q) {
+    var box = $('#gloss'); if (!box) return;
+    var f = norm(q), html = '', letter = '';
+    Object.keys(TERMS).sort(function (a, b) { return TERMS[a].t.localeCompare(TERMS[b].t, 'fr', { sensitivity: 'base' }); }).forEach(function (k) {
+      var t = TERMS[k];
+      if (f && norm(t.t + ' ' + t.d).indexOf(f) < 0) return;
+      var L = norm(t.t).charAt(0).toUpperCase();
+      if (L !== letter && !f) { letter = L; html += '<div class="gl-letter">' + L + '</div>'; }
+      var course = t.c && NAV_BY_ID[t.c] ? '<a href="#' + t.c + '">' + esc(NAV_BY_ID[t.c].label.replace(/^\d+ · /, 'Cours ')) + ' →</a>' : '';
+      html += '<div class="gl" id="gl-' + k + '"><b>' + esc(t.t) + '</b><p>' + esc(t.d) + '</p>' + course + '</div>';
+    });
+    box.innerHTML = html || '<p class="muted">Aucun terme ne correspond.</p>';
+  }
+  var glq = $('#gl-q'); if (glq) glq.addEventListener('input', function (e) { renderGloss(e.target.value); });
+  renderGloss('');
+
+  /* ══════════════════════════════════════════════════════════════════════
+     2. DONNÉES PARTAGÉES — lecture du dépôt du club
+     Chaque enregistrement est un petit fichier texte (en-tête « clé: valeur »
+     entre deux lignes ---, puis du texte) dans biscalab/<dossier>/.
+     Lecture : 1 appel à l'API GitHub (arborescence), puis les fichiers bruts.
+     ══════════════════════════════════════════════════════════════════════ */
+  var DIRS = { journal: 'seance', tests: 'test', achats: 'achat', decisions: 'decision', mesures: 'mesure', pieces: 'piece', avancement: 'tache', equipe: 'equipe' };
+  var TREE_KEY = 'canard.tree.v1', BLOB_KEY = 'canard.blobs.v1', ME_KEY = 'canard.me.v1';
+  var data = { ok: false, loading: false, error: '', when: 0, files: [], records: [], state: null, source: '' };
+
+  function parseFront(text) {
+    var meta = {}, body = text;
+    var m = /^﻿?---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/.exec(text);
+    if (m) {
+      m[1].split(/\r?\n/).forEach(function (l) { var i = l.indexOf(':'); if (i > 0) meta[norm(l.slice(0, i).trim()).replace(/[^a-z0-9_]/g, '_')] = l.slice(i + 1).trim(); });
+      body = text.slice(m[0].length);
+    }
+    return { meta: meta, body: body.replace(/\r\n/g, '\n').trim() };
+  }
+  function parseList(v) { return String(v || '').split(/[;,]/).map(function (s) { return s.trim(); }).filter(Boolean); }
+  function parseNum(v) { if (v == null) return NaN; var s = String(v).replace(/\s|€|g$|kg$/g, '').replace(',', '.'); var n = parseFloat(s); return isNaN(n) ? NaN : n; }
+  function parseInt0(v) { var n = parseInt(String(v || '').replace(/[^0-9-]/g, ''), 10); return isNaN(n) ? null : n; }
+  function sections(body) {
+    var out = {}, cur = '_';
+    body.split('\n').forEach(function (l) { var h = /^##\s+(.+?)\s*$/.exec(l); if (h) { cur = norm(h[1]).replace(/[^a-z]/g, ''); out[cur] = out[cur] || ''; } else out[cur] = (out[cur] || '') + l + '\n'; });
+    Object.keys(out).forEach(function (k) { out[k] = out[k].trim(); });
+    return out;
+  }
+  function inline(s) {
+    s = esc(s);
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+    return s;
+  }
+  function md(src) {
+    var out = [], lines = (src || '').split('\n'), i = 0, para = [];
+    function flushP() { if (para.length) { out.push('<p>' + inline(para.join(' ')) + '</p>'); para = []; } }
+    while (i < lines.length) {
+      var l = lines[i];
+      var h = /^(#{1,4})\s+(.+)$/.exec(l);
+      if (h) { flushP(); var lv = Math.min(4, h[1].length + 1); out.push('<h' + lv + '>' + inline(h[2]) + '</h' + lv + '>'); i++; continue; }
+      if (/^\s*[-*]\s+/.test(l)) { flushP(); var items = []; while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) { items.push('<li>' + inline(lines[i].replace(/^\s*[-*]\s+/, '')) + '</li>'); i++; } out.push('<ul>' + items.join('') + '</ul>'); continue; }
+      if (/^\s*\d+[.)]\s+/.test(l)) { flushP(); var oi = []; while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])) { oi.push('<li>' + inline(lines[i].replace(/^\s*\d+[.)]\s+/, '')) + '</li>'); i++; } out.push('<ol>' + oi.join('') + '</ol>'); continue; }
+      if (/^```/.test(l)) { flushP(); var code = []; i++; while (i < lines.length && !/^```/.test(lines[i])) { code.push(lines[i]); i++; } i++; out.push('<pre><code>' + esc(code.join('\n')) + '</code></pre>'); continue; }
+      if (!l.trim()) { flushP(); i++; continue; }
+      para.push(l.trim()); i++;
+    }
+    flushP();
+    return out.join('');
+  }
+
+  function apiUrl(p) { return 'https://api.github.com/repos/' + REPO.owner + '/' + REPO.repo + p; }
+  function rawUrl(path, sha) { return 'https://raw.githubusercontent.com/' + REPO.owner + '/' + REPO.repo + '/' + REPO.branch + '/' + path.split('/').map(encodeURIComponent).join('/') + (sha ? '?sha=' + sha : ''); }
+  function ghNewUrl(dir, filename, content) { return 'https://github.com/' + REPO.owner + '/' + REPO.repo + '/new/' + REPO.branch + '/' + REPO.base + '/' + dir + '?filename=' + encodeURIComponent(filename) + '&value=' + encodeURIComponent(content); }
+  function ghBlobUrl(path) { return 'https://github.com/' + REPO.owner + '/' + REPO.repo + '/blob/' + REPO.branch + '/' + path; }
+  function ghTreeUrl(dir) { return 'https://github.com/' + REPO.owner + '/' + REPO.repo + '/tree/' + REPO.branch + '/' + REPO.base + '/' + dir; }
+
+  function wanted(path) {
+    if (path.indexOf(REPO.base + '/') !== 0) return null;
+    var rel = path.slice(REPO.base.length + 1), parts = rel.split('/');
+    if (parts.length === 2 && DIRS[parts[0]] && /\.md$/i.test(parts[1]) && !/^readme/i.test(parts[1])) return DIRS[parts[0]];
+    return null;
+  }
+
+  function loadTree(force) {
+    var cache = lsGet(TREE_KEY, null);
+    var fresh = cache && cache.repo === REPO.owner + '/' + REPO.repo + '@' + REPO.branch && (Date.now() - cache.t) < 5 * 60 * 1000;
+    if (fresh && !force) return Promise.resolve({ tree: cache.tree, when: cache.t, source: 'cache' });
+    return fetch(apiUrl('/git/trees/' + encodeURIComponent(REPO.branch) + '?recursive=1'), { headers: { Accept: 'application/vnd.github+json' } }).then(function (r) {
+      if (r.status === 403 || r.status === 429) {
+        var reset = parseInt(r.headers.get('x-ratelimit-reset') || '0', 10) * 1000;
+        var when = reset ? new Date(reset) : null;
+        var msg = 'Limite de lecture GitHub atteinte (60 par heure et par connexion)' + (when ? ' ; réessayer à ' + pad2(when.getHours()) + ':' + pad2(when.getMinutes()) : '') + '.';
+        if (cache) return { tree: cache.tree, when: cache.t, source: 'cache', warn: msg };
+        throw new Error(msg);
+      }
+      if (r.status === 404) throw new Error('Dépôt ou branche introuvable : ' + REPO.owner + '/' + REPO.repo + ' (' + REPO.branch + ').');
+      if (!r.ok) throw new Error('GitHub répond ' + r.status + '.');
+      return r.json().then(function (j) {
+        var tree = (j.tree || []).filter(function (e) { return e.type === 'blob' && wanted(e.path); }).map(function (e) { return { path: e.path, sha: e.sha }; });
+        var when = Date.now();
+        lsSet(TREE_KEY, { repo: REPO.owner + '/' + REPO.repo + '@' + REPO.branch, t: when, tree: tree });
+        return { tree: tree, when: when, source: 'github' };
+      });
+    });
+  }
+  function loadBlobs(tree) {
+    var blobs = lsGet(BLOB_KEY, {}), keep = {}, todo = [];
+    tree.forEach(function (f) { if (blobs[f.sha] != null) keep[f.sha] = blobs[f.sha]; else todo.push(f); });
+    return Promise.all(todo.map(function (f) {
+      return fetch(rawUrl(f.path, f.sha)).then(function (r) { if (!r.ok) throw new Error('Fichier illisible : ' + f.path); return r.text(); }).then(function (t) { keep[f.sha] = t; });
+    })).then(function () { lsSet(BLOB_KEY, keep); return tree.map(function (f) { return { path: f.path, sha: f.sha, text: keep[f.sha] }; }); });
+  }
+  function fileDate(name, meta) {
+    var m = /^(\d{4}-\d{2}-\d{2})(?:-(\d{4}))?/.exec(name);
+    var d = meta.date && /^\d{4}-\d{2}-\d{2}/.test(meta.date) ? meta.date.slice(0, 10) : (m ? m[1] : '');
+    var t = m && m[2] ? m[2] : (meta.heure ? meta.heure.replace(':', '') : '0000');
+    return { date: d, key: d + '-' + t + '-' + name.replace(/\.md$/i, '') };
+  }
+  function toRecords(files) {
+    var recs = [];
+    files.forEach(function (f) {
+      var kind = wanted(f.path), name = f.path.split('/').pop();
+      var p = parseFront(f.text), meta = p.meta;
+      if (meta.type && DIRS[Object.keys(DIRS).filter(function (d) { return DIRS[d] === meta.type; })[0]] && meta.type !== kind) kind = meta.type;
+      var fd = fileDate(name, meta);
+      recs.push({ kind: kind, path: f.path, name: name, meta: meta, body: p.body, date: fd.date, key: fd.key, sections: sections(p.body) });
+    });
+    recs.sort(function (a, b) { return a.key < b.key ? -1 : a.key > b.key ? 1 : 0; });
+    return recs;
+  }
+
+  // ─── L'état du projet, déduit des enregistrements ───
+  function fold(recs) {
+    var st = { seances: [], tests: [], achats: [], decisions: [], mesures: [], pieces: {}, taches: {}, roles: null, events: [] };
+    var allTasks = {}; PLAN.phases.forEach(function (ph) { ph.taches.forEach(function (t) { allTasks[t[0]] = { phase: ph.n, label: t[1] }; }); });
+    $$('input[type=checkbox][data-k]').forEach(function (b) { var k = b.getAttribute('data-k'); if (!allTasks[k] && !/^l\./.test(k)) { var lab = b.parentNode.querySelector('.t'); allTasks[k] = { phase: null, label: lab ? lab.textContent.trim().slice(0, 140) : k }; } });
+    st.allTasks = allTasks;
+    recs.forEach(function (r) {
+      var m = r.meta;
+      if (r.kind === 'equipe') {
+        var roles = []; r.body.split('\n').forEach(function (l) { var i = l.indexOf(':'); if (i > 0) roles.push([l.slice(0, i).trim(), l.slice(i + 1).trim()]); });
+        if (!st.rolesRec || st.rolesRec.key < r.key) { st.roles = roles; st.rolesRec = { key: r.key, date: r.date, par: m.par || '', path: r.path }; }
+        st.events.push({ key: r.key, date: r.date, kind: 'equipe', titre: 'Rôles attribués', sub: m.par || '', href: '#equipe' });
+        return;
+      }
+      if (r.kind === 'seance') {
+        var s = { key: r.key, date: r.date, presents: parseList(m.presents), phase: parseInt0(m.phase), taches: parseList(m.taches), body: r.body, sec: r.sections, path: r.path, par: m.par || '' };
+        st.seances.push(s);
+        st.events.push({ key: r.key, date: r.date, kind: 'seance', titre: 'Séance' + (s.phase != null ? ' · phase ' + s.phase : ''), sub: s.presents.join(', '), href: '#journal' });
+      } else if (r.kind === 'tache') {
+        var fait = !/^(non|no|false|0)/i.test(m.fait || 'oui');
+        var pct = m.avancement != null && m.avancement !== '' ? Math.max(0, Math.min(100, parseInt0(m.avancement) || 0)) : (fait ? 100 : 0);
+        fait = pct >= 100;
+        var prev = st.taches[m.tache];
+        if (!prev || prev.key < r.key) st.taches[m.tache] = { fait: fait, pct: pct, date: r.date, par: m.par || '', note: m.note || r.body, via: 'coche', key: r.key };
+        st.events.push({ key: r.key, date: r.date, kind: 'tache', titre: (fait ? 'Fait : ' : pct > 0 ? pct + ' % : ' : 'Remis à zéro : ') + (allTasks[m.tache] ? allTasks[m.tache].label : m.tache), sub: m.par || '', href: '#planning' });
+      } else if (r.kind === 'test') {
+        var t = { key: r.key, date: r.date, phase: parseInt0(m.phase), titre: m.titre || r.name.replace(/\.md$/, ''), resultat: (m.resultat || '').toUpperCase().replace(/\s+/g, ''), par: m.par || '', body: r.body, sec: r.sections, path: r.path };
+        st.tests.push(t); st.events.push({ key: r.key, date: r.date, kind: 'test', titre: 'Test : ' + t.titre, sub: t.resultat || '', href: '#tests' });
+      } else if (r.kind === 'achat') {
+        var a = { key: r.key, date: r.date, fournisseur: m.fournisseur || '', montant: parseNum(m.montant), phase: parseInt0(m.phase), statut: norm(m.statut || 'commande').replace(/[^a-z]/g, ''), par: m.par || '', servos: parseInt0(m.servos) || 0, titre: m.titre || m.objet || r.name.replace(/^\d{4}-\d{2}-\d{2}-?/, '').replace(/\.md$/, ''), body: r.body, path: r.path };
+        if (isNaN(a.montant)) a.montant = 0;
+        st.achats.push(a); st.events.push({ key: r.key, date: r.date, kind: 'achat', titre: 'Achat : ' + a.titre, sub: eur(a.montant) + ' · ' + (ACHAT_LABELS[a.statut] || a.statut), href: '#achats' });
+      } else if (r.kind === 'decision') {
+        var d = { key: r.key, date: r.date, titre: m.titre || r.name.replace(/^\d{4}-\d{2}-\d{2}-?/, '').replace(/\.md$/, ''), statut: norm(m.statut || 'prise').replace(/[^a-z]/g, ''), par: m.par || '', body: r.body, sec: r.sections, path: r.path };
+        st.decisions.push(d); st.events.push({ key: r.key, date: r.date, kind: 'decision', titre: 'Décision : ' + d.titre, sub: d.statut === 'atrancher' ? 'à trancher' : d.statut, href: '#decisions' });
+      } else if (r.kind === 'mesure') {
+        var me = { key: r.key, date: r.date, grandeur: norm(m.grandeur || 'autre'), objet: m.objet || '', valeur: m.valeur || '', unite: m.unite || '', par: m.par || '', body: r.body, path: r.path };
+        st.mesures.push(me); st.events.push({ key: r.key, date: r.date, kind: 'mesure', titre: 'Mesure : ' + me.objet, sub: me.valeur + ' ' + me.unite, href: '#mesures' });
+      } else if (r.kind === 'piece') {
+        var ex = parseInt0(m.exemplaire) || 1, pk = (m.piece || '').trim() + '#' + ex;
+        var pe = { date: r.date, piece: (m.piece || '').trim(), exemplaire: ex, statut: norm(m.statut || 'imprimee').replace(/[^a-z_]/g, ''), par: m.par || '', masse: parseNum(m.masse_g || m.masse), rev: m.rev || '', note: m.note || r.body, key: r.key, path: r.path };
+        var prevp = st.pieces[pk];
+        if (!prevp || prevp.key < r.key) st.pieces[pk] = pe;
+        st.events.push({ key: r.key, date: r.date, kind: 'piece', titre: 'Pièce ' + pe.piece + (ex > 1 || true ? ' n° ' + ex : '') + ' : ' + (PIECE_LABELS[pe.statut] || pe.statut), sub: pe.par + (isNaN(pe.masse) ? '' : ' · ' + pe.masse + ' g'), href: '#pieces' });
+      }
+    });
+    // Une correction = un nouvel enregistrement sur le même objet : le dernier l'emporte, les précédents restent dans le dépôt.
+    function latest(arr, keyOf) { var mm = {}; arr.forEach(function (r) { var k = keyOf(r); if (!mm[k] || mm[k].key < r.key) mm[k] = r; }); return Object.keys(mm).map(function (k) { return mm[k]; }).sort(function (a, b) { return a.key < b.key ? -1 : a.key > b.key ? 1 : 0; }); }
+    st.seances = latest(st.seances, function (s) { return s.date; });
+    st.tests = latest(st.tests, function (t) { return slug(t.titre); });
+    st.achats = latest(st.achats, function (a) { return slug(a.titre); });
+    st.decisions = latest(st.decisions, function (d) { return slug(d.titre); });
+    st.mesures = latest(st.mesures, function (m) { return m.date + '|' + m.grandeur + '|' + norm(m.objet); });
+    st.seances.forEach(function (s) { s.taches.forEach(function (t) { if (!st.taches[t] || st.taches[t].key < s.key) st.taches[t] = { fait: true, pct: 100, date: s.date, par: s.presents.join(', '), via: 'séance', key: s.key }; }); });
+    st.seances.sort(function (a, b) { return a.key < b.key ? 1 : -1; });
+    st.events.sort(function (a, b) { return a.key < b.key ? 1 : -1; });
+    // Phase courante : celle de la dernière séance qui l'indique ; sinon la plus avancée où une tâche est faite ; sinon 0
+    var ph = null;
+    for (var i = 0; i < st.seances.length; i++) { if (st.seances[i].phase != null) { ph = st.seances[i].phase; break; } }
+    if (ph == null) { PLAN.phases.forEach(function (p) { p.taches.forEach(function (t) { if (st.taches[t[0]] && st.taches[t[0]].fait) ph = p.n; }); }); }
+    st.phase = ph == null ? 0 : ph;
+    // Budget
+    st.depense = st.achats.filter(function (a) { return a.statut === 'commande' || a.statut === 'recu' || a.statut === 'rembourse'; }).reduce(function (s, a) { return s + a.montant; }, 0);
+    st.servosRecus = st.achats.filter(function (a) { return a.statut === 'recu' || a.statut === 'rembourse'; }).reduce(function (s, a) { return s + a.servos; }, 0);
+    // Pièces
+    var tot = 0, imp = 0; PLAN.pieces.forEach(function (p) { tot += p[2]; for (var e = 1; e <= p[2]; e++) { var ev = st.pieces[p[1] + '#' + e]; if (ev && ev.statut !== 'a_imprimer' && ev.statut !== 'a_refaire') imp++; } });
+    st.piecesTotal = tot; st.piecesImprimees = imp;
+    // Tâches
+    var tt = 0, td = 0, tp = 0, sum = 0; PLAN.phases.forEach(function (p) { p.taches.forEach(function (t) { tt++; var x = taskPct(st, t[0]); sum += x; if (x >= 100) td++; else if (x > 0) tp++; }); });
+    st.tachesTotal = tt; st.tachesFaites = td; st.tachesEnCours = tp; st.pctGlobal = tt ? Math.round(sum / tt) : 0;
+    st.aTrancher = st.decisions.filter(function (d) { return d.statut === 'atrancher'; });
+    return st;
+  }
+
+  function refresh(force) {
+    if (data.loading) return;
+    data.loading = true; data.error = ''; renderStatus();
+    loadTree(force).then(function (t) {
+      data.source = t.source; data.when = t.when; data.warn = t.warn || '';
+      return loadBlobs(t.tree);
+    }).then(function (files) {
+      data.files = files; data.records = toRecords(files); data.state = fold(data.records); data.ok = true; data.loading = false;
+      renderStatus(); if (current && NAV_BY_ID[current] && NAV_BY_ID[current].live) renderLive(current);
+    }).catch(function (e) {
+      data.loading = false; data.error = (e && e.message) || String(e);
+      if (!data.state) { data.state = fold([]); }
+      renderStatus(); if (current && NAV_BY_ID[current] && NAV_BY_ID[current].live) renderLive(current);
+    });
+  }
+  function renderStatus() {
+    var html;
+    if (data.loading) html = '<span class="dot pulse"></span>Lecture du dépôt du club…';
+    else if (data.error) html = '<span class="dot bad"></span>' + esc(data.error) + ' <button type="button" class="lnk" data-act="refresh">Réessayer</button>';
+    else { var d = new Date(data.when); html = '<span class="dot ok"></span>' + data.files.length + ' enregistrement' + (data.files.length > 1 ? 's' : '') + ' · lu à ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + (data.warn ? ' · ' + esc(data.warn) : '') + ' <button type="button" class="lnk" data-act="refresh">Actualiser</button>'; }
+    $$('.data-status').forEach(function (el) { el.innerHTML = html; });
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]'); if (!b) return;
+    var act = b.getAttribute('data-act');
+    if (act === 'refresh') refresh(true);
+    else if (act === 'form') openForm(b.getAttribute('data-form'), JSON.parse(b.getAttribute('data-pre') || '{}'), b);
+    else if (act === 'form-close') closeForm(b.closest('[data-form-slot]'));
+    else if (act === 'fold') { var ft = $('#' + b.getAttribute('data-target')); if (ft) { ft.hidden = !ft.hidden; b.classList.toggle('open', !ft.hidden); b.setAttribute('aria-expanded', String(!ft.hidden)); } }
+    else if (act === 'goto') { pendingAnchor = b.getAttribute('data-anchor'); if (current === b.getAttribute('data-page')) scrollToAnchor(); else location.hash = '#' + b.getAttribute('data-page'); }
+    else if (act === 'toggle') { var tgt = $('#' + b.getAttribute('data-target')); if (tgt) { tgt.hidden = !tgt.hidden; b.textContent = tgt.hidden ? (b.getAttribute('data-open') || 'Voir') : (b.getAttribute('data-close') || 'Replier'); } }
+    else if (act === 'copy') { var fc = b.closest('.form-card'), ta = fc ? fc.querySelector('textarea.io') : null; copyText(b.getAttribute('data-text') || (ta ? ta.value : ''), 'Texte copié'); }
+  });
+
+  /* ══════════════════════════════════════════════════════════════════════
+     3. VUES DE SUIVI
+     ══════════════════════════════════════════════════════════════════════ */
+  function phaseOf(n) { return PLAN.phases.filter(function (p) { return p.n === n; })[0] || PLAN.phases[0]; }
+  function taskPct(st, k) { var t = st.taches[k], m = t ? (t.pct != null ? t.pct : (t.fait ? 100 : 0)) : 0, a = taskAuto(st, k); return a ? Math.max(m, a.pct) : m; }
+  function phasePct(st, ph) { var sum = 0; ph.taches.forEach(function (t) { sum += taskPct(st, t[0]); }); return ph.taches.length ? Math.round(sum / ph.taches.length) : 0; }
+  function phaseCounts(st, ph) { var c = { fait: 0, part: 0, rest: 0 }; ph.taches.forEach(function (t) { var x = taskPct(st, t[0]); if (x >= 100) c.fait++; else if (x > 0) c.part++; else c.rest++; }); return c; }
+  // ── Graphiques : anneau (une valeur sur un total) et barre empilée (fait / en cours / à faire) ──
+  function donut(pct, color, size, txt, sub) {
+    var r = (size - 10) / 2, c = 2 * Math.PI * r, p = Math.max(0, Math.min(100, pct || 0)), cx = size / 2;
+    return '<svg class="donut" viewBox="0 0 ' + size + ' ' + size + '" width="' + size + '" height="' + size + '" role="img" aria-label="' + esc(txt) + (sub ? ' ' + esc(sub) : '') + '"><circle cx="' + cx + '" cy="' + cx + '" r="' + r + '" fill="none" stroke="var(--color-muted)" stroke-width="9"/><circle cx="' + cx + '" cy="' + cx + '" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + (c * p / 100).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 ' + cx + ' ' + cx + ')"/><text x="50%" y="' + (sub ? '46%' : '50%') + '" text-anchor="middle" dominant-baseline="central" class="dv">' + esc(txt) + '</text>' + (sub ? '<text x="50%" y="66%" text-anchor="middle" dominant-baseline="central" class="ds">' + esc(sub) + '</text>' : '') + '</svg>';
+  }
+  function sbar(c) {
+    var tot = c.fait + c.part + c.rest || 1;
+    return '<div class="sbar" role="img" aria-label="' + c.fait + ' faites, ' + c.part + ' en cours, ' + c.rest + ' à faire">' + (c.fait ? '<span class="ok" style="flex:' + c.fait + '" title="' + c.fait + ' faite' + (c.fait > 1 ? 's' : '') + '"></span>' : '') + (c.part ? '<span class="part" style="flex:' + c.part + '" title="' + c.part + ' en cours"></span>' : '') + (c.rest ? '<span class="rest" style="flex:' + c.rest + '" title="' + c.rest + ' à faire"></span>' : '') + '</div>';
+  }
+  function legend(c) { return '<div class="legend"><span><i class="sw ok"></i>' + c.fait + ' faite' + (c.fait > 1 ? 's' : '') + '</span><span><i class="sw part"></i>' + c.part + ' en cours</span><span><i class="sw rest"></i>' + c.rest + ' à faire</span></div>'; }
+  function gonogo(st, ph) { var ts = st.tests.filter(function (t) { return t.phase === ph.n && (t.resultat === 'GO' || t.resultat === 'NO-GO' || t.resultat === 'NOGO'); }); if (!ts.length) return null; var last = ts[ts.length - 1]; return last.resultat === 'GO' ? 'GO' : 'NO-GO'; }
+  function pill(cls, txt) { return '<span class="pill ' + cls + '">' + esc(txt) + '</span>'; }
+  function statutPill(s, labels) { var cls = { prevu: 'mute', commande: 'info', recu: 'ok', rembourse: 'ok', annule: 'bad', a_imprimer: 'mute', imprimee: 'info', controlee: 'ok', montee: 'p', a_refaire: 'bad', prise: 'ok', atrancher: 'warn', annulee: 'mute', GO: 'ok', 'NO-GO': 'bad', PARTIEL: 'warn' }[s] || 'mute'; return pill(cls, (labels && labels[s]) || (s === 'atrancher' ? 'à trancher' : s)); }
+  function emptyState(what, formKind) {
+    return '<div class="note info"><svg><use href="#i-info"/></svg><div><strong>Rien d\'enregistré pour le moment.</strong> ' + esc(what) + (formKind ? ' Le premier se saisit dans le formulaire ci-dessus.' : '') + '</div></div>';
+  }
+  function slotHtml() { return '<div data-form-slot></div>'; }
+  function offlineNote() {
+    if (data.ok || data.loading) return '';
+    return '<div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Données non chargées.</strong> ' + esc(data.error || '') + ' La page lit les enregistrements dans le dépôt du club ; il faut une connexion à GitHub.</div></div>';
+  }
+  function preAttr(obj) { return ' data-pre="' + esc(JSON.stringify(obj)) + '"'; }
+  function fileLnk(path) { return '<a class="lnk" href="' + ghBlobUrl(path) + '" target="_blank" rel="noopener" title="Le fichier dans le dépôt">fichier</a>'; }
+  function who(par) { return par ? ' <span class="muted">· ' + esc(par) + '</span>' : ''; }
+
+  var AUTO_FORM = { journal: ['seance', function (st) { return st.seances.length; }], achats: ['achat', function (st) { return st.achats.length; }], tests: ['test', function (st) { return st.tests.length; }], mesures: ['mesure', function (st) { return st.mesures.length; }], decisions: ['decision', function (st) { return st.decisions.length; }], equipe: ['equipe', function (st) { return st.rolesRec ? 1 : 0; }] };
+  var formClosedBy = {};   // pages où l'on a fermé le formulaire ouvert d'office
+  function renderLive(id) {
+    var box = $('[data-view="' + id + '"]');
+    var st = data.state || fold([]);
+    if (!box) { renderChecklists(st); return; }
+    var fn = { accueil: viewAccueil, journal: viewJournal, planning: viewPlanning, pieces: viewPieces, achats: viewAchats, tests: viewTests, mesures: viewMesures, decisions: viewDecisions, equipe: viewEquipe, electronique: viewChecklist, marche: viewChecklist }[id];
+    if (!fn) { renderChecklists(st); return; }
+    // Les formulaires en cours de saisie survivent au rafraîchissement : on détache les emplacements remplis, on les remet après.
+    var open = $$('[data-form-slot]', box).filter(function (sl) { return sl.firstChild; }).map(function (sl) { sl.parentNode.removeChild(sl); return sl; });
+    box.innerHTML = (data.loading && !data.ok ? '<p class="muted">Lecture du dépôt du club…</p>' : offlineNote()) + fn(st, id);
+    open.forEach(function (sl) {
+      var at = sl.getAttribute('data-after');
+      var anchor = at ? box.querySelector('[data-anchor="' + at + '"]') : null;
+      if (anchor) { anchor.parentNode.insertBefore(sl, anchor.nextSibling); return; }
+      var fresh = box.querySelector('[data-form-slot]:not([data-after])'); if (fresh) fresh.parentNode.replaceChild(sl, fresh); else box.insertBefore(sl, box.firstChild);
+    });
+    renderChecklists(st); renderStatus();
+    // Page de suivi vide : le formulaire est directement là, pas de bouton à chercher.
+    var af = AUTO_FORM[id];
+    if (af && data.ok && !formClosedBy[id]) {
+      var n = af[1](st), slot = box.querySelector('[data-form-slot]:not([data-after])'), btn = box.querySelector('button[data-form="' + af[0] + '"]');
+      if (!n && slot && !slot.firstChild) openForm(af[0], btn ? JSON.parse(btn.getAttribute('data-pre') || '{}') : {}, null, true);
+    }
+  }
+
+  // Les listes de contrôle hors planning (réunion, banc servo, calibration) : partagées elles aussi
+  function renderChecklists(st) {
+    $$('input[type=checkbox][data-k]:not([data-k^="l."])').forEach(function (b) {
+      var k = b.getAttribute('data-k'), t = st.taches[k];
+      b.checked = !!(t && t.fait); b.disabled = false;
+      var lab = b.closest('.chk'); if (!lab) return;
+      var info = lab.querySelector('.chk-who'); if (!info) { info = document.createElement('small'); info.className = 'chk-who'; lab.querySelector('.t').appendChild(info); }
+      info.textContent = t && t.fait ? 'fait' + (t.par ? ' par ' + t.par : '') + (t.date ? ' le ' + frDate(t.date) : '') : '';
+      if (!b._shared) { b._shared = true; b.addEventListener('click', function (e) { e.preventDefault(); var cur = !!(st.taches[k] && st.taches[k].fait); openForm('tache', { tache: k, avancement: cur ? 0 : 100, label: (lab.querySelector('.t').textContent || '').replace(info.textContent, '').trim() }, b); }); }
+    });
+  }
+
+  function daysSince(iso) { if (!iso) return null; var d = new Date(iso + 'T12:00:00'); return Math.floor((Date.now() - d.getTime()) / 86400000); }
+  function viewAccueil(st) {
+    var ph = phaseOf(st.phase), last = st.seances[0], h = '';
+    var rolesVides = (st.roles || PLAN.roles).filter(function (r) { return !r[1]; }).length;
+    var nonRecus = st.achats.filter(function (a) { return a.statut === 'commande'; });
+    var aRefaire = Object.keys(st.pieces).filter(function (k) { return st.pieces[k].statut === 'a_refaire'; }).map(function (k) { return st.pieces[k]; });
+    var nogo = st.tests.filter(function (t) { return t.resultat === 'NO-GO' || t.resultat === 'NOGO'; }).slice(-3);
+    var since = last ? daysSince(last.date) : null;
+    var tot = { fait: st.tachesFaites, part: st.tachesEnCours, rest: st.tachesTotal - st.tachesFaites - st.tachesEnCours };
+
+    // ── 1. Vue d'ensemble ──
+    h += '<div class="card big overview"><div class="ov-main"><div class="ov-donut">' + donut(st.pctGlobal, 'var(--color-primary)', 132, st.pctGlobal + ' %', 'du projet') + '</div><a class="ov-duck" href="#pieces" title="Le canard : ' + st.piecesImprimees + ' pièces imprimées sur ' + st.piecesTotal + ' · registre des pièces">' + duckSvg(st, 'side', 150) + '<small>' + st.piecesImprimees + ' / ' + st.piecesTotal + ' pièces</small></a><div class="ov-txt"><h2 style="margin:0">' + svgUse('i-flag') + 'Avancement du projet</h2><p class="sub">' + st.tachesTotal + ' tâches sur 7 phases qui avancent en parallèle. Une tâche se termine quand les registres le prouvent (pièces, achats, mesures, fiches de test) ou quand quelqu\'un la note faite.</p>' + sbar(tot) + legend(tot) + '<p class="muted" style="font-size:0.85rem;margin-top:6px">Dernière séance : ' + (last ? frDate(last.date) + (last.presents.length ? ' · ' + esc(last.presents.join(', ')) : '') + ' · phase déclarée ' + ph.n : 'aucune encore') + ' · ' + st.seances.length + ' séance' + (st.seances.length > 1 ? 's' : '') + '</p></div></div>';
+    h += '<div class="ov-phases">';
+    PLAN.phases.forEach(function (p) { var v = phasePct(st, p), c = phaseCounts(st, p), gg = p.gonogo ? gonogo(st, p) : null; h += '<button type="button" class="prog-btn" data-act="goto" data-page="planning" data-anchor="phase-' + p.n + '" title="Les tâches de la phase ' + p.n + '"><div class="prog-row"><span class="lab"><span class="sw" style="background:' + p.tint + '"></span>Phase ' + p.n + ' · ' + esc(p.titre) + (gg ? ' ' + statutPill(gg) : '') + (c.part ? ' <span class="muted">' + c.part + ' en cours</span>' : '') + '</span><span class="n">' + v + ' %</span></div>' + sbar(c) + '</button>'; });
+    h += '</div><p class="muted" style="font-size:0.85rem;margin:0">Cliquer une phase ouvre ses tâches, avec leurs boutons, dans <a href="#planning">Travaux par phase</a>.</p></div>';
+
+    // ── 2. À faire maintenant : alertes calculées + prochaines tâches des phases actives ──
+    var items = [];
+    if (!st.rolesRec || rolesVides) items.push({ ic: 'i-users', txt: st.rolesRec ? rolesVides + ' rôle' + (rolesVides > 1 ? 's' : '') + ' encore à attribuer' : 'Attribuer les rôles (' + rolesVides + ' sans nom)', sub: 'Qui fait quoi : maître d\'œuvre, trésorier-acheteur, référents…', btn: 'Attribuer', act: 'data-act="form" data-form="equipe"' });
+    st.aTrancher.forEach(function (d) { items.push({ ic: 'i-flag', txt: 'Décision à trancher : ' + d.titre, sub: 'En attente depuis le ' + frDate(d.date) + (d.par ? ' (' + d.par + ')' : ''), btn: 'Trancher', act: 'data-act="form" data-form="decision"' + preAttr({ titre: d.titre, statut: 'prise', contexte: d.sec.contexte || '', decision: d.sec.decision || '', consequences: d.sec.consequences || '' }) }); });
+    nonRecus.forEach(function (a) { items.push({ ic: 'i-cart', txt: 'Commande en attente : ' + a.titre, sub: eur(a.montant) + ' · commandé le ' + frDate(a.date) + ' · contrôler la référence à la réception', btn: 'Reçu', act: 'data-act="form" data-form="achat"' + preAttr({ date: a.date > todayISO() ? a.date : '', titre: a.titre, fournisseur: a.fournisseur, montant: a.montant, phase: a.phase == null ? '' : a.phase, statut: 'recu', servos: a.servos, par: a.par, lignes: a.body }) }); });
+    aRefaire.forEach(function (pc) { items.push({ ic: 'i-printer', txt: 'Pièce à refaire : ' + pc.piece + ' n° ' + pc.exemplaire, sub: (pc.note || '').slice(0, 100), btn: 'Réimprimée', act: 'data-act="form" data-form="piece"' + preAttr({ piece: PLAN.pieces.some(function (p) { return p[1] === pc.piece; }) ? pc.piece : 'autre', piece_autre: pc.piece, exemplaire: pc.exemplaire, statut: 'imprimee', rev: pc.rev }) }); });
+    nogo.forEach(function (t) { items.push({ ic: 'i-warn', txt: 'Test NO-GO : ' + t.titre, sub: 'Corriger, puis refaire la fiche (' + frDate(t.date) + ')', btn: 'Refaire', act: 'data-act="form" data-form="test"' + preAttr({ titre: t.titre, phase: t.phase == null ? '' : t.phase, objectif: t.sec.objectif || '', montage: t.sec.montage || '', procedure: t.sec.procedure || '', critere: t.sec.criteredereussite || t.sec.critere || '' }) }); });
+    if (last && last.sec.problemes) items.push({ ic: 'i-warn', txt: 'Problèmes notés à la dernière séance', sub: last.sec.problemes.replace(/^[-*]\s*/gm, '').replace(/\n+/g, ' · ').slice(0, 160), btn: 'Décider', act: 'data-act="form" data-form="decision"' + preAttr({ contexte: last.sec.problemes }) });
+    PLAN.phases.forEach(function (p) { if (p.gonogo && phasePct(st, p) >= 100 && !gonogo(st, p)) items.push({ ic: 'i-check', txt: 'Phase ' + p.n + ' terminée : fiche GO / NO-GO à rédiger', sub: 'Elle décide l\'achat des 12 servos restants', btn: 'Fiche GO / NO-GO', act: 'data-act="form" data-form="test"' + preAttr(testPre('gonogo-2')) }); });
+    if (!last) items.push({ ic: 'i-book', txt: 'Enregistrer la première séance', sub: 'Qui était là, ce qui a été fait, les problèmes, les décisions', btn: 'Nouvelle séance', act: 'data-act="form" data-form="seance"' });
+    else if (since > 10) items.push({ ic: 'i-book', txt: 'Aucune séance enregistrée depuis ' + since + ' jours', sub: 'Dernière : ' + frDate(last.date) + (last.presents.length ? ' · ' + last.presents.join(', ') : ''), btn: 'Nouvelle séance', act: 'data-act="form" data-form="seance"' });
+    // Les prochaines tâches : deux par phase active (en cours, ou déclarée)
+    var next = [], active = PLAN.phases.filter(function (p) { var v = phasePct(st, p); return (v > 0 && v < 100) || p.n === st.phase; });
+    if (!active.length) active = [ph];
+    active.forEach(function (p) { p.taches.filter(function (t) { return taskPct(st, t[0]) < 100; }).slice(0, 2).forEach(function (t) { next.push([p, t]); }); });
+    h += '<div class="grid c2"><div class="card big"><h2>' + svgUse('i-zap') + 'À faire maintenant</h2>';
+    if (items.length) h += '<ol class="todo">' + items.map(function (it) { return '<li><span class="tl-ic">' + svgUse(it.ic) + '</span><div class="tl-b"><strong>' + esc(it.txt) + '</strong>' + (it.sub ? '<small>' + esc(it.sub) + '</small>' : '') + '</div><button type="button" class="btn sm primary" ' + it.act + '>' + esc(it.btn) + '</button></li>'; }).join('') + '</ol>';
+    if (next.length) {
+      h += '<p class="sub" style="margin-top:' + (items.length ? '12px' : '0') + '"><strong>Prochaines tâches</strong> des phases en cours :</p><div class="chklist">' + next.map(function (pt) { var p = pt[0], t = pt[1], a = taskAuto(st, t[0]), pct = taskPct(st, t[0]); return '<div class="task' + (pct > 0 ? ' part' : '') + '" data-anchor="n-' + t[0] + '"><div class="task-main"><span class="sw" style="background:' + p.tint + ';margin-top:9px"></span><span class="t" style="padding:6px 0"><span class="lbl">' + esc(t[1]) + '</span><small style="display:block;color:var(--color-muted-fg)">Phase ' + p.n + (pct > 0 ? ' · ' + pct + ' %' : '') + (a ? ' · ' + esc(a.info) : '') + '</small></span></div><div class="task-foot" style="padding-left:22px"><span class="task-acts">' + taskActs(st, t) + '</span><button type="button" class="lnk" data-act="goto" data-page="planning" data-anchor="t-' + t[0] + '">voir dans les travaux</button></div></div>'; }).join('') + '</div>';
+    }
+    if (!items.length && !next.length) h += '<p class="muted">Rien en attente. Les problèmes se notent dans une séance, les choix en suspens comme décision « à trancher » : ils apparaîtront ici.</p>';
+    h += '<p class="sub" style="margin-top:10px"><strong>Enregistrer :</strong></p><div class="row"><button type="button" class="btn primary" data-act="form" data-form="seance">' + svgUse('i-book') + 'Séance</button><button type="button" class="btn" data-act="form" data-form="piece">' + svgUse('i-printer') + 'Pièce imprimée</button><button type="button" class="btn" data-act="form" data-form="achat">' + svgUse('i-cart') + 'Achat</button><button type="button" class="btn" data-act="form" data-form="test">' + svgUse('i-check') + 'Fiche de test</button><button type="button" class="btn" data-act="form" data-form="mesure">' + svgUse('i-zap') + 'Mesure</button><button type="button" class="btn" data-act="form" data-form="decision">' + svgUse('i-flag') + 'Décision</button></div></div>';
+    h += '<div class="card"><h2>' + svgUse('i-zap') + 'Derniers enregistrements</h2>' + timeline(st.events.slice(0, 12)) + '</div></div>';
+
+    // ── 3. Les compteurs, chacun avec son anneau et son registre ──
+    function kpi(href, pct, color, v, small, l, d) { return '<a class="kpi kpi-ring" href="' + href + '">' + (pct != null ? donut(pct, color, 56, Math.round(pct) + '%') : '<span class="kpi-ic">' + svgUse(color) + '</span>') + '<div class="kpi-b"><div class="v">' + v + (small ? '<small>' + small + '</small>' : '') + '</div><div class="l">' + l + '</div><div class="d">' + d + ' →</div></div></a>'; }
+    h += '<div class="kpis">';
+    h += kpi('#pieces', 100 * st.piecesImprimees / (st.piecesTotal || 1), 'var(--color-battery)', st.piecesImprimees, '/ ' + st.piecesTotal, 'Pièces imprimées', 'registre des pièces');
+    h += kpi('#achats', 100 * st.servosRecus / 14, 'var(--color-consumption)', st.servosRecus, '/ 14', 'Servos reçus', 'achats par phase');
+    h += kpi('#achats', 100 * st.depense / PLAN.budget, 'var(--color-solar-fg)', Math.round(st.depense), '€ / ' + Math.round(PLAN.budget), 'Budget engagé', 'les six commandes du plan');
+    h += kpi('#tests', 100 * st.tests.filter(function (t) { return t.resultat === 'GO'; }).length / PLAN.tests.length, 'var(--color-battery)', st.tests.filter(function (t) { return t.resultat === 'GO'; }).length, '/ ' + PLAN.tests.length + ' GO', 'Fiches de test', nogo.length + ' NO-GO · ' + st.tests.length + ' fiche' + (st.tests.length > 1 ? 's' : ''));
+    var mesN = PLAN.mesures.filter(function (M) { return mesureOf(st, M); }).length;
+    h += kpi('#mesures', 100 * mesN / PLAN.mesures.length, 'var(--color-consumption)', mesN, '/ ' + PLAN.mesures.length, 'Mesures attendues', st.mesures.length + ' notée' + (st.mesures.length > 1 ? 's' : '') + ' en tout');
+    h += kpi('#decisions', null, 'i-flag', st.aTrancher.length, ' à trancher', 'Décisions', st.decisions.length + ' au total');
+    h += '</div>';
+    return h;
+  }
+  function timeline(evs) {
+    if (!evs.length) return '<p class="muted">Aucun enregistrement.</p>';
+    var ic = { seance: 'i-book', tache: 'i-check', test: 'i-check', achat: 'i-cart', decision: 'i-flag', mesure: 'i-zap', piece: 'i-printer', equipe: 'i-users' };
+    return '<ul class="tl">' + evs.map(function (e) { return '<li><span class="tl-ic">' + svgUse(ic[e.kind] || 'i-info') + '</span><span class="tl-b"><a href="' + e.href + '">' + esc(e.titre) + '</a><small>' + frDate(e.date) + (e.sub ? ' · ' + esc(e.sub) : '') + '</small></span></li>'; }).join('') + '</ul>';
+  }
+
+  function viewJournal(st) {
+    var h = '<div class="row" style="justify-content:space-between"><div class="data-status"></div><button type="button" class="btn primary" data-act="form" data-form="seance">' + svgUse('i-book') + 'Nouvelle séance</button></div>' + slotHtml();
+    if (!st.seances.length) return h + emptyState('Le journal est la mémoire du projet : une entrée par séance, cinq rubriques (présents, fait, mesures, problèmes, décisions).', 'seance');
+    st.seances.forEach(function (s, i) {
+      var id = 'se-' + i;
+      h += '<div class="card entry"><div class="entry-head"><div><h3>Séance du ' + frDate(s.date) + (s.phase != null ? ' ' + pill('p', 'phase ' + s.phase) : '') + '</h3><div class="muted">' + (s.presents.length ? 'Présents : ' + esc(s.presents.join(', ')) : 'Présents non indiqués') + (s.taches.length ? ' · ' + s.taches.length + ' tâche' + (s.taches.length > 1 ? 's' : '') + ' cochée' + (s.taches.length > 1 ? 's' : '') : '') + '</div></div><div class="row"><button type="button" class="btn sm" data-act="toggle" data-target="' + id + '" data-open="Lire" data-close="Replier">' + (i === 0 ? 'Replier' : 'Lire') + '</button><button type="button" class="btn sm" data-act="form" data-form="seance"' + preAttr({ date: s.date, presents: s.presents.join(', '), phase: s.phase == null ? '' : s.phase, taches: s.taches.join(', '), fait: s.sec.fait || '', mesures: s.sec.mesures || '', problemes: s.sec.problemes || '', decisions: s.sec.decisions || '' }) + '>Modifier</button></div></div><div class="entry-body md" id="' + id + '"' + (i === 0 ? '' : ' hidden') + '>' + (md(s.body) || '<p class="muted">Entrée vide.</p>') + (s.taches.length ? '<p class="muted"><strong>Tâches cochées :</strong> ' + s.taches.map(function (t) { return '<code>' + esc(t) + '</code> ' + esc(st.allTasks[t] ? st.allTasks[t].label : ''); }).join(' ; ') + '</p>' : '') + '<p class="muted" style="font-size:0.8rem">' + fileLnk(s.path) + '</p></div></div>';
+    });
+    return h;
+  }
+
+  function taskActs(st, t) {
+    var k = t[0], pct = taskPct(st, k), done = pct >= 100, DO = TASK_DO[k];
+    var prim = DO ? (DO.goto ? '<button type="button" class="btn sm primary" data-act="goto" data-page="' + DO.goto + '" data-anchor="' + DO.anchor + '">' + svgUse('i-arrow') + esc(DO.label) + '</button>' : '<button type="button" class="btn sm primary" data-act="form" data-form="' + DO.form + '"' + preAttr(DO.pre || {}) + '>' + svgUse(FORMS[DO.form] ? FORMS[DO.form].icon : 'i-git') + esc(DO.label) + '</button>') : '';
+    var manual = '<button type="button" class="btn sm' + (DO ? '' : ' primary') + '" data-act="form" data-form="tache"' + preAttr({ tache: k, avancement: done ? 0 : 100, label: t[1] }) + '>' + svgUse('i-check') + (done ? 'Modifier' : DO ? 'Noter à la main' : 'Noter l\'avancement') + '</button>';
+    return prim + manual;
+  }
+  function taskRow(st, t) {
+    var k = t[0], d = st.taches[k], a = taskAuto(st, k), pct = taskPct(st, k), done = pct >= 100, DO = TASK_DO[k];
+    var who = d && d.pct != null && d.pct >= (a ? a.pct : 0) ? (d.par ? ' · ' + esc(d.par) : '') + (d.date ? ' le ' + frDate(d.date) : '') + (d.via === 'séance' ? ' (séance)' : '') : '';
+    var meta = (done ? 'fait' : pct > 0 ? 'en cours ' + pct + ' %' : 'à faire') + who + (a ? ' · ' + esc(a.info) : '') + ' · <code>' + k + '</code>';
+    var links = (TASK_LINKS[k] || '').split(' ').filter(function (id) { return NAV_BY_ID[id] && !(DO && DO.goto === id); }).map(function (id) { return '<a class="chip" href="#' + id + '">' + svgUse(/^cours-/.test(id) ? 'i-book' : 'i-link') + esc(NAV_BY_ID[id].label) + '</a>'; }).join('');
+    var boxAct = DO && DO.form ? 'data-act="form" data-form="' + DO.form + '"' + preAttr(DO.pre || {}) : DO && DO.goto ? 'data-act="goto" data-page="' + DO.goto + '" data-anchor="' + DO.anchor + '"' : 'data-act="form" data-form="tache"' + preAttr({ tache: k, avancement: done ? 0 : 100, label: t[1] });
+    return '<div class="task' + (done ? ' done' : pct > 0 ? ' part' : '') + '" data-anchor="t-' + k + '"><div class="task-main"><button type="button" class="chk chk-btn" ' + boxAct + ' title="' + (DO ? esc(DO.label) : 'Noter l\'avancement') + '"><span class="box"' + (!done && pct > 0 ? ' style="background:linear-gradient(90deg, var(--color-primary) ' + pct + '%, transparent ' + pct + '%)"' : '') + '>' + (done ? '✓' : '') + '</span><span class="t"><span class="lbl">' + esc(t[1]) + '</span></span></button><span class="task-pct"><span class="bar thin"><span style="width:' + pct + '%' + (done ? ';background:var(--color-battery)' : '') + '"></span></span><b>' + pct + ' %</b></span></div><div class="task-foot"><small>' + meta + '</small><span class="task-acts">' + taskActs(st, t) + '</span>' + (links ? '<span class="chips"><small>voir :</small>' + links + '</span>' : '') + '</div></div>';
+  }
+  function taskBtn(st, t) { return taskRow(st, t); }
+  function phaseCard(st, p, idPrefix) {
+    var v = phasePct(st, p), c = phaseCounts(st, p), gg = p.gonogo ? gonogo(st, p) : null;
+    var anyPart = PLAN.phases.some(function (q) { var x = phasePct(st, q); return x > 0 && x < 100; });
+    var open = anyPart ? (v > 0 && v < 100) : p.n === st.phase;
+    var A = PLAN.achats.filter(function (a) { return a.phase === p.n; })[0], ap = achatPhase(st, p.n);
+    var engage = st.achats.filter(function (a) { return a.phase === p.n && a.statut !== 'prevu' && a.statut !== 'annule'; }).reduce(function (x, a) { return x + a.montant; }, 0);
+    var h = '<div class="card phase-card" data-anchor="phase-' + p.n + '" style="--ph:' + p.tint + '"><button type="button" class="ph-head' + (open ? ' open' : '') + '" data-act="fold" data-target="' + idPrefix + p.n + '" aria-expanded="' + open + '"><span class="ph-t"><span class="sw" style="background:' + p.tint + '"></span><strong>Phase ' + p.n + ' · ' + esc(p.titre) + '</strong>' + (p.n === st.phase ? ' <span class="pill p">déclarée en cours</span>' : '') + (gg ? ' ' + statutPill(gg) : '') + '<small>' + esc(p.jalon) + ' · ' + esc(p.mois) + (p.montant ? ' · ' + eur(p.montant) : '') + '</small></span><span class="ph-n">' + v + ' %</span><svg class="chev"><use href="#i-chevron"/></svg></button>' + sbar(c);
+    h += '<div class="ph-body" id="' + idPrefix + p.n + '"' + (open ? '' : ' hidden') + '>' + legend(c);
+    if (A) h += '<div class="ph-line">' + svgUse('i-cart') + '<span><strong>Commande de la phase</strong> : plan ' + eur(p.montant) + (engage ? ' · engagé ' + eur(engage) : '') + ' · ' + esc(ap.info) + '</span>' + (ap.pct < 50 ? '<button type="button" class="btn sm" data-act="form" data-form="achat"' + preAttr(achatPre(p.n)) + '>' + svgUse('i-cart') + 'Enregistrer la commande</button>' : '<a class="lnk" href="#achats">achats</a>') + '</div>';
+    h += '<div class="chklist">' + p.taches.map(function (t) { return taskRow(st, t); }).join('') + '</div>';
+    if (p.gonogo) h += '<div class="ph-line">' + svgUse('i-check') + '<span><strong>GO / NO-GO</strong> : ' + (gg ? 'décidé ' + gg : 'à décider quand le banc est validé') + '</span><button type="button" class="btn sm" data-act="form" data-form="test"' + preAttr(testPre('gonogo-2')) + '>' + svgUse('i-check') + (gg ? 'Refaire la fiche' : 'Fiche GO / NO-GO') + '</button></div>';
+    return h + '</div></div>';
+  }
+  function viewPlanning(st) {
+    var h = '<div class="data-status"></div><div class="phases">';
+    PLAN.phases.forEach(function (p) { var v = phasePct(st, p); var g = p.gonogo ? gonogo(st, p) : null; h += '<div class="phase' + (p.n === st.phase ? ' cur' : '') + '" style="--ph:' + p.tint + '" data-act="goto" data-page="planning" data-anchor="phase-' + p.n + '" role="button" tabindex="0" title="Voir les tâches de cette phase"><div class="n">Phase ' + p.n + (p.n === st.phase ? ' · en cours' : '') + '</div><div class="t">' + esc(p.titre) + '</div><div class="m">' + esc(p.mois) + '</div><div class="amt">' + eur(p.montant) + '</div>' + sbar(phaseCounts(st, p)) + '<div class="m">' + v + ' % · ' + esc(p.jalon) + (g ? ' ' + statutPill(g) : '') + '</div></div>'; });
+    h += '</div>' + slotHtml();
+    h += '<div class="note info"><svg><use href="#i-info"/></svg><div><strong>Comment lire une tâche.</strong> La case et la barre donnent son avancement ; la ligne grise dit d\'où il vient (un registre, une fiche, une liste, ou ce que quelqu\'un a noté) ; le bouton violet fait l\'action qui la prouve, déjà pré-remplie ; « voir » renvoie à la page ou au cours qui explique. Les sept phases avancent en parallèle.</div></div>';
+    PLAN.phases.forEach(function (p) { h += phaseCard(st, p, 'ph-'); });
+    return h;
+  }
+  function pieceRow(st, p, e) {
+    var ev = st.pieces[p[1] + '#' + e], st2 = ev ? ev.statut : 'a_imprimer', nxt = NEXT_STATUT[st2] || 'imprimee';
+    var cls = st2 === 'a_refaire' ? ' bad' : (st2 === 'controlee' || st2 === 'montee') ? ' done' : st2 === 'imprimee' ? ' part' : '';
+    var box = st2 === 'a_refaire' ? '✕' : (st2 === 'controlee' || st2 === 'montee') ? '✓' : '';
+    var meta = PIECE_LABELS[st2] + (ev ? (ev.par ? ' · ' + esc(ev.par) : '') + (ev.date ? ' le ' + frDate(ev.date) : '') + (ev.rev && ev.rev !== 'amont' ? ' · rév. ' + esc(ev.rev) : '') + (ev.note ? ' · ' + esc(ev.note.slice(0, 80)) : '') : '');
+    var acts = PIECE_STATUTS.filter(function (x) { return x !== 'a_imprimer' && x !== st2; }).map(function (x) { return '<button type="button" class="btn sm' + (x === nxt ? ' primary' : '') + '" data-act="form" data-form="piece"' + preAttr(piecePre(p[1], e, ev, x)) + '>' + esc(PIECE_LABELS[x].charAt(0).toUpperCase() + PIECE_LABELS[x].slice(1)) + '</button>'; }).join('');
+    return '<div class="task piece-row' + cls + '" data-anchor="pc-' + p[1] + '-' + e + '"><div class="task-main"><button type="button" class="chk chk-btn" data-act="form" data-form="piece"' + preAttr(piecePre(p[1], e, ev)) + ' title="' + esc('Cliquer : ' + PIECE_LABELS[nxt]) + '"><span class="box"' + (st2 === 'imprimee' ? ' style="background:linear-gradient(90deg, var(--color-consumption) 50%, transparent 50%)"' : '') + '>' + box + '</span><span class="t"><span class="lbl"><code>' + esc(p[1]) + '</code> n° ' + e + ' <small class="muted">' + esc(p[3]) + '</small></span></span></button><span class="task-pct">' + statutPill(st2, PIECE_LABELS) + (ev && !isNaN(ev.masse) ? '<b>' + ev.masse + ' g</b>' : '') + '</span></div><div class="task-foot"><small>' + meta + '</small><span class="task-acts">' + acts + '</span></div></div>';
+  }
+  function viewPieces(st) {
+    var h = '<div class="row" style="justify-content:space-between"><div class="data-status"></div><button type="button" class="btn primary" data-act="form" data-form="piece">' + svgUse('i-printer') + 'Enregistrer une pièce</button></div>' + slotHtml();
+    h += '<div class="card big"><h2>' + svgUse('i-printer') + 'Le canard, pièce par pièce</h2><p class="sub">Les pièces enregistrées au registre sont en couleur, les autres en transparence. Cliquer une pièce sur le dessin ou dans la liste prépare l\'enregistrement de son état suivant. Posture « home » de la marche fournie, contours tirés du modèle de simulation.</p><div class="duck-wrap">' + duckSvg(st, 'side', 300) + duckSvg(st, 'front', 300) + '</div>' + duckLegend() + '</div>';
+    h += '<div class="kpis"><div class="kpi"><div class="v">' + st.piecesImprimees + '<small>/ ' + st.piecesTotal + '</small></div><div class="l">Imprimées</div><div class="d">imprimée, contrôlée ou montée</div></div>';
+    var cnt = {}; Object.keys(st.pieces).forEach(function (k) { var x = st.pieces[k].statut; cnt[x] = (cnt[x] || 0) + 1; });
+    ['controlee', 'montee', 'a_refaire'].forEach(function (x) { h += '<div class="kpi"><div class="v">' + (cnt[x] || 0) + '</div><div class="l">' + PIECE_LABELS[x] + '</div><div class="d">exemplaires</div></div>'; });
+    var masses = Object.keys(st.pieces).map(function (k) { return st.pieces[k].masse; }).filter(function (m) { return !isNaN(m); });
+    h += '<div class="kpi"><div class="v">' + Math.round(masses.reduce(function (a, b) { return a + b; }, 0)) + '<small>g</small></div><div class="l">Masse pesée</div><div class="d">' + masses.length + ' exemplaire' + (masses.length > 1 ? 's' : '') + ' pesé' + (masses.length > 1 ? 's' : '') + '</div></div></div>';
+    var groups = []; PLAN.pieces.forEach(function (p) { if (groups.indexOf(p[0]) < 0) groups.push(p[0]); });
+    groups.forEach(function (g) {
+      var ps = PLAN.pieces.filter(function (p) { return p[0] === g; }), tot = 0, done = 0, part = 0;
+      ps.forEach(function (p) { for (var e = 1; e <= p[2]; e++) { tot++; var ev = st.pieces[p[1] + '#' + e]; if (ev && (ev.statut === 'controlee' || ev.statut === 'montee')) done++; else if (ev && ev.statut === 'imprimee') part++; } });
+      h += '<div class="card"><h3 style="justify-content:space-between"><span>' + svgUse('i-printer') + esc(g) + ' ' + pill('p', done + part + ' / ' + tot) + '</span></h3>' + sbar({ fait: done, part: part, rest: tot - done - part }) + '<div class="chklist">';
+      ps.forEach(function (p) { for (var e = 1; e <= p[2]; e++) h += pieceRow(st, p, e); });
+      h += '</div></div>';
+    });
+    var known = {}; PLAN.pieces.forEach(function (p) { known[p[1]] = true; });
+    var autres = Object.keys(st.pieces).filter(function (k) { return !known[st.pieces[k].piece]; });
+    if (autres.length) {
+      h += '<div class="card"><h3>' + svgUse('i-printer') + 'Autres pièces (outillage, pièces modifiées)</h3><div class="tw"><table><thead><tr><th>Pièce</th><th class="num">Ex.</th><th>État</th><th>Masse</th><th>Rév.</th><th>Par</th><th>Date</th><th>Note</th><th></th></tr></thead><tbody>';
+      autres.sort().forEach(function (k) { var ev = st.pieces[k]; h += '<tr><td><code>' + esc(ev.piece) + '</code></td><td class="num">' + ev.exemplaire + '</td><td>' + statutPill(ev.statut, PIECE_LABELS) + '</td><td>' + (isNaN(ev.masse) ? '' : ev.masse + ' g') + '</td><td>' + esc(ev.rev) + '</td><td>' + esc(ev.par) + '</td><td class="nw">' + frDate(ev.date) + '</td><td>' + esc(ev.note.slice(0, 100)) + '</td><td class="nw"><button type="button" class="lnk" data-act="form" data-form="piece"' + preAttr({ piece: 'autre', piece_autre: ev.piece, exemplaire: ev.exemplaire, statut: ev.statut, masse_g: isNaN(ev.masse) ? '' : ev.masse, rev: ev.rev, par: ev.par, note: ev.note }) + '>modifier</button></td></tr>'; });
+      h += '</tbody></table></div></div>';
+    }
+    return h;
+  }
+  function viewAchats(st) {
+    var h = '<div class="row" style="justify-content:space-between"><div class="data-status"></div><button type="button" class="btn primary" data-act="form" data-form="achat">' + svgUse('i-cart') + 'Nouvel achat</button></div>' + slotHtml();
+    var prevu = st.achats.filter(function (a) { return a.statut === 'prevu'; }).reduce(function (s, a) { return s + a.montant; }, 0);
+    h += '<div class="kpis"><div class="kpi"><div class="v">' + eur(st.depense).replace(' €', '<small>€</small>') + '</div><div class="l">Engagé</div><div class="d">commandé, reçu ou remboursé</div></div><div class="kpi"><div class="v">' + eur(PLAN.budget).replace(' €', '<small>€</small>') + '</div><div class="l">Plan (socle)</div><div class="d">' + Math.round(100 * st.depense / PLAN.budget) + ' % engagé</div></div><div class="kpi"><div class="v">' + eur(prevu).replace(' €', '<small>€</small>') + '</div><div class="l">Prévu, pas commandé</div><div class="d">à valider par le bureau</div></div><div class="kpi"><div class="v">' + st.servosRecus + '<small>/ 14</small></div><div class="l">Servos reçus</div><div class="d">champ « servos » des achats reçus</div></div></div>';
+    h += '<div class="card"><h3>' + svgUse('i-cal') + 'Les six commandes du plan</h3><p class="sub">Une commande par phase, prête à enregistrer avec ses lignes ; le trésorier-acheteur ajuste le fournisseur et le montant réel. L\'écart compare le plan au montant engagé.</p><div class="tw"><table><thead><tr><th>Phase</th><th class="num">Plan</th><th class="num">Engagé</th><th class="num">Écart</th><th>État</th><th></th></tr></thead><tbody>';
+    PLAN.phases.forEach(function (p) { var e = st.achats.filter(function (a) { return a.phase === p.n && a.statut !== 'prevu' && a.statut !== 'annule'; }).reduce(function (s, a) { return s + a.montant; }, 0); if (!p.montant && !e) return; var ec = e - p.montant, ap = achatPhase(st, p.n); h += '<tr><td>Phase ' + p.n + ' · ' + esc(p.titre) + '</td><td class="num">' + eur(p.montant) + '</td><td class="num">' + eur(e) + '</td><td class="num" style="color:' + (ec > 0 ? 'var(--color-alert)' : 'var(--color-battery)') + '">' + (ec > 0 ? '+' : '') + eur(ec) + '</td><td>' + esc(ap.info) + '</td><td class="nw">' + (ap.pct < 50 ? '<button type="button" class="btn sm primary" data-act="form" data-form="achat"' + preAttr(achatPre(p.n)) + '>Enregistrer la commande</button>' : '') + '</td></tr>'; });
+    var sans = st.achats.filter(function (a) { return a.phase == null && a.statut !== 'prevu' && a.statut !== 'annule'; }).reduce(function (s, a) { return s + a.montant; }, 0);
+    if (sans) h += '<tr><td>Sans phase</td><td class="num">—</td><td class="num">' + eur(sans) + '</td><td></td><td></td><td></td></tr>';
+    h += '</tbody><tfoot><tr><td>Total</td><td class="num">' + eur(PLAN.budget) + '</td><td class="num">' + eur(st.depense) + '</td><td class="num">' + (st.depense - PLAN.budget > 0 ? '+' : '') + eur(st.depense - PLAN.budget) + '</td><td></td><td></td></tr></tfoot></table></div></div>';
+    if (!st.achats.length) return h + emptyState('Un enregistrement par commande : fournisseur, montant, phase, statut (prévu → commandé → reçu → remboursé).', 'achat');
+    h += '<div class="card"><h3>' + svgUse('i-cart') + 'Toutes les commandes</h3><div class="tw"><table><thead><tr><th>Date</th><th>Objet</th><th>Fournisseur</th><th class="num">Montant</th><th>Phase</th><th>Statut</th><th>Par</th><th></th></tr></thead><tbody>';
+    st.achats.slice().reverse().forEach(function (a, i) { h += '<tr><td class="nw">' + frDate(a.date) + '</td><td>' + esc(a.titre) + (a.body ? ' <button type="button" class="lnk" data-act="toggle" data-target="ac-' + i + '" data-open="détail" data-close="replier">détail</button><div id="ac-' + i + '" class="md" hidden>' + md(a.body) + '</div>' : '') + '</td><td>' + esc(a.fournisseur) + '</td><td class="num">' + eur(a.montant) + '</td><td>' + (a.phase != null ? a.phase : '—') + '</td><td>' + statutPill(a.statut, ACHAT_LABELS) + '</td><td>' + esc(a.par) + '</td><td class="nw"><button type="button" class="lnk" data-act="form" data-form="achat"' + preAttr({ date: a.date > todayISO() ? a.date : '', titre: a.titre, fournisseur: a.fournisseur, montant: a.montant, phase: a.phase == null ? '' : a.phase, statut: a.statut, servos: a.servos, par: a.par, lignes: a.body }) + '>modifier</button> · ' + fileLnk(a.path) + '</td></tr>'; });
+    h += '</tbody></table></div></div>';
+    return h;
+  }
+
+  function viewTests(st) {
+    var h = '<div class="row" style="justify-content:space-between"><div class="data-status"></div><button type="button" class="btn primary" data-act="form" data-form="test">' + svgUse('i-check') + 'Nouvelle fiche de test</button></div>' + slotHtml();
+    h += '<div class="card"><h3>' + svgUse('i-cal') + 'Les fiches que le plan attend</h3><p class="sub">Objectif, montage, procédure et critère de réussite sont déjà écrits ; il reste à faire l\'essai et à noter le résultat.</p><div class="tw"><table><thead><tr><th>Phase</th><th>Fiche</th><th>Critère</th><th>État</th><th></th></tr></thead><tbody>';
+    PLAN.tests.forEach(function (T) { var t = testOf(st, T.id), r = t ? (t.resultat === 'NOGO' ? 'NO-GO' : t.resultat) : ''; h += '<tr><td class="nw">' + T.phase + '</td><td><strong>' + esc(T.titre) + '</strong></td><td class="muted" style="font-size:0.85rem">' + esc(T.critere) + '</td><td class="nw">' + (t ? (r ? statutPill(r) : pill('mute', 'sans résultat')) : pill('mute', 'à faire')) + '</td><td class="nw"><button type="button" class="btn sm' + (t && r === 'GO' ? '' : ' primary') + '" data-act="form" data-form="test"' + preAttr(t ? { titre: t.titre, phase: t.phase == null ? T.phase : t.phase, resultat: r, par: t.par, objectif: t.sec.objectif || T.objectif, montage: t.sec.montage || T.montage, procedure: t.sec.procedure || T.procedure, critere: t.sec.criteredereussite || t.sec.critere || T.critere, resultat_txt: t.sec.resultat || '', decision: t.sec.decision || '' } : testPre(T.id)) + '>' + (t ? 'Refaire' : 'Rédiger') + '</button></td></tr>'; });
+    h += '</tbody></table></div></div>';
+    if (!st.tests.length) return h + emptyState('Une fiche par essai : objectif, montage, procédure, critère chiffré, résultat, décision. Sans fiche validée, pas de phase suivante.', 'test');
+    st.tests.slice().reverse().forEach(function (t, i) { h += '<div class="card entry"><div class="entry-head"><div><h3>' + esc(t.titre) + ' ' + (t.resultat ? statutPill(t.resultat === 'NOGO' ? 'NO-GO' : t.resultat) : '') + '</h3><div class="muted">' + frDate(t.date) + (t.phase != null ? ' · phase ' + t.phase : '') + who(t.par) + '</div></div><div class="row"><button type="button" class="btn sm" data-act="toggle" data-target="te-' + i + '" data-open="Lire" data-close="Replier">Lire</button><button type="button" class="btn sm" data-act="form" data-form="test"' + preAttr({ date: t.date > todayISO() ? t.date : '', titre: t.titre, phase: t.phase == null ? '' : t.phase, resultat: t.resultat === 'NOGO' ? 'NO-GO' : t.resultat, par: t.par, objectif: t.sec.objectif || '', montage: t.sec.montage || '', procedure: t.sec.procedure || '', critere: t.sec.criteredereussite || t.sec.critere || '', resultat_txt: t.sec.resultat || '', decision: t.sec.decision || '' }) + '>Modifier</button></div></div><div class="entry-body md" id="te-' + i + '" hidden>' + (md(t.body) || '<p class="muted">Fiche vide.</p>') + '<p class="muted" style="font-size:0.8rem">' + fileLnk(t.path) + '</p></div></div>'; });
+    return h;
+  }
+
+  function viewMesures(st) {
+    var h = '<div class="row" style="justify-content:space-between"><div class="data-status"></div><button type="button" class="btn primary" data-act="form" data-form="mesure">' + svgUse('i-zap') + 'Nouvelle mesure</button></div>' + slotHtml();
+    h += '<div class="note info"><svg><use href="#i-info"/></svg><div>Repères de la simulation, à comparer : masse totale 2,107 kg (tronc 0,699 ; cou + tête 0,582 ; jambe ≈ 0,41 chacune) ; tension nominale 7,4 V (2S : 6,0 à 8,4 V) ; coupure thermique des servos à 70 °C ; jeu modélisé ±0,5°.</div></div>';
+    h += '<div class="card"><h3>' + svgUse('i-cal') + 'Les mesures que le plan attend</h3><p class="sub">Chaque ligne se note d\'un clic : grandeur, objet et unité sont déjà remplis, il reste la valeur.</p><div class="tw"><table><thead><tr><th>Phase</th><th>Grandeur</th><th>Objet</th><th>Référence</th><th>Mesuré</th><th></th></tr></thead><tbody>';
+    var grp = {};
+    PLAN.mesures.forEach(function (M) {
+      if (M.group) { var g = grp[M.group] = grp[M.group] || { n: 0, tot: 0, first: null, M: M }; g.tot++; if (mesureOf(st, M)) g.n++; else if (!g.first) g.first = M; if (g.tot < 14) return; var gm = grp[M.group]; h += '<tr><td class="nw">' + M.phase + '</td><td>' + esc(M.grandeur) + '</td><td>les 14 servos (find_soft_offsets.py)</td><td class="muted">' + esc(M.ref) + '</td><td class="nw">' + (gm.n ? pill(gm.n >= gm.tot ? 'ok' : 'info', gm.n + '/' + gm.tot) : pill('mute', '0/' + gm.tot)) + '</td><td class="nw">' + (gm.first ? '<button type="button" class="btn sm primary" data-act="form" data-form="mesure"' + preAttr(mesurePre(gm.first.key)) + '>Noter ' + esc(gm.first.objet.split(' ').slice(0, 2).join(' ')) + '</button>' : '') + '</td></tr>'; return; }
+      var m = mesureOf(st, M);
+      h += '<tr><td class="nw">' + M.phase + '</td><td>' + esc(M.grandeur) + '</td><td>' + esc(M.objet) + '</td><td class="muted">' + esc(M.ref) + '</td><td class="nw">' + (m ? pill('ok', m.valeur + ' ' + m.unite) + (m.par ? ' <span class="muted">' + esc(m.par) + '</span>' : '') : pill('mute', 'à mesurer')) + '</td><td class="nw"><button type="button" class="btn sm' + (m ? '' : ' primary') + '" data-act="form" data-form="mesure"' + preAttr(mesurePre(M.key)) + '>' + (m ? 'Refaire' : 'Mesurer') + '</button></td></tr>';
+    });
+    h += '</tbody></table></div></div>';
+    if (!st.mesures.length) return h + emptyState('Une mesure = une grandeur (masse, offset, courant, tension, température, jeu), un objet (jambe droite, servo 12…), une valeur et son unité.', 'mesure');
+    var gs = []; st.mesures.forEach(function (m) { if (gs.indexOf(m.grandeur) < 0) gs.push(m.grandeur); });
+    gs.forEach(function (g) {
+      h += '<div class="card"><h3>' + svgUse('i-zap') + esc(g.charAt(0).toUpperCase() + g.slice(1)) + '</h3><div class="tw"><table><thead><tr><th>Date</th><th>Objet</th><th class="num">Valeur</th><th>Par</th><th>Note</th><th></th></tr></thead><tbody>';
+      st.mesures.filter(function (m) { return m.grandeur === g; }).slice().reverse().forEach(function (m) { h += '<tr><td class="nw">' + frDate(m.date) + '</td><td>' + esc(m.objet) + '</td><td class="num">' + esc(m.valeur) + ' ' + esc(m.unite) + '</td><td>' + esc(m.par) + '</td><td>' + esc(m.body.slice(0, 120)) + '</td><td class="nw"><button type="button" class="lnk" data-act="form" data-form="mesure"' + preAttr({ grandeur: m.grandeur, objet: m.objet, valeur: m.valeur, unite: m.unite, date: m.date, par: m.par, note: m.body }) + '>modifier</button></td></tr>'; });
+      h += '</tbody></table></div></div>';
+    });
+    return h;
+  }
+
+  function viewDecisions(st) {
+    var h = '<div class="row" style="justify-content:space-between"><div class="data-status"></div><button type="button" class="btn primary" data-act="form" data-form="decision">' + svgUse('i-flag') + 'Nouvelle décision</button></div>' + slotHtml();
+    var base = [['Chargeur 2S : le « TP4056 2S » du plan est incohérent (TP4056 = 1S)'], ['Calibre du BMS, après mesure du courant crête (phase 5)'], ['Tension d\'entrée de la carte Waveshare en 2S : mesure au banc avant les 12 servos'], ['Carte graphique (GPU) disponible pour un éventuel réentraînement']];
+    h += '<div class="card"><h3>' + svgUse('i-warn') + 'À trancher d\'après le dossier</h3><ul class="tight">' + base.map(function (b) { return '<li>' + esc(b[0]) + ' <button type="button" class="lnk" data-act="form" data-form="decision" data-pre=\'' + JSON.stringify({ titre: b[0].split(' :')[0].split(',')[0] }).replace(/'/g, '&#39;') + '\'>enregistrer la décision</button></li>'; }).join('') + '</ul></div>';
+    if (!st.decisions.length) return h + emptyState('Une décision = un titre, un statut (prise ou à trancher), et trois paragraphes : contexte, décision, conséquences.', 'decision');
+    st.decisions.slice().reverse().forEach(function (d, i) { h += '<div class="card entry"><div class="entry-head"><div><h3>' + esc(d.titre) + ' ' + statutPill(d.statut) + '</h3><div class="muted">' + frDate(d.date) + who(d.par) + '</div></div><div class="row"><button type="button" class="btn sm" data-act="toggle" data-target="de-' + i + '" data-open="Lire" data-close="Replier">Lire</button><button type="button" class="btn sm" data-act="form" data-form="decision"' + preAttr({ date: d.date > todayISO() ? d.date : '', titre: d.titre, statut: d.statut === 'atrancher' ? 'a-trancher' : d.statut, par: d.par, contexte: d.sec.contexte || '', decision: d.sec.decision || '', consequences: d.sec.consequences || '' }) + '>Modifier</button></div></div><div class="entry-body md" id="de-' + i + '" hidden>' + (md(d.body) || '<p class="muted">Sans détail.</p>') + '<p class="muted" style="font-size:0.8rem">' + fileLnk(d.path) + '</p></div></div>'; });
+    return h;
+  }
+
+  function viewEquipe(st) {
+    var rows = st.roles || PLAN.roles, pre = {};
+    PLAN.roles.forEach(function (r, i) { var f = rows.filter(function (x) { return norm(x[0]) === norm(r[0]); })[0]; pre['r' + i] = f ? f[1] : ''; });
+    pre.autres = rows.filter(function (x) { return !PLAN.roles.some(function (r) { return norm(r[0]) === norm(x[0]); }); }).map(function (x) { return x[0] + ' : ' + x[1]; }).join('\n');
+    var h = '<div class="row" style="justify-content:space-between"><div class="data-status"></div><button type="button" class="btn primary" data-act="form" data-form="equipe"' + preAttr(pre) + '>' + svgUse('i-users') + (st.rolesRec ? 'Modifier les rôles' : 'Attribuer les rôles') + '</button></div>' + slotHtml();
+    h += '<div class="tw"><table><thead><tr><th>Rôle</th><th>Qui</th></tr></thead><tbody>' + rows.map(function (r) { return '<tr><td><strong>' + esc(r[0]) + '</strong></td><td>' + (r[1] ? pill('p', r[1]) : pill('mute', 'à attribuer')) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+    h += '<p class="muted" style="font-size:0.85rem">' + (st.rolesRec ? 'Enregistré le ' + frDate(st.rolesRec.date) + (st.rolesRec.par ? ' par ' + esc(st.rolesRec.par) : '') + ' · ' + fileLnk(st.rolesRec.path) + '. Chaque nouvel enregistrement remplace le précédent ; l\'historique reste dans <code>biscalab/equipe/</code>.' : 'Rôles proposés par le dossier, personne n\'est encore enregistré. Le formulaire ci-dessus écrit le premier enregistrement dans <code>biscalab/equipe/</code>.') + '</p>';
+    return h;
+  }
+  function viewChecklist() { return ''; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     FORMULAIRES → un fichier pré-rempli dans l'éditeur GitHub
+     ══════════════════════════════════════════════════════════════════════ */
+  var FORMS = {
+    seance: { titre: 'Enregistrer une séance', dir: 'journal', page: 'journal', icon: 'i-book', aide: 'Une entrée par séance. Cinq rubriques, jamais plus. Les tâches cochées ici comptent dans le planning.',
+      fields: [['date', 'Date', 'date'], ['presents', 'Présents (prénoms, séparés par des virgules)', 'text'], ['phase', 'Phase en cours', 'phase'], ['taches', 'Tâches terminées pendant la séance', 'taches'], ['fait', 'Fait', 'textarea', 'Une ligne par chose faite, en commençant par un tiret'], ['mesures', 'Mesures', 'textarea', 'Chiffres relevés (les mesures importantes ont aussi leur propre registre)'], ['problemes', 'Problèmes', 'textarea', 'Ce qui bloque ou a surpris'], ['decisions', 'Décisions', 'textarea', 'Ce qui a été décidé (les décisions structurantes ont aussi leur propre registre)']],
+      build: function (v) { var fm = ['type: seance', 'date: ' + v.date, 'presents: ' + v.presents, 'phase: ' + v.phase]; if (v.taches) fm.push('taches: ' + v.taches); return { name: v.date + '.md', text: '---\n' + fm.join('\n') + '\n---\n## Fait\n' + (v.fait || '- ') + '\n\n## Mesures\n' + (v.mesures || '- ') + '\n\n## Problèmes\n' + (v.problemes || '- ') + '\n\n## Décisions\n' + (v.decisions || '- ') + '\n' }; } },
+    tache: { titre: 'Avancement d\'une tâche', dir: 'avancement', page: null, icon: 'i-check', aide: 'Un enregistrement par changement d\'avancement ; le dernier l\'emporte. 100 % = fait. Pour cocher plusieurs tâches d\'un coup, préférer l\'enregistrement d\'une séance.',
+      fields: [['label', 'Tâche', 'static'], ['tache', 'Identifiant', 'static'], ['avancement', 'Avancement', 'select', ['100|fait (100 %)', '75|75 %', '50|50 %', '25|25 %', '0|pas commencé (0 %)']], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['note', 'Note (facultatif)', 'text']],
+      build: function (v) { var pct = parseInt0(v.avancement) || 0; return { name: v.date + '-' + nowHHMM() + '-' + slug(v.tache) + '.md', text: '---\ntype: tache\ntache: ' + v.tache + '\navancement: ' + pct + '\nfait: ' + (pct >= 100 ? 'oui' : 'non') + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n' + (v.note ? v.note + '\n' : '') + (v.label ? '> ' + v.label + '\n' : '') }; } },
+    piece: { titre: 'Enregistrer une pièce imprimée', dir: 'pieces', page: 'pieces', icon: 'i-printer', aide: 'Un enregistrement par exemplaire et par changement d\'état. La pesée sert à comparer avec le modèle de simulation.',
+      fields: [['piece', 'Pièce', 'piece'], ['exemplaire', 'Exemplaire n°', 'number', '1'], ['statut', 'État', 'select', PIECE_STATUTS.map(function (s) { return s + '|' + PIECE_LABELS[s]; })], ['masse_g', 'Masse pesée (g, facultatif)', 'text'], ['rev', 'Révision (amont, b1, b2…)', 'text', 'amont'], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['note', 'Note (orientation, supports, défaut…)', 'textarea']],
+      build: function (v) { if (v.piece === 'autre') v.piece = slug(v.piece_autre || 'piece'); return { name: v.date + '-' + nowHHMM() + '-' + slug(v.piece) + '-' + (v.exemplaire || 1) + '.md', text: '---\ntype: piece\npiece: ' + v.piece + '\nexemplaire: ' + (v.exemplaire || 1) + '\nstatut: ' + v.statut + '\nmasse_g: ' + (v.masse_g || '') + '\nrev: ' + (v.rev || 'amont') + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n' + (v.note || '') + '\n' }; } },
+    achat: { titre: 'Enregistrer un achat', dir: 'achats', page: 'achats', icon: 'i-cart', aide: 'Une entrée par commande, au moment où elle est passée. Quand son statut change (commandé → reçu → remboursé), bouton « modifier » sur la ligne : même objet, nouveau statut. Le dernier enregistrement l\'emporte, rien n\'est compté deux fois.',
+      fields: [['titre', 'Objet (en quelques mots)', 'text'], ['fournisseur', 'Fournisseur', 'text'], ['montant', 'Montant TTC, port compris (€)', 'text'], ['phase', 'Phase', 'phase'], ['statut', 'Statut', 'select', ACHAT_STATUTS.map(function (s) { return s + '|' + ACHAT_LABELS[s]; })], ['servos', 'Nombre de servos STS3215 dans cette commande', 'number', '0'], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['lignes', 'Lignes de la commande', 'textarea', '- 1 × …']],
+      build: function (v) { return { name: v.date + '-' + nowHHMM() + '-' + slug(v.titre) + '.md', text: '---\ntype: achat\ntitre: ' + v.titre + '\nfournisseur: ' + v.fournisseur + '\nmontant: ' + v.montant + '\nphase: ' + v.phase + '\nstatut: ' + v.statut + '\nservos: ' + (v.servos || 0) + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n' + (v.lignes || '') + '\n' }; } },
+    test: { titre: 'Fiche de test', dir: 'tests', page: 'tests', icon: 'i-check', aide: 'Le critère de réussite est chiffré et écrit AVANT l\'essai. Le résultat GO d\'une fiche de phase ouvre la phase suivante.',
+      fields: [['titre', 'Titre', 'text'], ['phase', 'Phase', 'phase'], ['resultat', 'Résultat', 'select', ['GO|GO', 'NO-GO|NO-GO', 'PARTIEL|partiel', '|pas encore réalisé']], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['objectif', 'Objectif', 'textarea'], ['montage', 'Montage', 'textarea'], ['procedure', 'Procédure', 'textarea'], ['critere', 'Critère de réussite (chiffré)', 'textarea'], ['resultat_txt', 'Résultat obtenu', 'textarea'], ['decision', 'Décision', 'textarea']],
+      build: function (v) { return { name: v.date + '-' + nowHHMM() + '-' + slug(v.titre) + '.md', text: '---\ntype: test\ntitre: ' + v.titre + '\nphase: ' + v.phase + '\nresultat: ' + v.resultat + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n## Objectif\n' + (v.objectif || '') + '\n\n## Montage\n' + (v.montage || '') + '\n\n## Procédure\n' + (v.procedure || '') + '\n\n## Critère de réussite\n' + (v.critere || '') + '\n\n## Résultat\n' + (v.resultat_txt || '') + '\n\n## Décision\n' + (v.decision || '') + '\n' }; } },
+    mesure: { titre: 'Enregistrer une mesure', dir: 'mesures', page: 'mesures', icon: 'i-zap', aide: 'Une mesure = une grandeur, un objet, une valeur. Les masses se comparent au modèle (2,107 kg au total).',
+      fields: [['grandeur', 'Grandeur', 'select', ['masse|masse', 'offset|offset (zéro servo)', 'courant|courant', 'tension|tension', 'temperature|température', 'jeu|jeu mécanique', 'autonomie|autonomie', 'autre|autre']], ['objet', 'Objet mesuré (jambe droite, servo 12, pack…)', 'text'], ['valeur', 'Valeur', 'text'], ['unite', 'Unité (g, rad, A, V, °C, °, min)', 'text'], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['note', 'Conditions, instrument, remarque', 'textarea']],
+      build: function (v) { return { name: v.date + '-' + nowHHMM() + '-' + slug(v.grandeur + '-' + v.objet) + '.md', text: '---\ntype: mesure\ngrandeur: ' + v.grandeur + '\nobjet: ' + v.objet + '\nvaleur: ' + v.valeur + '\nunite: ' + v.unite + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n' + (v.note || '') + '\n' }; } },
+    equipe: { titre: 'Attribuer les rôles', dir: 'equipe', page: 'equipe', icon: 'i-users', aide: 'Un prénom par rôle ; une même personne peut en cumuler plusieurs ; vide = à attribuer. Chaque enregistrement remplace le précédent.',
+      fields: PLAN.roles.map(function (r, i) { return ['r' + i, r[0], 'text']; }).concat([['autres', 'Autres rôles (un par ligne : Rôle : Prénom)', 'textarea'], ['date', 'Date', 'date'], ['par', 'Par', 'me']]),
+      build: function (v) { var lines = PLAN.roles.map(function (r, i) { return r[0] + ': ' + (v['r' + i] || ''); }); (v.autres || '').split('\n').forEach(function (l) { var i = l.indexOf(':'); if (i > 0) lines.push(l.slice(0, i).trim() + ': ' + l.slice(i + 1).trim()); }); return { name: v.date + '-' + nowHHMM() + '-roles.md', text: '---\ntype: equipe\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n' + lines.join('\n') + '\n' }; } },
+    decision: { titre: 'Enregistrer une décision', dir: 'decisions', page: 'decisions', icon: 'i-flag', aide: 'Trois paragraphes suffisent : le contexte, ce qu\'on décide, ce que ça entraîne. Une décision « à trancher » reste sur le tableau de bord jusqu\'à ce qu\'on la ré-enregistre (bouton Modifier) avec le statut « prise ».',
+      fields: [['titre', 'Titre', 'text'], ['statut', 'Statut', 'select', ['prise|prise', 'a-trancher|à trancher', 'annulee|annulée']], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['contexte', 'Contexte', 'textarea'], ['decision', 'Décision', 'textarea'], ['consequences', 'Conséquences', 'textarea']],
+      build: function (v) { return { name: v.date + '-' + nowHHMM() + '-' + slug(v.titre) + '.md', text: '---\ntype: decision\ntitre: ' + v.titre + '\nstatut: ' + v.statut + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n## Contexte\n' + (v.contexte || '') + '\n\n## Décision\n' + (v.decision || '') + '\n\n## Conséquences\n' + (v.consequences || '') + '\n' }; } }
+  };
+
+  var pendingForm = null, pendingAnchor = null, formSeq = 0;
+  function scrollToAnchor() { var a = pendingAnchor; pendingAnchor = null; if (!a) return; var el = document.querySelector('.page:not([hidden]) [data-anchor="' + a + '"]'); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash'); }, 1600); } }
+  function closeForm(slot) {
+    if (!slot) return;
+    var page = slot.closest('.page'); if (page && !slot.hasAttribute('data-after')) formClosedBy[page.id.replace('page-', '')] = true;
+    if (slot.hasAttribute('data-after')) slot.parentNode.removeChild(slot); else slot.innerHTML = '';
+  }
+  // Le formulaire s'ouvre dans la page, à l'endroit où l'on travaille : sous la ligne de tête de la rubrique,
+  // ou juste sous la carte dont on vient de cocher une case. Il reste ouvert tant qu'on ne le ferme pas.
+  function openForm(kind, pre, src, auto) {
+    var F = FORMS[kind]; if (!F) return;
+    pre = pre || {};
+    var cur = current || 'accueil';
+    var host = F.page || cur;
+    if (host !== cur) { pendingForm = { kind: kind, pre: pre }; location.hash = '#' + host; return; }
+    var slot, inPlace = src && src.closest && (!F.page ? src.closest('.task, .chk, .card') : src.closest('.task'));
+    if (inPlace) {
+      var card = !F.page ? (src.closest('.task') || src.closest('.chk, .card')) : src.closest('.task'); if (!card) return;
+      slot = card.nextElementSibling && card.nextElementSibling.hasAttribute('data-form-slot') ? card.nextElementSibling : null;
+      if (!slot) { slot = document.createElement('div'); slot.setAttribute('data-form-slot', ''); slot.setAttribute('data-after', card.getAttribute('data-anchor') || ('c' + (++formSeq))); if (!card.getAttribute('data-anchor')) card.setAttribute('data-anchor', slot.getAttribute('data-after')); card.parentNode.insertBefore(slot, card.nextSibling); }
+      slot.classList.add('inline-slot');
+    } else {
+      slot = $('#page-' + host + ' [data-form-slot]:not([data-after])');
+      if (!slot) return;
+    }
+    var st = data.state || fold([]);
+    var me = lsGet(ME_KEY, '');
+    var uid = 'f' + (++formSeq) + '-';
+    var h = '<div class="card form-card"><div class="entry-head"><h3>' + svgUse(F.icon || 'i-git') + esc(F.titre) + '</h3><button type="button" class="btn sm" data-act="form-close">' + svgUse('i-x') + 'Fermer</button></div>';
+    h += '<p class="sub">' + esc(F.aide) + '</p><form class="form" autocomplete="off">';
+    F.fields.forEach(function (f) {
+      var id = uid + f[0], lab = f[1], type = f[2], extra = f[3], val = pre[f[0]] != null ? pre[f[0]] : '';
+      var wide = type === 'textarea' || type === 'taches' || type === 'piece' || type === 'static' || f[0] === 'titre' || f[0] === 'presents';
+      if (type === 'static') { h += '<div class="fld' + (wide ? ' wide' : '') + '"><label>' + esc(lab) + '</label><div class="static" data-name="' + f[0] + '" data-val="' + esc(val) + '">' + esc(val) + '</div></div>'; return; }
+      h += '<div class="fld' + (wide ? ' wide' : '') + '"><label for="' + id + '">' + esc(lab) + '</label>';
+      if (type === 'date') h += '<input id="' + id + '" name="' + f[0] + '" type="date" value="' + esc(val || todayISO()) + '" required>';
+      else if (type === 'text') h += '<input id="' + id + '" name="' + f[0] + '" type="text" value="' + esc(val || extra || '') + '"' + (f[0] === 'titre' || f[0] === 'objet' || f[0] === 'valeur' ? ' required' : '') + '>';
+      else if (type === 'number') h += '<input id="' + id + '" name="' + f[0] + '" type="number" min="0" step="1" value="' + esc(val || extra || '') + '">';
+      else if (type === 'me') h += '<input id="' + id + '" name="' + f[0] + '" type="text" value="' + esc(val || me) + '" placeholder="Votre prénom" required>';
+      else if (type === 'textarea') h += '<textarea id="' + id + '" name="' + f[0] + '" rows="3" placeholder="' + esc(extra || '') + '">' + esc(val) + '</textarea>';
+      else if (type === 'select') h += '<select id="' + id + '" name="' + f[0] + '">' + extra.map(function (o) { var p = o.split('|'); return '<option value="' + esc(p[0]) + '"' + (String(val) === p[0] ? ' selected' : '') + '>' + esc(p[1]) + '</option>'; }).join('') + '</select>';
+      else if (type === 'phase') h += '<select id="' + id + '" name="' + f[0] + '">' + PLAN.phases.map(function (p) { return '<option value="' + p.n + '"' + ((val !== '' ? String(val) : String(st.phase)) === String(p.n) ? ' selected' : '') + '>Phase ' + p.n + ' · ' + esc(p.titre) + '</option>'; }).join('') + '</select>';
+      else if (type === 'piece') h += '<select id="' + id + '" name="' + f[0] + '">' + PLAN.pieces.map(function (p) { return '<option value="' + esc(p[1]) + '"' + (val === p[1] ? ' selected' : '') + '>' + esc(p[1]) + ' (' + esc(p[0]) + ', × ' + p[2] + ')</option>'; }).join('') + '<option value="autre"' + (val === 'autre' ? ' selected' : '') + '>Autre pièce (gabarit, cale, pièce modifiée…)</option></select><input type="text" name="piece_autre" value="' + esc(pre.piece_autre || '') + '" placeholder="Nom de l\'autre pièce, sans espace : gabarit-zero-servo" style="margin-top:6px">';
+      else if (type === 'taches') {
+        var preT = parseList(val);
+        h += '<div class="tgroups" id="' + id + '">';
+        PLAN.phases.forEach(function (p) {
+          var rows = p.taches.filter(function (t) { return preT.indexOf(t[0]) >= 0 || taskPct(st, t[0]) < 100; });
+          if (!rows.length) return;
+          var v = phasePct(st, p), openG = rows.some(function (t) { return preT.indexOf(t[0]) >= 0; }) || (v > 0 && v < 100) || p.n === st.phase;
+          h += '<details class="tgrp"' + (openG ? ' open' : '') + '><summary>Phase ' + p.n + ' · ' + esc(p.titre) + ' <span class="muted">(' + rows.length + ' restante' + (rows.length > 1 ? 's' : '') + ')</span></summary><div class="chklist small">' + rows.map(function (t) { var x = taskPct(st, t[0]); return '<label class="chk"><input type="checkbox" name="taches" value="' + t[0] + '"' + (preT.indexOf(t[0]) >= 0 ? ' checked' : '') + '><span class="t">' + esc(t[1]) + (x > 0 && x < 100 ? ' <small>(' + x + ' %)</small>' : '') + '</span></label>'; }).join('') + '</div></details>';
+        });
+        h += '</div><small class="muted">Cocher les tâches terminées pendant la séance, toutes phases confondues. Un avancement partiel se note depuis Travaux par phase.</small>';
+      }
+      h += '</div>';
+    });
+    h += '<div class="row wide" style="margin-top:4px"><button type="submit" class="btn primary">' + svgUse('i-git') + 'Préparer l\'enregistrement</button><button type="button" class="btn" data-act="form-close">Annuler</button></div></form><div class="f-out"></div></div>';
+    slot.innerHTML = h;
+    var body = slot.querySelector('.form-card'), form = slot.querySelector('form');
+    if (!auto) {
+      slot.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      var first = body.querySelector('input:not([type=date]):not([type=hidden]), select, textarea'); if (first) setTimeout(function () { first.focus({ preventScroll: true }); }, 350);
+    }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = {}; F.fields.forEach(function (f) {
+        if (f[2] === 'static') { v[f[0]] = pre[f[0]] || ''; return; }
+        if (f[2] === 'taches') { v[f[0]] = $$('input[name=taches]:checked', body).map(function (c) { return c.value; }).join(', '); return; }
+        var el = body.querySelector('[name="' + f[0] + '"]'); v[f[0]] = el ? el.value.trim() : '';
+      });
+      var pa = body.querySelector('[name="piece_autre"]'); if (pa) v.piece_autre = pa.value.trim();
+      if (v.par) lsSet(ME_KEY, v.par);
+      var out = F.build(v), name = out.name;
+      function taken(n) { return data.files.some(function (f) { return f.path === REPO.base + '/' + F.dir + '/' + n; }); }
+      var existing = taken(name);
+      if (existing && kind === 'seance') name = v.date + '-' + nowHHMM() + '.md';
+      for (var k2 = 2; taken(name) && k2 < 20; k2++) name = name.replace(/(-\d+)?\.md$/, '-' + k2 + '.md');
+      var url = ghNewUrl(F.dir, name, out.text), tooLong = url.length > 7000;
+      var o = '<div class="note ok"><svg><use href="#i-check"/></svg><div><strong>Fichier prêt :</strong> <code>' + esc(REPO.base + '/' + F.dir + '/' + name) + '</code>' + (existing ? ' <span class="muted">(remplace l\'enregistrement précédent du même objet)</span>' : '') + '</div></div>';
+      o += '<textarea class="io" rows="8" readonly>' + esc(out.text) + '</textarea>';
+      o += '<div class="row">' + (tooLong ? '<button type="button" class="btn primary" data-act="copy">1 · Copier le texte</button><a class="btn" href="' + ghNewUrl(F.dir, name, '') + '" target="_blank" rel="noopener">2 · Ouvrir l\'éditeur GitHub et coller</a>' : '<a class="btn primary" href="' + url + '" target="_blank" rel="noopener">' + svgUse('i-git') + 'Enregistrer sur GitHub</a><button type="button" class="btn" data-act="copy">Copier le texte</button>') + '</div>';
+      o += '<p class="muted" style="font-size:0.85rem">GitHub s\'ouvre avec le fichier déjà rempli : vérifier, puis <strong>Commit changes…</strong> deux fois. Revenir ici et cliquer « Actualiser » une minute plus tard.' + (tooLong ? ' Le texte est long : il faut le coller à la main dans l\'éditeur.' : '') + '</p>';
+      var fo = body.querySelector('.f-out'); fo.innerHTML = o; fo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  // ─── Démarrage ───
+  renderSidebar(''); renderTabs(); renderSheet('');
+  updateLessonProgress();
+  route();
+  refresh(false);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && data.when && Date.now() - data.when > 5 * 60 * 1000) refresh(true); });
+})();
+</script>

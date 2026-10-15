@@ -32,7 +32,7 @@
       <ul class="tight">
         <li>Avertissement au-delà de 50 Mio par fichier, <strong>blocage à 100 Mio</strong>, 25 Mio maximum par envoi depuis le navigateur.</li>
         <li>Les STL du canard sont petits : <strong><i class="t" data-t="git">Git</i> LFS est inutile</strong> au départ (et sa configuration demande la ligne de commande).</li>
-        <li>GitHub affiche les <strong>STL en 3D</strong> (&lt; 10 Mo) et les <strong><i class="t" data-t="csv">CSV</i> en tableau</strong> (&lt; 512 Ko) : <code>pieces.csv</code> devient un tableau consultable en ligne.</li>
+        <li>GitHub affiche les <strong>STL en 3D</strong> (&lt; 10 Mo) et les <strong><i class="t" data-t="csv">CSV</i> en tableau</strong> (&lt; 512 Ko). Les enregistrements <code>.md</code> du suivi s'affichent mis en forme.</li>
         <li>L'app GitHub Desktop n'a pas de version française ; la documentation officielle, elle, existe en français.</li>
       </ul>
     </div>
@@ -48,10 +48,16 @@
     ├── README.md             <span class="c">but, état d'avancement, liens</span>
     ├── CREDITS.md            <span class="c">attribution Apache-2.0</span>
     ├── CHANGELOG.md          <span class="c">pièces modifiées / ajoutées</span>
+    ├── <span class="d">equipe/</span>               <span class="c">← page : les rôles, un fichier par attribution</span>
+    ├── <span class="d">journal/</span>              <span class="c">← page : séances, 2026-10-08.md …</span>
+    ├── <span class="d">tests/</span>                <span class="c">← page : fiches, AAAA-MM-JJ-banc-servo.md …</span>
+    ├── <span class="d">achats/</span>               <span class="c">← page : un fichier par commande</span>
+    ├── <span class="d">pieces/</span>               <span class="c">← page : un fichier par exemplaire et par état</span>
+    ├── <span class="d">mesures/</span>              <span class="c">← page : masses, offsets, courants…</span>
+    ├── <span class="d">decisions/</span>            <span class="c">← page : prises et à trancher</span>
+    ├── <span class="d">avancement/</span>           <span class="c">← page : cases cochées des listes partagées</span>
     ├── <span class="d">docs/</span>                 <span class="c">conventions.md, securite.md, guide-github-desktop.md, photos/</span>
-    ├── <span class="d">journal/</span>              <span class="c">2026-10-08.md …</span>
-    ├── <span class="d">tests/</span>                <span class="c">fiches : 2026-11-banc-servo.md …</span>
-    ├── <span class="d">achats/</span>achats.csv
+    │   └── <span class="d">dossier-canard/</span>   <span class="c">cette page et ses sources</span>
     ├── <span class="d">cad/</span>
     │   ├── onshape-liens.md
     │   ├── <span class="d">freecad/</span>          <span class="c">*.FCStd (compression 0)</span>
@@ -59,19 +65,20 @@
     ├── <span class="d">print/</span>
     │   ├── <span class="d">stl/</span>              <span class="c">pièces modifiées / nouvelles uniquement</span>
     │   ├── <span class="d">3mf/</span>              <span class="c">un projet PrusaSlicer par plateau</span>
-    │   ├── <span class="d">profiles/</span>         <span class="c">biscalab-bundle.ini (sans imprimantes physiques)</span>
-    │   └── pieces.csv        <span class="c">suivi des 51 pièces</span>
+    │   └── <span class="d">profiles/</span>         <span class="c">biscalab-bundle.ini (sans imprimantes physiques)</span>
     ├── <span class="d">laser/</span>
     │   ├── <span class="d">svg-dxf/</span>
     │   └── <span class="d">xcs/</span>
     └── <span class="d">electronics/</span>          <span class="c">câblage, photos, BOM élec, offsets servos</span></div>
+      <p>Les dossiers marqués « ← page » se remplissent depuis cette page : chaque bouton « Enregistrer » y dépose un petit fichier texte, un enregistrement, sans passer par GitHub Desktop (mécanisme au <a href="#cours-methode">cours 4</a>). Inutile d'y créer des fichiers à la main. Pour corriger ou faire évoluer un enregistrement (un achat reçu, une décision prise), bouton « Modifier » sur la page : le formulaire revient pré-rempli, on ré-enregistre, et le dernier enregistrement l'emporte ; les précédents restent dans le dépôt, c'est l'historique.</p>
       <p class="muted" style="font-size:0.85rem">À la racine, un <code>.gitattributes</code> et un <code>.gitignore</code> (ci-contre). Le second dépôt du club, copie de <code>Open_Duck_Mini_Runtime</code> (à créer), aura son propre dossier <code>biscalab/</code> pour <code>duck_config.json</code> et les notes d'installation.</p>
     </div>
     <div class="card">
       <h2><svg><use href="#i-code"/></svg>Conventions</h2>
       <dl class="def">
         <dt>Noms de fichiers</dt><dd>minuscules, sans accents ni espaces, tirets. <strong>Jamais</strong> <code>_v2_final</code> : git garde l'historique, et les <i class="t" data-t="3mf">3MF</i> référencent les noms.</dd>
-        <dt>Révision</dt><dd>notée dans <code>pieces.csv</code> (colonne <code>rev</code>) et <code>CHANGELOG.md</code>.</dd>
+        <dt>Révision</dt><dd>notée dans le champ <code>rev</code> de l'enregistrement de la pièce (<a href="#pieces">registre des pièces</a>) et dans <code>CHANGELOG.md</code>.</dd>
+        <dt>Enregistrements</dt><dd>créés depuis la page, un fichier par objet, nom daté fabriqué par la page ; en haut, un en-tête clé : valeur entre deux lignes <code>---</code>.</dd>
         <dt>Commits</dt><dd>verbe + objet : « Ajoute gabarit zéro <i class="t" data-t="servo">servo</i> », « Corrige <i class="t" data-t="kerf">kerf</i> plaque banc ».</dd>
         <dt>Branches</dt><dd><code>prenom/sujet</code> ; un référent relit et fusionne la pull request.</dd>
         <dt>Labels</dt><dd>phases <code>phase-0</code> … <code>phase-6</code> ; métiers <code>impression</code>, <code>laser</code>, <code>cao</code>, <code>elec</code>, <code>code</code> ; suivi <code>achat</code>, <code>securite</code>, <code>bloque</code>, <code>aide-bienvenue</code>.</dd>
@@ -104,7 +111,7 @@ Thumbs.db
         <li><div><b>Pousser</b> <em>Push origin</em>, <strong>en fin de séance</strong>. Tant que ce n'est pas poussé, personne d'autre ne le voit.</div></li>
         <li><div><b>Brancher et proposer</b> <em>Current branch → New branch</em>, puis <em>Create Pull Request</em> (ouvre le navigateur). Vérifier que la cible est <code>JMTRIP/Open_Duck_Mini_Fablab</code> : <code>v2</code>, pas le dépôt d'Antoine. Un référent relit et fusionne.</div></li>
       </ol>
-      <p class="muted" style="font-size:0.85rem">Une fois par mois, Jean-Marie ou le référent clique sur <em>Sync fork → Update branch</em> (page du dépôt du club) pour récupérer les nouveautés d'Antoine ; chacun fait ensuite un Pull.</p>
+      <p class="muted" style="font-size:0.85rem">Une fois par mois, Jean-Marie ou le référent clique sur <em>Sync fork → Update branch</em> (page du dépôt du club) pour récupérer les nouveautés d'Antoine ; chacun fait ensuite un Pull. Les enregistrements du suivi (séances, pièces, achats…) ne passent pas par GitHub Desktop : ils se font depuis la page, et le Pull les ramène sur le PC comme le reste.</p>
     </div>
     <div class="card">
       <h2><svg><use href="#i-flag"/></svg>Ce que GitHub nous apporte, par priorité</h2>
@@ -126,7 +133,8 @@ Thumbs.db
 Ce travail est basé sur Open Duck Mini (V2), © Antoine Pirrone et contributeurs,
 publié sous licence Apache-2.0 (dépôt GitHub apirrone/Open_Duck_Mini)
 Les ajouts et modifications du BiscaLab (dossier biscalab/) sont publiés sous la même licence.
-Les pièces modifiées sont listées dans CHANGELOG.md et dans la colonne « rev » de print/pieces.csv.</code></pre>
+Les pièces modifiées sont listées dans CHANGELOG.md ; leur révision figure aussi
+dans le champ « rev » du registre des pièces (dossier biscalab/pieces/).</code></pre>
   </div>
 </section>
 
@@ -201,12 +209,20 @@ Les pièces modifiées sont listées dans CHANGELOG.md et dans la colonne « rev
 
   <div class="grid c2">
     <div class="card">
-      <h3><svg><use href="#i-printer"/></svg>Le suivi des pièces : <code>pieces.csv</code></h3>
-      <p>Un fichier <i class="t" data-t="csv">CSV</i> par robot, affiché en tableau par <i class="t" data-t="github">GitHub</i>. Une ligne par pièce :</p>
-<pre><code>piece,fichier,rev,qte,matiere,remplissage,couche,supports,3mf,imprimee_par,date,statut,remarque
-trunk_bottom,print/trunk_bottom.stl,amont,1,PLA,15%,0.2,oui,print/3mf/plateau-01.3mf,,,a_imprimer,inserts M3 x6 + roulements
-foot_bottom_tpu,print/foot_bottom_tpu.stl,amont,2,TPU,40%,0.2,non,print/3mf/plateau-pieds.3mf,,,a_imprimer,semelle = contact sol simulé</code></pre>
-      <p class="muted" style="font-size:0.85rem">Statuts : <code>a_imprimer</code>, <code>imprimee</code>, <code>controlee</code>, <code>montee</code>, <code>a_refaire</code>.</p>
+      <h3><svg><use href="#i-printer"/></svg>Le registre des pièces</h3>
+      <p>Le suivi des 51 pièces se tient dans la page <a href="#pieces">Registre des pièces</a> : un enregistrement par exemplaire et par changement d'état, créé avec le bouton « Enregistrer » de sa ligne. Chacun devient un petit fichier de <code>biscalab/pieces/</code> sur <i class="t" data-t="github">GitHub</i>, par exemple <code>2026-10-14-1530-trunk-bottom-1.md</code> :</p>
+<pre><code>---
+type: piece
+piece: trunk_bottom
+exemplaire: 1
+statut: imprimee
+masse_g:
+rev: amont
+date: 2026-10-14
+par: prénom
+---
+inserts M3 et roulements à poser</code></pre>
+      <p class="muted" style="font-size:0.85rem">États : <code>a_imprimer</code>, <code>imprimee</code>, <code>controlee</code>, <code>montee</code>, <code>a_refaire</code>. Pour un exemplaire, l'enregistrement le plus récent fait foi. Les réglages d'impression (matière, remplissage, supports) restent dans le 3MF du plateau.</p>
     </div>
     <div class="card">
       <h3><svg><use href="#i-link"/></svg>Formats et qui les lit</h3>

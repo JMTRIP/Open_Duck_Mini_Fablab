@@ -68,7 +68,7 @@
         <li><strong>Lot de profils partagé</strong> : <em>Fichier → Exporter → Exporter le lot de configuration</em> → <code>print/profiles/biscalab-bundle.ini</code>, commité. <strong>Jamais</strong> la variante « with Physical Printers » : elle contient clés API et adresses IP.</li>
         <li><strong>Un projet 3MF par plateau</strong> : objets, positions, modificateurs, réglages et supports peints sont embarqués. C'est notre documentation d'orientation et de supports.</li>
         <li>Nommer les plateaux par sous-ensemble : <code>plateau-pieds.3mf</code>, <code>plateau-jambe-gauche.3mf</code>…</li>
-        <li>Mettre à jour <code>pieces.csv</code> à chaque pièce sortie de la machine (statut, qui, date).</li>
+        <li>Enregistrer chaque pièce sortie de la machine dans le <a href="#pieces">registre des pièces</a> de la page (exemplaire, état, masse pesée, qui, date).</li>
       </ul>
     </div>
     <div class="card">
@@ -185,8 +185,8 @@
       <ol class="steps">
         <li><div><b>Besoin</b> Le référent ouvre une issue « Achat » : lien, quantité, prix, phase, justification.</div></li>
         <li><div><b>Validation</b> Le maître d'œuvre vérifie la cohérence avec la phase ; le bureau de l'association valide le montant.</div></li>
-        <li><div><b>Commande</b> Le trésorier-acheteur commande, seul. Il note le numéro de commande dans l'issue.</div></li>
-        <li><div><b>Réception</b> Contrôle à l'arrivée (quantité, référence exacte : « 7,4 V » sur les servos), photo dans l'issue, ligne dans <code>achats/achats.csv</code>.</div></li>
+        <li><div><b>Commande</b> Le trésorier-acheteur commande, seul. Il note le numéro de commande dans l'issue et enregistre l'achat depuis la page <a href="#achats">Achats et budget</a> (bouton « Nouvel achat », statut « commandé »).</div></li>
+        <li><div><b>Réception</b> Contrôle à l'arrivée (quantité, référence exacte : « 7,4 V » sur les servos), photo dans l'issue, statut de l'achat passé à « reçu » (le fichier de l'achat se modifie sur GitHub : on ne crée pas un second achat).</div></li>
         <li><div><b>Comptabilité</b> Facture sur le Nextcloud (pas dans le dépôt public), remboursement par note de frais.</div></li>
       </ol>
       <div class="note bad"><svg><use href="#i-warn"/></svg><div><strong>Fournisseurs</strong> : privilégier l'UE (Eckstein, OpenELAB, RobotShop EU, Kubii, RS, Mouser, Gotronic, Lextronic, NKON, Amazon.fr, Prusa). AliExpress et Temu sont exclus : frais de douane et délais. Un seul achat hors UE possible et assumé : les servos, si l'écart de prix dépasse 150 € sur 14 pièces, décision du bureau.</div></div>

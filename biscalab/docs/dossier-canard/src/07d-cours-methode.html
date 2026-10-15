@@ -16,6 +16,7 @@
     <ul>
       <li>Dire qui fait quoi chaque semaine dans l'équipe.</li>
       <li>Situer une tâche dans une phase et savoir comment on décide de passer à la suivante.</li>
+      <li>Enregistrer depuis la page une séance, une fiche de test, un achat ou une case cochée, et savoir où arrive le fichier.</li>
       <li>Rédiger une fiche de test avec un critère chiffré.</li>
       <li>Tenir le journal d'une séance et animer le point hebdomadaire.</li>
       <li>Suivre un achat de la demande à la facture.</li>
@@ -68,17 +69,63 @@
   </div>
 
   <div class="card lesson">
-    <h2>4. La fiche de test</h2>
-    <p>La fiche de test vit dans <code>biscalab/tests/</code>, en <i class="t" data-t="markdown">Markdown</i>. Le critère s'écrit <strong>avant</strong> le test, et le résultat recopie ce qu'on a lu, pas ce qu'on espérait.</p>
-    <h3>Le modèle, à recopier</h3>
-    <pre><code># Fiche de test : titre du test
-- Phase :
-- Date : AAAA-MM-JJ
-- Testeurs :
-- Issue liée : #
+    <h2>4. Le suivi : tout s'enregistre depuis la page</h2>
+    <p>Ce dossier n'est pas seulement un manuel : c'est le tableau de bord du projet. Séances, fiches de test, achats, pièces imprimées, mesures, décisions et cases cochées s'enregistrent depuis ses pages, et tout le monde voit la même chose.</p>
+    <p>L'image à garder : le carnet à souches du chantier. On remplit un formulaire tout prêt ; la souche, datée et signée, est rangée dans le bon classeur ; n'importe qui peut ouvrir le classeur. Ici, le classeur est le dossier <code>biscalab/</code> du dépôt du club, et chaque souche est un <i class="t" data-t="enregistrement">enregistrement</i> : un petit fichier texte.</p>
+    <h3>Le mécanisme, en quatre temps</h3>
+    <ol class="steps">
+      <li><div><b>Un formulaire.</b> Un bouton de la page (« Nouvelle séance », « Enregistrer une pièce », « Nouvel achat », « Nouvelle fiche de test », « Nouvelle mesure », « Nouvelle décision », ou une case du planning) déplie un formulaire dans la page, sous le bouton ou sous la case. On le remplit, puis « Préparer l'enregistrement ».</div></li>
+      <li><div><b>Un fichier texte.</b> La page écrit le fichier : son dossier, son nom daté, son contenu. On le voit avant de l'envoyer.</div></li>
+      <li><div><b>L'éditeur GitHub pré-rempli.</b> « Enregistrer sur GitHub » ouvre la page de création de fichier de <i class="t" data-t="github">GitHub</i>, déjà remplie. Rien à taper.</div></li>
+      <li><div><b>Corriger, faire évoluer.</b> On ne retouche jamais un fichier : bouton « Modifier » sur l'enregistrement, le formulaire revient pré-rempli, on change ce qu'il faut, on ré-enregistre. Le dernier enregistrement d'un même objet (même titre, même tâche, même exemplaire) l'emporte ; les précédents restent dans le dépôt et font l'historique.</div></li>
+      <li><div><b>Commit.</b> Bouton vert « Commit changes… », puis, dans la fenêtre qui s'ouvre, second « Commit changes ». Le fichier entre dans le dépôt avec un <i class="t" data-t="commit">commit</i> à votre nom. Une minute plus tard, « Actualiser » le fait apparaître sur la page. Les écrans sont décrits au <a href="#cours-git">cours 1</a>.</div></li>
+    </ol>
+    <p>Il suffit d'un compte GitHub collaborateur du dépôt du club, connecté dans le navigateur : ni GitHub Desktop, ni copie du dépôt sur le PC.</p>
+    <h3>Où arrive chaque enregistrement</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Ce qu'on enregistre</th><th>Depuis</th><th>Fichier créé dans <code>biscalab/</code></th></tr></thead>
+      <tbody>
+        <tr><td>Une séance (journal de bord)</td><td><a href="#journal">Journal des séances</a></td><td><code>journal/AAAA-MM-JJ.md</code> (corrigée : <code>AAAA-MM-JJ-HHMM.md</code>)</td></tr>
+        <tr><td>Une fiche de test</td><td><a href="#tests">Fiches de test</a></td><td><code>tests/AAAA-MM-JJ-HHMM-titre.md</code></td></tr>
+        <tr><td>Un achat</td><td><a href="#achats">Achats et budget</a></td><td><code>achats/AAAA-MM-JJ-HHMM-objet.md</code></td></tr>
+        <tr><td>Un exemplaire de pièce qui change d'état</td><td><a href="#pieces">Registre des pièces</a></td><td><code>pieces/AAAA-MM-JJ-HHMM-piece-n.md</code></td></tr>
+        <tr><td>Une mesure</td><td><a href="#mesures">Mesures</a></td><td><code>mesures/AAAA-MM-JJ-HHMM-grandeur-objet.md</code></td></tr>
+        <tr><td>Une décision</td><td><a href="#decisions">Décisions</a></td><td><code>decisions/AAAA-MM-JJ-HHMM-titre.md</code></td></tr>
+        <tr><td>L'avancement d'une tâche (0, 25, 50, 75 ou 100 %) ; beaucoup se calculent seules depuis les registres</td><td><a href="#planning">Travaux par phase</a>, <a href="#accueil">Tableau de bord</a> et listes partagées</td><td><code>avancement/AAAA-MM-JJ-HHMM-tache.md</code></td></tr>
+        <tr><td>Les rôles</td><td><a href="#equipe">Équipe et méthode</a></td><td><code>equipe/AAAA-MM-JJ-HHMM-roles.md</code></td></tr>
+      </tbody>
+    </table></div>
+    <h3>L'en-tête : ce que la page sait lire</h3>
+    <p>Chaque enregistrement commence par un <i class="t" data-t="en-tete">en-tête</i> : des lignes clé : valeur, une information par ligne, entre deux lignes <code>---</code>. La page lit ces lignes pour remplir ses tableaux et ses compteurs ; le texte libre vient dessous.</p>
+    <pre><code>---
+type: tache
+tache: p1.2
+fait: oui
+date: 2026-10-…
+par: prénom
+---
+&gt; Lot de profils PrusaSlicer exporté et commité ; pièce test inserts validée</code></pre>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Ce fichier est celui que prépare la page quand un membre coche, dans le planning, la tâche <code>p1.2</code> de la phase 1. Une fois commité, la case apparaît cochée chez tout le monde, avec le nom de celui qui l'a cochée et la date. Les cases du planning, de la première réunion, du banc servo et de la calibration sont toutes partagées de cette façon ; seules les cases « cours terminé » du parcours restent personnelles à chaque appareil.</p></div>
+    <h3>Faire évoluer un enregistrement</h3>
+    <p>Pour une pièce ou une case, chaque changement est un nouvel enregistrement, et le plus récent l'emporte : une pièce « imprimée » puis « contrôlée », une case cochée puis décochée. Pour une séance, une fiche de test, un achat ou une décision, il y a un seul fichier par objet : quand il évolue (achat reçu, décision prise, résultat d'un test), on modifie ce fichier sur GitHub, par le lien affiché à côté de l'enregistrement puis l'icône crayon.</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Réenregistrer un achat quand il arrive, au lieu de modifier son fichier : la page compte alors deux achats, et le budget engagé est faux.</div></div>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi c'est comme ça.</strong> Un fichier par enregistrement : deux membres qui enregistrent au même moment ne se gênent jamais, et l'historique de Git garde qui a enregistré quoi, et quand. C'est la règle « un éditeur par fichier » appliquée d'office.</div></div>
+  </div>
 
+  <div class="card lesson">
+    <h2>5. La fiche de test</h2>
+    <p>La fiche de test se saisit depuis la page <a href="#tests">Fiches de test</a>, bouton « Nouvelle fiche de test » ; elle devient un fichier <code>biscalab/tests/AAAA-MM-JJ-titre.md</code>, en <i class="t" data-t="markdown">Markdown</i>. Le critère s'écrit <strong>avant</strong> le test, et le résultat recopie ce qu'on a lu, pas ce qu'on espérait.</p>
+    <h3>Le modèle : ce que prépare le formulaire</h3>
+    <pre><code>---
+type: test
+titre: titre du test
+phase: numéro de la phase
+resultat: GO, NO-GO ou PARTIEL (vide tant que l'essai n'est pas fait)
+date: AAAA-MM-JJ
+par: prénoms des testeurs
+---
 ## Objectif
-Ce qu'on veut savoir, en une phrase.
+Ce qu'on veut savoir, en une phrase. Issue liée : #…
 
 ## Montage
 Matériel, versions (image, firmware, révision des pièces), photo.
@@ -87,27 +134,28 @@ Matériel, versions (image, firmware, révision des pièces), photo.
 1. …
 2. …
 
-## Critères de réussite (chiffrés)
-- [ ] …
+## Critère de réussite
+- [ ] … (chiffré)
 
 ## Résultat
-Les valeurs lues, telles quelles.
-
-## Preuves
-Photos, vidéo (dossier Nextcloud), sortie des scripts.
+Les valeurs lues, telles quelles. Preuves : photos, vidéo (dossier
+Nextcloud), sortie des scripts.
 
 ## Décision
 GO / NO-GO / à refaire, par qui, quand.</code></pre>
+    <p>On enregistre la fiche avant l'essai, critère compris. Quand l'essai est fait, on complète ce même fichier sur GitHub (Résultat, Décision et la ligne <code>resultat</code> de l'en-tête) au lieu d'en créer un second.</p>
     <h3>Exemple rempli : le banc servo</h3>
-    <pre><code># Fiche de test : banc servo
-- Phase : 2, Cerveau + banc servo
-- Date : 2026-11-…
-- Testeurs : …
-- Issue liée : #…
-
+    <pre><code>---
+type: test
+titre: Banc servo
+phase: 2
+resultat: GO
+date: 2026-11-…
+par: …
+---
 ## Objectif
 Vérifier que le Pi commande deux STS3215 par la carte Waveshare
-alimentée en 2S, avant d'acheter les 12 servos restants.
+alimentée en 2S, avant d'acheter les 12 servos restants. Issue #…
 
 ## Montage
 - Socle de banc découpé au laser
@@ -121,16 +169,14 @@ alimentée en 2S, avant d'acheter les 12 servos restants.
 2. python check_motors.py
 3. Lecture de la tension des servos 10 et 11
 
-## Critères de réussite (chiffrés)
+## Critère de réussite
 - [x] Les 2 servos répondent à check_motors et bougent de 0,1 rad
 - [x] Tension lue entre 7,2 et 8,4 V
 
 ## Résultat
 - check_motors : 10 et 11 répondent, aller-retour de 0,1 rad
 - Tension lue : … V (valeur mesurée, recopiée de l'écran)
-
-## Preuves
-Vidéo : Nextcloud Canard/2026-11-…/ ; sortie des scripts en annexe
+- Vidéo : Nextcloud Canard/2026-11-…/
 
 ## Décision
 GO pour la commande de la phase 3, prononcé au point du …,
@@ -139,23 +185,26 @@ noté au journal.</code></pre>
   </div>
 
   <div class="card lesson">
-    <h2>5. La définition de « fini »</h2>
+    <h2>6. La définition de « fini »</h2>
     <p>La <i class="t" data-t="dod">définition de « fini »</i> est la liste des conditions pour qu'une chose soit vraiment terminée. Elle évite les « c'est presque fait » qui traînent des semaines.</p>
     <ul>
-      <li><strong>Une pièce</strong> est finie quand elle est imprimée, contrôlée, ses inserts posés, sa ligne de <code>pieces.csv</code> à jour et sa photo prise.</li>
-      <li><strong>Une tâche</strong> est finie quand son issue est fermée avec une preuve : photo, mesure ou commit.</li>
-      <li><strong>Un achat</strong> est fini quand il est reçu, contrôlé, et que la facture est rangée.</li>
-      <li><strong>Un test</strong> est fini quand sa fiche est poussée sur GitHub et la décision écrite au journal.</li>
+      <li><strong>Une pièce</strong> est finie quand elle est imprimée, contrôlée, ses inserts posés, son état enregistré dans le <a href="#pieces">registre des pièces</a> et sa photo prise.</li>
+      <li><strong>Une tâche</strong> est finie quand son issue est fermée avec une preuve (photo, mesure ou commit) et sa case cochée dans le <a href="#planning">planning</a>.</li>
+      <li><strong>Un achat</strong> est fini quand il est reçu, contrôlé, son statut à jour dans la page et la facture rangée.</li>
+      <li><strong>Un test</strong> est fini quand sa fiche est enregistrée avec son résultat et la décision écrite au journal.</li>
     </ul>
   </div>
 
   <div class="card lesson">
-    <h2>6. Journal de bord et rendez-vous</h2>
+    <h2>7. Journal de bord et rendez-vous</h2>
     <h3>Le journal de bord</h3>
-    <p>Le <i class="t" data-t="journal-de-bord">journal de bord</i> est un fichier par séance, <code>biscalab/journal/AAAA-MM-JJ.md</code>, avec cinq rubriques, jamais plus. C'est la mémoire du projet : ce qui n'y est pas n'a pas existé. Le premier arrivé ouvre le fichier, le dernier parti le pousse.</p>
-    <pre><code># Séance du 2026-10-14
-## Présents
-Jean-Marie, …
+    <p>Le <i class="t" data-t="journal-de-bord">journal de bord</i> compte une entrée par séance, saisie depuis la page <a href="#journal">Journal des séances</a> (bouton « Nouvelle séance ») et rangée dans <code>biscalab/journal/AAAA-MM-JJ.md</code>. Cinq rubriques, jamais plus : les présents, dans l'en-tête, puis Fait, Mesures, Problèmes, Décisions. C'est la mémoire du projet : ce qui n'y est pas n'a pas existé. Un scribe note pendant la séance et l'enregistre avant que tout le monde parte.</p>
+    <pre><code>---
+type: seance
+date: 2026-10-14
+presents: Jean-Marie, …
+phase: 1
+---
 ## Fait
 - foot_top gauche et droit imprimés (PLA, remplissage 15 %), issue #…
 - 4 inserts M3 posés dans foot_top gauche
@@ -165,6 +214,7 @@ Jean-Marie, …
 - un insert enfoncé de travers : issue #… ouverte
 ## Décisions
 - chaque pièce est marquée G ou D au marqueur dès la sortie du plateau</code></pre>
+    <p>Si des tâches du planning ont été terminées pendant la séance, on les coche dans le formulaire : il ajoute une ligne <code>taches:</code> à l'en-tête (par exemple <code>taches: p1.2</code>), et elles comptent aussitôt dans l'avancement.</p>
     <h3>Le point hebdomadaire, 20 minutes</h3>
     <p>Debout ou presque, devant le tableau GitHub projeté, toujours dans le même ordre :</p>
     <ol>
@@ -172,7 +222,7 @@ Jean-Marie, …
       <li>Les issues <code>bloque</code> : qui débloque, et quand.</li>
       <li>Les achats en attente de validation ou de réception.</li>
       <li>Le jalon en cours : ce qui reste, la date tient-elle ?</li>
-      <li>Mise à jour du tableau à l'écran ; décisions écrites au journal.</li>
+      <li>Mise à jour du tableau à l'écran ; décisions écrites au journal, les plus importantes aussi dans <a href="#decisions">Décisions</a>.</li>
     </ol>
     <p>On ne règle pas un problème technique en séance : on crée une issue, on nomme un responsable, on passe au point suivant.</p>
     <h3>La démo mensuelle</h3>
@@ -180,21 +230,22 @@ Jean-Marie, …
   </div>
 
   <div class="card lesson">
-    <h2>7. Le circuit d'achat</h2>
+    <h2>8. Le circuit d'achat</h2>
     <ol class="steps">
       <li><div><b>Issue Achat.</b> Le demandeur remplit le modèle : article, référence exacte, quantité, fournisseur, prix, phase, ligne de la <i class="t" data-t="bom">BOM</i> (la nomenclature : liste complète des composants à acheter).</div></li>
       <li><div><b>Validation.</b> Le maître d'œuvre valide par un commentaire dans l'issue.</div></li>
-      <li><div><b>Commande.</b> Le trésorier-acheteur, et lui seul, commande. Il note la date et le numéro de commande dans l'issue.</div></li>
-      <li><div><b>Réception contrôlée.</b> On ouvre le colis à deux, on compare à la commande, on vérifie la référence et on photographie l'étiquette.</div></li>
-      <li><div><b>Facture.</b> Elle est déposée sur le Nextcloud ; note de frais si un membre a avancé l'argent ; ligne ajoutée dans <code>achats/achats.csv</code> ; issue fermée.</div></li>
+      <li><div><b>Commande.</b> Le trésorier-acheteur, et lui seul, commande. Il note la date et le numéro de commande dans l'issue, et enregistre l'achat depuis la page <a href="#achats">Achats et budget</a> (bouton « Nouvel achat ») : objet, fournisseur, montant, phase, statut « commandé », nombre de servos s'il y en a, lignes de la commande.</div></li>
+      <li><div><b>Réception contrôlée.</b> On ouvre le colis à deux, on compare à la commande, on vérifie la référence et on photographie l'étiquette. Le statut de l'achat passe à « reçu ».</div></li>
+      <li><div><b>Facture.</b> Elle est déposée sur le Nextcloud ; note de frais si un membre a avancé l'argent, statut « remboursé » une fois payé ; issue fermée.</div></li>
     </ol>
+    <p>Changer le statut, c'est ré-enregistrer l'achat depuis la page (bouton « modifier » sur sa ligne : même objet, nouveau statut), pas en créer un second avec un autre nom. La page additionne les achats commandés, reçus et remboursés pour donner le budget engagé, à comparer au plan de chaque phase.</p>
     <p>On privilégie les fournisseurs de l'Union européenne : pas de douane, délais connus.</p>
     <div class="ex"><b>Exemple sur notre canard</b><p>Commande de la phase 2 (99,55 €) : Pi Zero 2 W, carte microSD, carte Waveshare, capteur BNO055, deux STS3215. À la réception, on lit sur l'étiquette des servos « 7,4 V », le rapport 1/345 et la référence C001. Une version 12 V serait renvoyée.</p></div>
     <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Un membre commande « en passant » avec sa carte, sans issue. Le même article arrive deux fois, et personne ne sait qui rembourser.</div></div>
   </div>
 
   <div class="card lesson">
-    <h2>8. Les canaux, et comment écrire une bonne issue</h2>
+    <h2>9. Les canaux, et comment écrire une bonne issue</h2>
     <div class="tw"><table>
       <thead><tr><th>Canal</th><th>Sert à</th><th>Ne sert pas à</th></tr></thead>
       <tbody>
@@ -222,18 +273,18 @@ Responsable : un seul nom
   </div>
 
   <div class="card lesson">
-    <h2>9. Accueillir un nouveau membre</h2>
+    <h2>10. Accueillir un nouveau membre</h2>
     <ol class="steps">
       <li><div><b>Lire.</b> Lui faire lire ce dossier : l'accueil, puis le <a href="#parcours">parcours de formation</a>, en commençant par le <a href="#cours-git">cours 1</a>.</div></li>
       <li><div><b>Équiper.</b> Compte GitHub avec double authentification, invitation comme collaborateur du dépôt du club (Jean-Marie), groupe Signal, accès au Nextcloud.</div></li>
-      <li><div><b>Accompagner.</b> Un binôme pour sa première séance : on fait ensemble le pull, le commit et le push.</div></li>
+      <li><div><b>Accompagner.</b> Un binôme pour sa première séance : on fait ensemble le pull, le commit et le push, puis un premier enregistrement depuis la page.</div></li>
       <li><div><b>Confier.</b> Une première issue étiquetée <code>aide-bienvenue</code> : petite, claire, faisable en une séance, avec une preuve à la clé.</div></li>
     </ol>
-    <div class="ex"><b>Exemple sur notre canard</b><p>Issues <code>aide-bienvenue</code> typiques : peser une pièce et noter sa masse dans <code>pieces.csv</code> ; imprimer une pièce de carrosserie ; relire une fiche de test et poser une question. On en garde toujours quelques-unes en réserve sur le tableau.</p></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Issues <code>aide-bienvenue</code> typiques : peser une pièce et enregistrer sa masse depuis le <a href="#pieces">registre des pièces</a> ; imprimer une pièce de carrosserie ; relire une fiche de test et poser une question. On en garde toujours quelques-unes en réserve sur le tableau.</p></div>
   </div>
 
   <div class="card lesson">
-    <h2>10. Les 5 règles d'or</h2>
+    <h2>11. Les 5 règles d'or</h2>
     <ol>
       <li><strong>Si ce n'est pas sur GitHub (issue ou journal), ça n'existe pas.</strong> Signal sert à discuter, GitHub à décider.</li>
       <li><strong>Pull en arrivant, Push en partant.</strong> Un fichier de CAO n'a qu'un éditeur à la fois : celui qui s'est assigné l'issue.</li>
@@ -244,14 +295,15 @@ Responsable : un seul nom
   </div>
 
   <div class="card lesson">
-    <h2>11. Licence, crédits et documentation au fil de l'eau</h2>
+    <h2>12. Licence, crédits et documentation au fil de l'eau</h2>
     <h3>Apache-2.0 et CREDITS.md</h3>
     <p>Le canard est publié sous <i class="t" data-t="licence-apache">licence Apache-2.0</i> par Antoine Pirrone et Grégoire Passault. Notre dépôt du club est public : le publier, c'est redistribuer leur œuvre : licence fournie, mentions d'auteur conservées, fichiers modifiés signalés, fichier NOTICE repris s'il existe (détail au <a href="#cours-git">cours 1</a>). Aucun droit sur les marques Disney ou BDX. Notre fichier <code>biscalab/CREDITS.md</code> le dit en clair :</p>
     <pre><code>Ce travail est basé sur Open Duck Mini (V2), © Antoine Pirrone et
 contributeurs, publié sous licence Apache-2.0 (dépôt apirrone/Open_Duck_Mini).
 Les ajouts et modifications du BiscaLab (dossier biscalab/) sont publiés
-sous la même licence. Les pièces modifiées sont listées dans CHANGELOG.md
-et dans la colonne « rev » de print/pieces.csv.</code></pre>
+sous la même licence. Les pièces modifiées sont listées dans CHANGELOG.md ;
+leur révision figure aussi dans le champ « rev » du registre des pièces
+(dossier biscalab/pieces/).</code></pre>
     <h3>Documenter au fil de l'eau</h3>
     <ul>
       <li><strong>Photos à chaque étape</strong> : avant de démonter, après chaque sous-ensemble, à chaque surprise. Dossier Nextcloud <code>Canard/AAAA-MM-JJ/</code>.</li>
@@ -267,35 +319,35 @@ et dans la colonne « rev » de print/pieces.csv.</code></pre>
     <p>Matériel : un PC relié au vidéoprojecteur, le dépôt du club ouvert sur GitHub, toute l'équipe. Durée : une réunion de travail, à la suite du cours.</p>
     <ol class="steps">
       <li><div><b>Désigner un scribe</b> qui écrit pendant que les autres parlent.</div></li>
-      <li><div><b>Rédiger la fiche de test de la phase 1</b> avec le modèle. Critères proposés : les 51 pièces imprimées et cochées dans <code>pieces.csv</code> ; PLA à 15 % de remplissage, les 2 <code>foot_bottom_tpu</code> en TPU à 40 % ; inserts M3 et 3 roulements 608 en place ; pièces gauche/droite marquées ; assemblage à blanc sans forcer, photo de chaque sous-ensemble ; masse de chaque sous-ensemble notée.</div></li>
-      <li><div><b>La pousser</b> dans <code>biscalab/tests/</code>.</div></li>
+      <li><div><b>Rédiger la fiche de test de la phase 1</b> avec le modèle. Critères proposés : les 51 pièces imprimées et enregistrées « contrôlée » dans le registre des pièces ; PLA à 15 % de remplissage, les 2 <code>foot_bottom_tpu</code> en TPU à 40 % ; inserts M3 et 3 roulements 608 en place ; pièces gauche/droite marquées ; assemblage à blanc sans forcer, photo de chaque sous-ensemble ; masse de chaque sous-ensemble notée.</div></li>
+      <li><div><b>L'enregistrer</b> depuis la page <a href="#tests">Fiches de test</a>, bouton « Nouvelle fiche de test », résultat laissé « pas encore réalisé », puis Commit changes deux fois. Le fichier arrive dans <code>biscalab/tests/</code>.</div></li>
       <li><div><b>Créer les 10 premières issues</b>, avec titre, contexte, résultat attendu, responsable, étiquettes et jalon :</div></li>
     </ol>
     <div class="tw"><table>
       <thead><tr><th>Titre</th><th>Étiquettes</th></tr></thead>
       <tbody>
-        <tr><td>Attribuer les rôles et les noter dans biscalab/README.md</td><td>phase-0</td></tr>
+        <tr><td>Attribuer les rôles et les enregistrer depuis la page Équipe</td><td>phase-0</td></tr>
         <tr><td>Activer la double authentification pour tous les membres</td><td>phase-0, securite</td></tr>
         <tr><td>Rédiger et afficher securite.md</td><td>phase-0, securite</td></tr>
         <tr><td>Valider l'achat de la phase 1 (55,70 €)</td><td>phase-1, achat</td></tr>
         <tr><td>Exporter et commiter les profils PrusaSlicer</td><td>phase-1, impression</td></tr>
         <tr><td>Imprimer une pièce test pour les inserts M3</td><td>phase-1, impression</td></tr>
-        <tr><td>Créer pieces.csv avec les 51 pièces</td><td>phase-1, impression</td></tr>
+        <tr><td>Vérifier les 36 STL amont et le registre des pièces de la page</td><td>phase-1, impression</td></tr>
         <tr><td>Imprimer les 8 pièces des pieds, dont 2 en TPU</td><td>phase-1, impression</td></tr>
         <tr><td>Imprimer les 18 pièces des jambes et marquer G/D</td><td>phase-1, impression</td></tr>
         <tr><td>Imprimer tronc, cou et tête, poser roulements et inserts</td><td>phase-1, impression</td></tr>
       </tbody>
     </table></div>
-    <p><strong>Résultat attendu :</strong> la fiche de la phase 1 est sur GitHub, dix issues sont dans la colonne À faire du tableau, chacune a un responsable, et chaque membre repart avec au moins une issue.</p>
+    <p><strong>Résultat attendu :</strong> la fiche de la phase 1 apparaît dans Fiches de test, dix issues sont dans la colonne À faire du tableau, chacune a un responsable, et chaque membre repart avec au moins une issue.</p>
   </div>
 
   <div class="card">
     <h2>Auto-contrôle</h2>
-    <details class="quiz"><summary>Qui a le droit de passer une commande ?</summary><p>Le trésorier-acheteur seul, après validation de l'issue Achat par le maître d'œuvre.</p></details>
+    <details class="quiz"><summary>Qui a le droit de passer une commande, et que fait-on quand elle arrive ?</summary><p>Le trésorier-acheteur seul, après validation de l'issue Achat par le maître d'œuvre. À l'arrivée : contrôle à deux, puis le statut de l'achat passe à « reçu » en modifiant son fichier sur GitHub. Pas de second enregistrement : l'achat compterait deux fois dans le budget.</p></details>
     <details class="quiz"><summary>Pourquoi la phase 2 est-elle un GO/NO-GO ?</summary><p>Elle précède l'achat des douze servos restants. On vérifie d'abord la bonne variante de servo, la carte de commande en 2S et la réponse des servos sur le banc.</p></details>
     <details class="quiz"><summary>« Les servos marchent bien » : est-ce un bon critère de réussite ?</summary><p>Non : il n'est pas vérifiable. Mieux : « les 2 servos répondent à check_motors et bougent de 0,1 rad, tension lue entre 7,2 et 8,4 V ».</p></details>
     <details class="quiz"><summary>Une décision est prise sur Signal un soir. Que faut-il faire ?</summary><p>La recopier dans l'issue concernée ou dans le journal. Sinon, pour le projet, elle n'existe pas.</p></details>
-    <details class="quiz"><summary>Quelles sont les cinq rubriques du journal de bord ?</summary><p>Présents, Fait, Mesures, Problèmes, Décisions.</p></details>
+    <details class="quiz"><summary>Quelles sont les cinq rubriques du journal de bord, et où les saisit-on ?</summary><p>Présents, Fait, Mesures, Problèmes, Décisions. On les saisit depuis la page Journal des séances, bouton « Nouvelle séance » ; le fichier arrive dans <code>biscalab/journal/</code>.</p></details>
     <details class="quiz"><summary>À quoi sert CREDITS.md ?</summary><p>À citer les auteurs et la licence Apache-2.0 du projet d'origine, et à indiquer où sont listées nos modifications.</p></details>
   </div>
 
@@ -304,10 +356,10 @@ et dans la colonne « rev » de print/pieces.csv.</code></pre>
     <ul>
       <li>Chaque rôle a un nom ; le trésorier-acheteur est le seul à commander.</li>
       <li>Sept phases, un jalon chacune ; la phase 2 est le GO/NO-GO avant les douze servos.</li>
-      <li>Une fiche de test a un critère chiffré, écrit avant le test.</li>
-      <li>« Fini » veut dire contrôlé, noté, photographié, prouvé.</li>
+      <li>Tout s'enregistre depuis la page : formulaire, fichier texte, éditeur GitHub pré-rempli, Commit changes.</li>
+      <li>Une fiche de test a un critère chiffré, écrit avant le test ; « fini » veut dire contrôlé, enregistré, photographié, prouvé.</li>
       <li>Un journal par séance, cinq rubriques ; un point de 20 minutes par semaine ; une démo par mois.</li>
-      <li>Achat : issue, validation, commande, réception contrôlée, facture.</li>
+      <li>Achat : issue, validation, commande enregistrée, réception contrôlée (statut modifié, pas réenregistré), facture.</li>
       <li>Signal pour parler, GitHub pour décider, Nextcloud pour les photos.</li>
       <li>CREDITS.md, versions au marqueur, photos à chaque étape.</li>
     </ul>
