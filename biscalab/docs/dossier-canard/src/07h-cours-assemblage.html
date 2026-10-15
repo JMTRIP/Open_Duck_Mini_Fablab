@@ -1,0 +1,233 @@
+<!-- ═══════════════════════════ COURS 8 · ASSEMBLAGE ═══════════════════════════ -->
+<section class="page" id="page-cours-assemblage" data-title="Cours · Assembler le canard" data-sub="Visserie, inserts, roulements, jeu" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 8 · Fabrication</div>
+    <h1>Assembler le canard : visserie, inserts, roulements, jeu</h1>
+    <p class="lead">Transformer 51 pièces, 14 moteurs et des vis en un robot dont chaque articulation tourne librement, sans flottement, à la masse prévue : les gestes de base, puis l'ordre de montage du projet d'origine, commenté.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 60 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : Cours 6 (impression)</span>
+      <span class="pill p">Rôles : montage</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Choisir et serrer la bonne vis, dans un écrou noyé ou dans le plastique.</li>
+      <li>Presser un roulement sans l'abîmer.</li>
+      <li>Expliquer pourquoi le flottement des articulations compte pour la marche, et le mesurer.</li>
+      <li>Préparer un moteur avant de le monter.</li>
+      <li>Suivre l'ordre de montage du canard en connaissant les pièges de chaque étape.</li>
+      <li>Contrôler un sous-ensemble monté : mouvement libre, symétrie, masse.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. L'établi de montage</h2>
+    <dl class="def">
+      <dt>Tournevis</dt><dd>Six pans creux ou Torx (empreinte en étoile), selon les vis achetées. Vérifier l'empreinte sur une vis avant de commencer : un embout mal ajusté l'arrondit. Pas de visseuse : au tournevis, on sent le serrage.</dd>
+      <dt>Pied à coulisse</dt><dd>Vérifier une longueur de vis, un diamètre, un écart.</dd>
+      <dt>Fer Pinecil V2</dt><dd>Poser ou reprendre un <i class="t" data-t="insert">insert</i>, petit écrou en laiton noyé à chaud dans le plastique.</dd>
+      <dt>Pince plate</dt><dd>Tenir une petite pièce, retirer un reste de support.</dd>
+      <dt>Marqueur fin</dt><dd>Noter G ou D, la révision d'une pièce, le numéro d'un moteur.</dd>
+      <dt>Boîte à compartiments</dt><dd>Une case par longueur de vis, une par sous-ensemble en cours. Une vis perdue sous l'établi peut gâcher une séance.</dd>
+      <dt>Et aussi</dt><dd>Un étau à mors doux pour presser les <i class="t" data-t="roulement">roulements</i> à billes, une balance de cuisine, un <i class="t" data-t="multimetre">multimètre</i> (appareil qui mesure tensions et continuité) pour les interrupteurs des pieds.</dd>
+    </dl>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. La visserie M3</h2>
+    <h3>Lire une vis</h3>
+    <p>« M3×10 » se lit : filetage métrique (M) de 3 mm de diamètre, 10 mm de long. Le pas, distance entre deux filets, est de 0,5 mm pour une M3 standard : toutes nos vis et tous nos inserts M3 vont ensemble. La longueur se mesure sous la tête, sauf pour une tête fraisée (conique), mesurée tête comprise.</p>
+    <ul>
+      <li><strong>Tête cylindrique</strong> : haute, empreinte profonde, la plus courante.</li>
+      <li><strong>Tête bombée</strong> : basse, plus discrète.</li>
+      <li><strong>Tête fraisée</strong> : conique, elle affleure dans un trou chanfreiné.</li>
+    </ul>
+    <h3>Pourquoi un assortiment</h3>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le guide de montage <i class="t" data-t="amont">amont</i>, celui du projet d'origine, cite quelques vis (2 × M3×10 dans le tronc, 2 × M3×6 par semelle) mais ne donne ni le nombre total ni toutes les longueurs. On achète donc un assortiment M3 en 6, 8, 10 et 12 mm, et on choisit au montage.</p></div>
+    <p>Règle : une vis dans un insert doit prendre toute la longueur de l'insert sans buter au fond du trou. Trop courte, elle arrache ; trop longue, elle bute avant de serrer, ou dépasse et frotte sur une pièce mobile. On la présente à côté de l'assemblage avant de la visser.</p>
+    <h3>Dans un insert ou dans le plastique</h3>
+    <ul>
+      <li><strong>Dans un insert</strong> : métal sur métal, on démonte et on remonte autant qu'on veut.</li>
+      <li><strong>Directement dans le plastique</strong> : la vis taille son propre filet. Ça tient, mais chaque démontage l'use. On serre juste assez et on démonte le moins possible.</li>
+    </ul>
+    <h3>Serrer : à la main, sans forcer</h3>
+    <p>Pas de clé dynamométrique pour du M3 dans du plastique : on serre au tournevis tenu du bout des doigts, jusqu'au contact, puis un petit effort de plus. S'il faut forcer, quelque chose ne va pas : vis trop longue, insert de travers, mauvais trou.</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Mettre du frein filet « pour être sûr ». La Loctite 243 (frein filet démontable) est réservée aux assemblages métal sur métal. Jamais dans le plastique : le produit l'attaque et peut le faire fissurer.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. Inserts et roulements</h2>
+    <h3>Les inserts : un contrôle avant de visser</h3>
+    <p>Les inserts sont posés à l'atelier d'impression, avant le montage (procédure au <a href="#cours-impression">cours 6</a>). Au montage, on vérifie qu'une vis entre à la main sans point dur et que l'insert ne tourne pas. Sinon, on le reprend au fer avant d'aller plus loin.</p>
+    <h3>Les trois roulements 608</h3>
+    <p>Un roulement 608 est le roulement à billes standard des rollers : 8 mm de diamètre intérieur, 22 mm extérieur, 7 mm d'épaisseur. Une bague extérieure, une bague intérieure, des billes entre les deux. Le canard en a trois, pressés dans <code>trunk_bottom</code> et dans la tête, pour guider des axes en rotation.</p>
+    <ol class="steps">
+      <li><div><b>Contrôler le logement</b> Propre, rond, sans reste de support. Le roulement doit se présenter droit à l'entrée.</div></li>
+      <li><div><b>Monter à l'étau</b> Mors doux (cales de bois), pièce bien soutenue du côté opposé, et une cale (une douille, par exemple) qui appuie sur la bague extérieure seulement.</div></li>
+      <li><div><b>Presser lentement</b> En vérifiant à chaque tour de manivelle que le roulement descend droit.</div></li>
+      <li><div><b>Contrôler</b> À fond, au ras ; il tourne librement au doigt, sans point dur ni grattement.</div></li>
+    </ol>
+    <div class="note bad"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Le marteau. Le choc passe par les billes et marque leurs pistes : le roulement gratte ensuite, et le plastique autour peut se fendre. Appuyer sur la bague intérieure pour enfoncer le roulement dans son logement fait le même dégât. Jamais au marteau, toujours sur la bague qu'on emmanche.</div></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p><code>trunk_bottom</code> est l'une des pièces les plus longues à imprimer. Si le roulement résiste sous une pression modérée, on ne force pas : on reprend le logement au papier abrasif, par petites passes, en réessayant à chaque fois.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Le jeu mécanique</h2>
+    <p>Image : une poignée de porte qui tourne un peu « dans le vide » avant d'entraîner le pêne. Ce petit mouvement libre est le <i class="t" data-t="jeu">jeu mécanique</i>. Dans le canard, il a deux sources.</p>
+    <ul>
+      <li>Le <i class="t" data-t="backlash">backlash</i> : le jeu entre les dents des engrenages de chaque <i class="t" data-t="servo">servo</i>, le moteur à réducteur d'une articulation. On ne le règle pas, on le subit.</li>
+      <li>Le jeu d'assemblage : vis mal serrée, <i class="t" data-t="palonnier">palonnier</i> (la pièce vissée sur l'axe du servo) mal fixé, trou ovalisé, roulement mal pressé. Celui-là, on le supprime.</li>
+    </ul>
+    <h3>Pourquoi il compte</h3>
+    <p>Le modèle de <i class="t" data-t="simulation">simulation</i>, le robot virtuel sur lequel la marche a été apprise, suppose ±0,5° de jeu par articulation. Si nos articulations en ont nettement plus, le robot réel ne répond plus comme le robot simulé et la marche devient instable. C'est pour trop de jeu que la première version du canard a été abandonnée.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>0,5°, c'est peu : au bout d'un segment de 10 cm, un déplacement d'environ 0,9 mm. Un pied qui bouge de plusieurs millimètres quand on le secoue doucement signale un défaut d'assemblage.</p></div>
+    <h3>Le mesurer à la main</h3>
+    <ol class="steps">
+      <li><div><b>Bloquer un côté</b> Tenir fermement la pièce d'un côté de l'articulation.</div></li>
+      <li><div><b>Bouger l'autre</b> Doucement, dans le sens de rotation, d'une butée du jeu à l'autre, sans forcer.</div></li>
+      <li><div><b>Mesurer</b> Le déplacement au bout du segment (réglet ou pied à coulisse) et la distance de ce point à l'axe.</div></li>
+      <li><div><b>Calculer</b> Angle en degrés ≈ 57 × déplacement ÷ distance. Exemple : 0,9 mm à 100 mm donne environ 0,5°.</div></li>
+      <li><div><b>Noter</b> Dans le <i class="t" data-t="journal-de-bord">journal de bord</i> de la séance, articulation par articulation, à gauche et à droite.</div></li>
+    </ol>
+    <p>La mesure la plus juste se fait servo alimenté qui tient sa position, sur le montage d'essai du <a href="#cours-servos">cours servos</a> : hors tension, on sent un mélange de jeu et de résistance du réducteur.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Préparer les servos avant le montage</h2>
+    <p>Les servos du canard sont des <i class="t" data-t="sts3215">STS3215</i>. Ils sont reliés par le <i class="t" data-t="bus-serie">bus série</i>, un câble commun à 3 fils, et chacun y a un numéro, son <i class="t" data-t="id-servo">ID</i>. Tous sortent d'usine avec l'ID 1. Une fois enfouis dans une jambe, ils sont pénibles à configurer : on les prépare donc avant, sur le <i class="t" data-t="banc-servo">banc servo</i>, ce montage d'essai où un servo, la carte <i class="t" data-t="waveshare">Waveshare</i> (l'adaptateur vers le bus) et le <i class="t" data-t="raspberry-pi">Raspberry Pi</i> (l'ordinateur du robot) sont posés sur une plaque.</p>
+    <ol class="steps">
+      <li><div><b>Un seul servo</b> Brancher un seul servo neuf sur la carte.</div></li>
+      <li><div><b>Configurer</b> <code>python configure_motor.py --id N</code> : le script cherche l'ID 1, écrit les réglages (P=32, I=0, D=0, accélération 0, mode 0), donne l'ID N, puis envoie le servo en position 0.</div></li>
+      <li><div><b>Monter le palonnier</b> Sans faire tourner l'axe, le monter aligné au mieux ; le gabarit de zéro découpé au laser sert à ça.</div></li>
+      <li><div><b>Étiqueter</b> Écrire l'ID sur le servo.</div></li>
+    </ol>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Articulation</th><th class="num">Jambe droite</th><th class="num">Jambe gauche</th></tr></thead>
+        <tbody>
+          <tr><td>Hanche, lacet (<code>hip_yaw</code>)</td><td class="num">10</td><td class="num">20</td></tr>
+          <tr><td>Hanche, roulis (<code>hip_roll</code>)</td><td class="num">11</td><td class="num">21</td></tr>
+          <tr><td>Hanche, tangage (<code>hip_pitch</code>)</td><td class="num">12</td><td class="num">22</td></tr>
+          <tr><td>Genou (<code>knee</code>)</td><td class="num">13</td><td class="num">23</td></tr>
+          <tr><td>Cheville (<code>ankle</code>)</td><td class="num">14</td><td class="num">24</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="3">Cou et tête : 30 <code>neck_pitch</code>, 31 <code>head_pitch</code>, 32 <code>head_yaw</code>, 33 <code>head_roll</code></td></tr></tfoot>
+      </table>
+    </div>
+    <p>Lacet : tourner autour de la verticale, comme pour dire « non ». Roulis : basculer sur le côté. Tangage : basculer d'avant en arrière, comme pour dire « oui ».</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le servo de la cheville gauche se prépare par <code>python configure_motor.py --id 24</code>, puis reçoit son palonnier et une étiquette « 24 ».</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Brancher deux servos neufs à la fois. Tous deux ont l'ID 1 : ils répondent ensemble, et la configuration échoue ou renumérote le mauvais. Un servo à la fois.</div></div>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi l'alignement ne doit pas être parfait.</strong> Le petit écart qui reste entre le palonnier et la position idéale sera mesuré puis compensé en logiciel : c'est l'<i class="t" data-t="offset">offset</i> (<a href="#cours-calibration">cours calibration</a>). En revanche, monter le palonnier sans avoir mis le servo à 0 fausse tout le zéro de l'articulation.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. L'ordre de montage, étape par étape</h2>
+    <p>Le projet amont donne un ordre de montage, mais son guide est incomplet : pas de nombre de vis, pas toutes les photos. Le voici, commenté. Avant chaque étape, on ouvre l'assemblage <i class="t" data-t="onshape">Onshape</i>, le modèle 3D du canard (<a href="#cours-cao">cours 5</a>), et on tourne autour du sous-ensemble : c'est la meilleure notice disponible.</p>
+    <ol class="steps">
+      <li><div><b>Tronc</b> Pièces : <code>trunk_bottom</code> avec ses roulements et ses inserts (dont 4 sous la pièce), 2 vis M3×10, le servo central. Servo : le « servo central » du guide ; son rôle et son ID se vérifient sur l'assemblage avant de visser. Attention : roulements pressés à l'étau (section 3).</div></li>
+      <li><div><b>Pieds</b> Pièces : <code>foot_bottom_tpu</code> vissée sur <code>foot_bottom_pla</code> par 2 × M3×6, <code>foot_top</code>, <code>foot_side</code>, 2 <i class="t" data-t="contact-pied">contacts de pied</i> (micro-interrupteurs Omron SS-10 qui disent si le pied touche le sol). Servo : cheville, 14 à droite, 24 à gauche. Attention : le « driver side » du servo, le côté que le guide désigne ainsi, va côté <code>foot_top</code> ; le repérer sur l'assemblage. Les contacts sont pressés à force dans la semelle, bien droits.</div></li>
+      <li><div><b>Tibias</b> Pièces : <code>knee_to_ankle_left_sheet</code> ou <code>knee_to_ankle_right_sheet</code>, <code>leg_spacer</code> avec ses 4 inserts. Servo : genou, 13 / 23. Attention : pièces gauche et droite différentes, marquées G ou D.</div></li>
+      <li><div><b>Cuisses</b> Servo : hanche tangage, 12 / 22. Attention : le guide insiste, l'orientation du <code>hip_pitch</code> est importante pour la position zéro. Servo à 0, palonnier aligné, position comparée à l'assemblage avant de serrer.</div></li>
+      <li><div><b>Hanches</b> Pièces : <code>left_roll_to_pitch</code> ou <code>right_roll_to_pitch</code>, <code>roll_motor_bottom</code>, <code>roll_motor_top</code>. Servos : hanche roulis 11 / 21, hanche lacet 10 / 20. Attention : pièces gauche et droite asymétriques ; une pièce gauche ne va pas à droite.</div></li>
+      <li><div><b>Cou, tête, carte servo</b> Pièces : <code>neck_left_sheet</code>, <code>neck_right_sheet</code>, <code>head_pitch_to_yaw</code>, <code>head_yaw_to_roll</code>, <code>head_roll_mount</code>, carte Waveshare. Servos : 30 à 33. Attention : cou et tête portent 28 % de la masse. Chez un constructeur, tête et jambe ont bougé ensemble pendant une calibration et cassé des pièces (<i class="t" data-t="issue">issue</i> n° 32, une fiche de problème sur <i class="t" data-t="github">GitHub</i>) : robot toujours sur support pour ces essais.</div></li>
+      <li><div><b><i class="t" data-t="imu">IMU</i>, électronique, batterie, tête</b> Pièces : <code>head</code>, <code>head_bot_sheet</code>, l'IMU BNO055 (le capteur d'équilibre, l'oreille interne du robot), le <i class="t" data-t="pi-zero-2w">Pi Zero 2 W</i>, le pack batterie, les micro-servos de 9 g des antennes. Attention : l'IMU est montée à l'envers sur les photos amont ; c'est normal, le réglage <code>imu_upside_down</code> de <i class="t" data-t="duck-config">duck_config.json</i>, le fichier de réglages de notre robot, en tient compte. Les deux cellules <i class="t" data-t="18650">18650</i> doivent être chargées à la même tension avant d'être assemblées en pack <i class="t" data-t="2s">2S</i>, deux en série (<a href="#cours-electronique">cours électronique</a>).</div></li>
+      <li><div><b>Carrosserie</b> Pièces : <code>body_front</code>, <code>body_middle_bottom</code>, <code>body_middle_top</code>, <code>body_back</code>, <code>battery_pack_lid</code>, caches, porte-antennes. Pas de servo. Attention : en dernier, quand tout est contrôlé ; on la démontera souvent au début, donc vis dans les inserts uniquement.</div></li>
+    </ol>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Les câbles du bus</h2>
+    <p>Les servos sont reliés en chaîne, de l'un à l'autre, par le bus. Un câble pincé ou arraché, et tous les servos situés après lui disparaissent.</p>
+    <ul>
+      <li>Suivre le chemin des câbles visible sur les photos amont et dans l'assemblage Onshape.</li>
+      <li>Gaine spirale autour des faisceaux qui traversent une articulation : elle protège et regroupe sans rigidifier.</li>
+      <li>Une boucle de câble à chaque articulation, assez longue pour toute l'amplitude.</li>
+      <li>Test : bouger chaque articulation lentement d'une butée à l'autre, à la main et sans forcer, en regardant le câble. Jamais tendu, jamais coincé entre deux pièces, jamais frottant sur une arête.</li>
+    </ul>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Tester les câbles articulation au milieu seulement. Un câble se pince en bout de course, souvent la première fois que le robot s'accroupit ou tombe.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. L'assemblage à blanc de la phase 1</h2>
+    <p>En octobre, pendant la phase 1, les pièces sont imprimées, mais les servos n'arrivent qu'à partir de novembre, par lots, jusqu'en février. On monte donc le robot « à blanc » : sans servos, avec à leur place des cales imprimées de la taille d'un STS3215.</p>
+    <ul>
+      <li><strong>Cotes des cales</strong> : relevées sur le modèle du servo dans l'assemblage Onshape, puis vérifiées sur le premier servo reçu. On ne les invente pas.</li>
+      <li><strong>Trous</strong> : les cales reprennent les trous de fixation du servo, pour visser les pièces comme en vrai.</li>
+      <li><strong>Ce qu'on vérifie</strong> : emboîtements, longueurs de vis, inserts au bon endroit, chemin des câbles, symétrie gauche/droite.</li>
+      <li><strong>Ce qu'on ne vérifie pas</strong> : le jeu des articulations et la masse finale, puisque les servos manquent.</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Un défaut d'emboîtement trouvé à blanc coûte une réimpression. Le même, trouvé après avoir monté et câblé dix servos, coûte une soirée de démontage.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>9. Contrôler, marquer, prévoir</h2>
+    <h3>Après chaque sous-ensemble</h3>
+    <ul>
+      <li><strong>Mouvement</strong> : chaque articulation bouge à la main, doucement, sans frottement, sans point dur, sans grattement.</li>
+      <li><strong>Symétrie</strong> : les deux jambes côte à côte ont les mêmes vis, les mêmes positions de palonnier, la même longueur.</li>
+      <li><strong>Jeu</strong> : mesuré et noté (section 4).</li>
+      <li><strong>Masse</strong> : chaque sous-ensemble est pesé et comparé au modèle.</li>
+    </ul>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Masses du modèle de simulation</th><th class="num">Masse</th></tr></thead>
+        <tbody>
+          <tr><td>Tronc</td><td class="num">0,699 kg</td></tr>
+          <tr><td>Cou + tête (28 % du total)</td><td class="num">0,582 kg</td></tr>
+          <tr><td>Chaque jambe</td><td class="num">≈ 0,41 kg</td></tr>
+        </tbody>
+        <tfoot><tr><td>Total</td><td class="num">2,107 kg</td></tr></tfoot>
+      </table>
+    </div>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi peser.</strong> Pendant l'apprentissage, les masses ont varié de ±10 %. Un écart plus grand doit être compris avant le premier essai de marche (<a href="#cours-rl">cours sur l'apprentissage</a>). Le découpage du modèle ne correspond pas forcément à nos sous-ensembles : ce qui est compté dans le « tronc » se lit dans le fichier <i class="t" data-t="mjcf">MJCF</i> qui décrit le robot virtuel. On compare donc d'abord la masse totale, qui ne dépend d'aucun découpage.</div></div>
+    <h3>Rechanges et marquage</h3>
+    <ul>
+      <li><strong>Rechanges imprimées d'avance</strong> : les pièces « sheet » des tibias et du cou et les <code>leg_spacer</code>, fines et sollicitées, celles qu'on casse lors d'une chute ou d'une calibration ratée. Une rechange prête, et l'essai reprend le jour même.</li>
+      <li><strong>Marquage</strong> au marqueur fin, sur une face cachée : la révision (<code>amont</code>, <code>b1</code>…), la même que dans la colonne <code>rev</code> de <code>pieces.csv</code>, et G ou D pour les pièces asymétriques. Sur chaque servo, son ID.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : <code>foot_top</code> et <code>foot_bottom_pla</code> avec leurs inserts posés, <code>foot_side</code>, <code>foot_bottom_tpu</code>, 2 contacts SS-10, 2 vis M3×6, l'assortiment M3, tournevis, pied à coulisse, balance, multimètre, une cale de STS3215 si elle existe. Durée : 30 min.</p>
+    <ol class="steps">
+      <li><div><b>Vérifier les pièces</b> Statut <code>controlee</code> dans <code>pieces.csv</code> ; une vis entre à la main dans chaque insert.</div></li>
+      <li><div><b>Peser</b> Chaque pièce seule ; noter.</div></li>
+      <li><div><b>Contacts</b> Presser les 2 contacts dans la semelle, bien droits. Au multimètre, en continuité, chacun doit s'ouvrir et se fermer quand on appuie.</div></li>
+      <li><div><b>Semelle</b> Visser <code>foot_bottom_tpu</code> sur <code>foot_bottom_pla</code> avec les 2 M3×6, sans écraser le TPU.</div></li>
+      <li><div><b>Pied</b> Assembler <code>foot_top</code> et <code>foot_side</code> ; longueur de chaque vis vérifiée avant serrage. Si la cale existe, la présenter « driver side » côté <code>foot_top</code>.</div></li>
+      <li><div><b>Contrôler</b> Aucun flottement entre les pièces ; posé sur une surface plane, le pied ne bascule pas ; chargé à la main, les contacts se ferment, et ils s'ouvrent quand on le soulève.</div></li>
+      <li><div><b>Peser et noter</b> Masse du pied complet, comparée à la somme des pièces, vis et contacts. Statut <code>montee</code>, longueurs de vis utilisées et photo dans le journal de bord.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> un pied complet aux contacts fonctionnels et sa masse, qui n'est publiée nulle part : elle devient notre référence pour le second pied. La liste des vis utilisées commence à combler ce que le guide amont ne dit pas.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi jamais de Loctite 243 sur une vis plantée dans le plastique ?</summary><p>Le produit attaque le plastique et peut le faire fissurer. Il est réservé aux assemblages métal sur métal.</p></details>
+    <details class="quiz"><summary>Comment presser un roulement 608 dans <code>trunk_bottom</code> ?</summary><p>À l'étau à mors doux, pièce soutenue, cale appuyant sur la bague extérieure seulement, lentement et droit. Jamais au marteau ; si ça résiste, on reprend le logement.</p></details>
+    <details class="quiz"><summary>Pourquoi configurer chaque servo avant de le monter, et un seul à la fois ?</summary><p>Ils sortent tous d'usine avec l'ID 1 : il faut leur donner leur ID et les mettre à 0 avant de poser le palonnier. Deux servos branchés ensemble répondraient en même temps.</p></details>
+    <details class="quiz"><summary>Quel jeu la simulation suppose-t-elle, et que se passe-t-il au-delà ?</summary><p>±0,5° par articulation. Avec nettement plus, le robot réel ne répond plus comme le robot simulé et la marche devient instable.</p></details>
+    <details class="quiz"><summary>Imaginons que le canard complet pèse 2,4 kg. Que faire ?</summary><p>Environ 14 % de plus que les 2,107 kg du modèle : hors de la plage de ±10 %. Peser les sous-ensembles pour trouver l'origine, puis corriger la pièce ou mettre le modèle à jour avant d'essayer la marche.</p></details>
+    <details class="quiz"><summary>Que note-t-on au marqueur sur une pièce ?</summary><p>Sa révision (celle de la colonne <code>rev</code> de <code>pieces.csv</code>) et G ou D si elle est asymétrique, sur une face cachée.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>Assortiment M3 en 6, 8, 10 et 12 mm ; une vis dans un insert prend toute sa longueur sans buter.</li>
+      <li>Serrer à la main, sans forcer ; Loctite 243 uniquement métal sur métal.</li>
+      <li>Roulement 608 pressé à l'étau, sur la bague qu'on emmanche, jamais au marteau.</li>
+      <li>La simulation suppose ±0,5° de jeu : on supprime le jeu d'assemblage, on mesure et on note le reste.</li>
+      <li>Chaque servo reçoit son ID et sa position 0 avant montage, un à la fois ; palonnier aligné ensuite.</li>
+      <li>Ordre : tronc, pieds, tibias, cuisses, hanches, cou et tête, électronique, carrosserie ; assemblage Onshape ouvert à chaque étape.</li>
+      <li>Câbles testés sur toute l'amplitude ; rien de pincé en bout de course.</li>
+      <li>On pèse : tronc 0,699 kg, cou et tête 0,582 kg, jambe ≈ 0,41 kg, total 2,107 kg, à ±10 %.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-electronique">Électronique</a>.</p>
+  </div>
+</section>

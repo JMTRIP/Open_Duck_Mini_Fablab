@@ -1,0 +1,209 @@
+<section class="page" id="page-cours-securite" data-title="Cours · Sécurité" data-sub="Batteries, laser, banc, robot" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 12 · Électronique</div>
+    <h1>Sécurité : batteries, laser, banc d'essai et robot</h1>
+    <p class="lead">Les gestes qui évitent de se brûler, de mettre le feu à l'atelier ou de casser le robot. Court, mais obligatoire avant de toucher à une batterie, au laser ou au banc.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 30 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : aucun</span>
+      <span class="pill p">Rôles : tout le monde</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Expliquer pourquoi une batterie Li-ion peut prendre feu, et charger, stocker et manipuler les cellules sans danger.</li>
+      <li>Appliquer les règles du laser et du fer à souder.</li>
+      <li>Préparer un essai au banc ou une marche sans risque pour les mains ni pour les pièces.</li>
+      <li>Réagir à une fumée, une odeur, un servo brûlant, une chute ou une coupure.</li>
+      <li>Rédiger et afficher la consigne de sécurité du projet.</li>
+    </ul>
+    <p><strong>Prérequis :</strong> aucun. Les cours <a href="#cours-electronique">L'électronique du robot</a> et sur la <a href="#cours-laser">découpe laser</a> donnent le contexte.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Pourquoi un cours à part</h2>
+    <p>La plupart des erreurs du projet coûtent une pièce à réimprimer. Trois familles d'erreurs, elles, blessent ou brûlent :</p>
+    <ul>
+      <li><strong>les batteries <i class="t" data-t="li-ion">lithium-ion</i></strong> (Li-ion), qui peuvent s'enflammer seules et violemment ;</li>
+      <li><strong>le laser</strong>, qui découpe en brûlant la matière : flammes, fumées, rayonnement ;</li>
+      <li><strong>les pièces en mouvement</strong> : un <i class="t" data-t="servo">servo</i> (le moteur d'une articulation) qui démarre pince les doigts et peut casser le robot.</li>
+    </ul>
+    <p>S'y ajoutent le fer à souder et les erreurs électriques. Chaque règle ci-dessous a une raison : on la donne, pour qu'elle soit comprise et pas seulement obéie.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Les batteries Li-ion</h2>
+    <h3>Ce qui se passe quand ça tourne mal</h3>
+    <p>Une cellule Li-ion, comme les deux <i class="t" data-t="18650">18650</i> du pack (des cylindres de 18 mm sur 65 mm), stocke beaucoup d'énergie dans peu de place. Lors d'un <i class="t" data-t="court-circuit">court-circuit</i> (le plus et le moins reliés directement), d'une surcharge ou d'un choc, elle chauffe. Au-delà d'un certain point, la réaction chimique produit elle-même sa chaleur et s'accélère : c'est l'<strong>emballement thermique</strong>. La cellule dégaze, s'enflamme, peut projeter des matériaux brûlants et dégage des fumées toxiques. Ce feu entretient sa propre chaleur : un peu d'eau ne l'éteint pas, et il peut repartir après avoir semblé éteint.</p>
+    <h3>Règles de charge</h3>
+    <ul>
+      <li><strong>Jamais de charge sans surveillance.</strong> Quelqu'un reste dans la pièce du début à la fin.</li>
+      <li>Sur une surface incombustible, dans un sac ou une boîte ignifuge, loin de tout ce qui brûle.</li>
+      <li>On arrête tout si une cellule chauffe, gonfle ou sent : on débranche le chargeur, on ne touche plus la cellule, on surveille.</li>
+      <li>Un chargeur <strong><i class="t" data-t="2s">2S</i></strong>, prévu pour deux cellules en série. Le « TP4056 2S » du plan d'achat est incohérent : le TP4056 est un circuit pour une seule cellule. À remplacer avant la phase 6.</li>
+      <li>Les deux cellules sont chargées <strong>à la même tension</strong> avant d'être mises en série. En série, le même courant traverse les deux ; si l'une part plus haut, elle atteint sa tension maximale avant l'autre et serait surchargée.</li>
+      <li>Le <i class="t" data-t="bms">BMS</i>, la carte de protection du pack, est obligatoire : il coupe en cas de tension trop haute ou trop basse et de courant excessif.</li>
+    </ul>
+    <h3>Stockage et manipulation</h3>
+    <ul>
+      <li>Stockage à environ 50 % de charge, <strong>hors du robot</strong>, dans une boîte métallique identifiée.</li>
+      <li>Pôles toujours protégés : capuchon, ruban isolant ou support. Jamais une cellule en vrac dans une poche avec des clés ou une boîte avec des vis.</li>
+      <li>Une cellule tombée, cabossée ou dont la gaine est abîmée ne sert plus. On l'isole et on la dépose dans un point de collecte des piles.</li>
+    </ul>
+    <h3>En cas de départ de feu</h3>
+    <ol class="steps">
+      <li><div><b>Évacuer</b> Faire sortir tout le monde, fermer la porte derrière soi.</div></li>
+      <li><div><b>Alerter</b> Appeler les pompiers (18, ou 112, le numéro d'urgence européen) en précisant « feu de batterie lithium ».</div></li>
+      <li><div><b>N'intervenir que si c'est petit</b> Et seulement si l'on sait faire : sable sec sur la cellule, ou extincteur adapté aux batteries lithium.</div></li>
+      <li><div><b>Ne pas respirer les fumées</b> Elles sont toxiques. On ne reste pas dans la pièce pour regarder.</div></li>
+    </ol>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> « Je lance la charge et je reviens dans dix minutes. » C'est précisément pendant ces dix minutes qu'un défaut de charge se transforme en feu. Si personne ne peut rester, on ne charge pas.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. Le laser</h2>
+    <p>Notre découpeuse est une xTool P2S, un <i class="t" data-t="laser-co2">laser CO₂</i> de 55 W : un faisceau infrarouge invisible qui brûle la matière le long du tracé. Brûler veut dire flammes possibles et fumées.</p>
+    <ul>
+      <li><strong>Jamais de découpe sans quelqu'un devant la machine</strong>, du début à la fin.</li>
+      <li><strong>Extraction des fumées en marche</strong> avant de lancer la coupe.</li>
+      <li><strong>Extincteur CO₂</strong> à portée de main, à côté de la machine.</li>
+      <li><strong>Surveiller l'acrylique</strong> (PMMA) : il s'enflamme facilement. Une flamme qui persiste derrière la tête de coupe, on met en pause.</li>
+      <li><strong>Ne jamais ouvrir le capot pendant la coupe.</strong></li>
+      <li>Pour la protection des yeux, on suit la notice de la machine.</li>
+    </ul>
+    <h3>Les matériaux interdits, et pourquoi</h3>
+    <p>Matériaux autorisés : contreplaqué de peuplier, acrylique coulé (PMMA). La liste des interdits est affichée près de la machine, avec la raison :</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Matériau interdit</th><th>Raison</th></tr></thead>
+        <tbody>
+          <tr><td>PVC, vinyle (y compris certains adhésifs et similicuirs)</td><td>Dégage du chlore : gaz toxique et corrosif qui attaque aussi la machine.</td></tr>
+          <tr><td>ABS</td><td>Fond au lieu de se couper ; fumées toxiques.</td></tr>
+          <tr><td>Polycarbonate</td><td>Se coupe mal, noircit et s'enflamme ; fumées nocives.</td></tr>
+          <tr><td>Polystyrène expansé</td><td>Fond et s'enflamme très facilement.</td></tr>
+          <tr><td>Fibre de carbone enduite</td><td>La résine dégage des fumées nocives.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Découper une chute de plastique « qui ressemble à de l'acrylique ». Matériau inconnu = matériau interdit, jusqu'à preuve du contraire.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Le fer à souder</h2>
+    <p>Le Pinecil V2 chauffe vite et reste chaud un moment après l'arrêt.</p>
+    <ul>
+      <li><strong>Brûlures :</strong> le fer toujours reposé sur son support, jamais sur la table ; on ne rattrape pas un fer qui tombe.</li>
+      <li><strong>Fumées de flux :</strong> on aère et on ne se penche pas au-dessus de la soudure.</li>
+      <li><strong>Jamais de soudure sous tension</strong>, et jamais sur une cellule Li-ion : la chaleur l'abîme.</li>
+      <li>On débranche le fer en partant.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Le banc d'essai</h2>
+    <p>Au <i class="t" data-t="banc-servo">banc servo</i> comme sur le robot en cours de mise au point, on n'utilise pas la batterie : on la remplace par une <i class="t" data-t="alim-labo">alimentation de laboratoire</i>, réglée à 7,4 V et <strong>limitée en courant</strong>. Si un fil se touche ou un servo se bloque, elle plafonne le courant au lieu de tout donner comme une batterie.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Montage</th><th>Tension</th><th>Limite de courant</th></tr></thead>
+        <tbody>
+          <tr><td>Banc avec 1 ou 2 servos</td><td>7,4 V</td><td>3 A</td></tr>
+          <tr><td>Robot complet</td><td>7,4 V</td><td>10 A</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li><strong>Mains hors des articulations</strong> dès qu'un <i class="t" data-t="script">script</i> (programme lancé sur le <i class="t" data-t="raspberry-pi">Raspberry Pi</i>, le mini-ordinateur du robot) peut faire bouger un servo. On annonce à voix haute avant de lancer.</li>
+      <li>On garde la main près du bouton de sortie de l'alimentation pour tout couper.</li>
+      <li><strong>Robot sur support</strong>, pieds dans le vide, pour les scripts de calibration.</li>
+    </ul>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Remonter la limite de courant parce que l'alimentation « plafonne ». Si elle plafonne, c'est qu'un servo force ou qu'un fil se touche : on coupe et on cherche la cause, on ne retire pas la protection.</div></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le script <code>find_soft_offsets.py</code> mesure le décalage de zéro de chaque articulation. Un autre constructeur a vu la tête et une jambe bouger en même temps pendant ce script, et des pièces ont cassé (<i class="t" data-t="issue">issue</i> #32 du logiciel embarqué, une fiche de discussion de son dépôt). D'où la règle : robot sur support, rien autour, personne les mains dedans.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Le robot en marche</h2>
+    <ul>
+      <li><strong>Potence aux premiers essais.</strong> La <i class="t" data-t="potence">potence</i> est un support avec une sangle qui retient le robot s'il tombe, sans le porter.</li>
+      <li><strong>Sol plat et dégagé</strong>, pas de câble ni d'outil qui traîne, personne dans le passage.</li>
+      <li><strong>Bouton A toujours à portée.</strong> Le robot démarre en pause ; le bouton A de la manette lance et arrête la marche.</li>
+      <li><strong>Pas de bouton Y.</strong> Il active le contrôle de la tête, que l'auteur du projet lui-même juge capable de casser la tête du robot.</li>
+      <li><strong>Servos chauds :</strong> à 70 °C, un servo se coupe tout seul et le robot s'effondre. On laisse refroidir avant de reprendre.</li>
+      <li>On ne rattrape pas un robot qui tombe par les jambes : les articulations pincent.</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Premier essai de marche : robot accroché à la potence, une personne à la manette, le pouce sur A, une autre à côté de l'interrupteur, et tout le monde hors de la zone où il peut tomber. On garde la même répartition des rôles tant que la marche n'est pas fiable.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. L'électricité : trois réflexes</h2>
+    <ul>
+      <li><strong>Jamais 5 V sur une <i class="t" data-t="gpio">GPIO</i></strong>, ces broches d'entrée-sortie du Pi qui fonctionnent en 3,3 V et grillent sans prévenir.</li>
+      <li><strong>Jamais inverser + et −</strong> : rouge = plus, on vérifie au multimètre avant le premier branchement.</li>
+      <li><strong>Couper avant de brancher ou débrancher</strong> le bus des servos ou un connecteur de puissance.</li>
+    </ul>
+    <p>Et un piège à connaître : un <i class="t" data-t="multimetre">multimètre</i> laissé en mode courant se comporte comme un simple fil. Posé sur la batterie, il la met en court-circuit. Après chaque mesure de courant, on remet le fil rouge sur la douille V/Ω.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Affichage, rangement et « que faire si »</h2>
+    <p>Une règle qu'on ne voit pas n'existe pas. Le dépôt du projet contient un fichier <code>securite.md</code>, imprimé et affiché au poste de travail. Il tient sur une page :</p>
+    <ul>
+      <li>les règles de charge et de stockage des batteries ;</li>
+      <li>les règles du laser et la liste des matériaux interdits ;</li>
+      <li>les réglages du banc (7,4 V, 3 A ou 10 A) ;</li>
+      <li>l'emplacement de l'extincteur, du sable, du sac ignifuge ;</li>
+      <li>qui prévenir : le responsable de la séance, Jean-Marie (maître d'œuvre du projet), les pompiers.</li>
+    </ul>
+    <p>La boîte métallique des batteries porte une étiquette « Li-ion », et elle a une place fixe, connue de tous.</p>
+    <h3>Que faire si</h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Situation</th><th>Réflexe</th></tr></thead>
+        <tbody>
+          <tr><td>Fumée qui sort d'une batterie ou du robot</td><td>Ne pas toucher. Éloigner les personnes, évacuer, alerter. Sable ou extincteur adapté seulement si c'est petit et qu'on sait faire.</td></tr>
+          <tr><td>Odeur de chaud ou de plastique</td><td>Couper l'alimentation (sortie de l'alimentation de labo ou interrupteur du robot). Chercher la source sans toucher les pièces nues. Noter dans le journal.</td></tr>
+          <tr><td>Servo brûlant</td><td>Couper, laisser refroidir. Chercher la cause : blocage, frottement, pièce qui force. Ne pas reprendre avant de l'avoir trouvée.</td></tr>
+          <tr><td>Robot tombé</td><td>Bouton A, puis couper. Inspecter les pièces et la batterie : une cellule cabossée est hors service.</td></tr>
+          <tr><td>Coupure : le robot s'effondre</td><td>Couper l'interrupteur. Mesurer la tension du pack, vérifier la température des servos, noter dans le journal avant de relancer.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : imprimante, sac ou boîte ignifuge, plaque incombustible, extincteur, banc servo avec son alimentation de laboratoire. Durée : 20 min.</p>
+    <ol class="steps">
+      <li><div><b>Rédiger <code>securite.md</code></b> À partir des rubriques de la section 8, en phrases courtes. Le faire relire par un deuxième membre, l'imprimer, l'afficher.</div></li>
+      <li><div><b>Préparer le poste de charge</b> Plaque incombustible, sac ou boîte ignifuge, extincteur à portée, consigne affichée au-dessus. Vérifier qu'aucun objet inflammable n'est à côté.</div></li>
+      <li><div><b>Répéter la coupure d'urgence</b> Au banc, une personne lance <code>check_motors.py</code>, le script qui fait bouger chaque servo. Au signal d'une autre, elle coupe la sortie de l'alimentation. Chacun le fait à tour de rôle, jusqu'à trouver le bouton sans chercher.</div></li>
+      <li><div><b>Consigner</b> Noter dans le <i class="t" data-t="journal-de-bord">journal de bord</i> (le fichier qui garde la mémoire de chaque séance) : date, présents, emplacement de l'extincteur et du sac, remarques.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> une consigne affichée et relue, un poste de charge prêt, et chaque membre capable de couper le banc sans hésiter.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi ne jette-t-on pas un verre d'eau sur une cellule Li-ion en feu ?</summary><p>L'emballement thermique entretient sa propre chaleur : un peu d'eau ne suffit pas, et le feu peut repartir. On évacue, on alerte ; sable ou extincteur adapté seulement si c'est petit.</p></details>
+    <details class="quiz"><summary>Pourquoi charger les deux cellules à la même tension avant de les mettre en série ?</summary><p>Le même courant les traverse : la plus chargée atteindrait sa tension maximale la première et serait surchargée.</p></details>
+    <details class="quiz"><summary>Un membre apporte une plaque de PVC à découper. Que répondez-vous ?</summary><p>Non : le PVC dégage du chlore, toxique et corrosif pour la machine.</p></details>
+    <details class="quiz"><summary>Quels réglages pour l'alimentation de laboratoire au banc avec deux servos ?</summary><p>7,4 V, limite 3 A (10 A pour le robot complet).</p></details>
+    <details class="quiz"><summary>Pourquoi le robot est-il sur support pendant <code>find_soft_offsets.py</code> ?</summary><p>Parce que des articulations peuvent bouger ensemble de façon inattendue : chez un autre constructeur, tête et jambe ont bougé et des pièces ont cassé (issue #32).</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>Jamais de charge sans surveillance : surface incombustible, sac ignifuge, arrêt si chaleur, gonflement ou odeur.</li>
+      <li>Chargeur 2S adapté, BMS obligatoire, cellules à la même tension avant la mise en série.</li>
+      <li>Stockage à environ 50 %, hors du robot, en boîte métallique, pôles protégés. Cellule tombée ou cabossée = hors service.</li>
+      <li>Feu de batterie : évacuer, alerter, ne pas respirer les fumées.</li>
+      <li>Laser : quelqu'un devant, extraction en marche, extincteur CO₂ à portée, capot fermé, matériaux interdits refusés.</li>
+      <li>Banc : alimentation de laboratoire à 7,4 V limitée à 3 A (10 A robot complet), mains hors des articulations, robot sur support en calibration.</li>
+      <li>Marche : potence, sol dégagé, bouton A à portée, jamais de bouton Y.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-marche">Comment un robot à deux jambes tient debout et marche</a>.</p>
+  </div>
+</section>

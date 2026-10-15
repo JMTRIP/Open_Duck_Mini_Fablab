@@ -1,0 +1,202 @@
+<!-- ═══════════════════════════ MARCHE ═══════════════════════════ -->
+<section class="page" id="page-marche" data-title="Marche et calibration" data-sub="RL, sim2real, dépendances" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Le cœur du sujet</div>
+    <h1>Marche, calibration et transfert sim → réel</h1>
+    <p class="lead">La marche n'est pas programmée : elle est apprise en <i class="t" data-t="simulation">simulation</i>, puis exécutée telle quelle sur le robot. La <i class="t" data-t="politique">politique</i> a donc « mémorisé » un robot précis — ses masses, ses <i class="t" data-t="servo">servos</i>, ses semelles, son <i class="t" data-t="jeu">jeu mécanique</i>. Cette page dit ce qui est figé, ce qui se règle sans réentraîner, et ce qui impose de repasser par la simulation.</p>
+    <div class="read-first"><span>Pour comprendre cette page, lire d'abord :</span> <a href="#cours-marche"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>13 · Marche bipède</a> <a href="#cours-rl"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>14 · Simulation et RL</a> <a href="#cours-calibration"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>15 · Calibration</a></div>
+  </div>
+
+  <div class="grid c3">
+    <div class="card">
+      <h3><svg><use href="#i-check"/></svg>Se règle sans réentraîner</h3>
+      <ul class="tight">
+        <li>Les <i class="t" data-t="id-servo">ID</i> des servos et l'alignement des <i class="t" data-t="palonnier">palonniers</i> (<i class="t" data-t="offset">offsets</i>).</li>
+        <li>La calibration et l'<i class="t" data-t="orientation">orientation</i> de l'<i class="t" data-t="imu">IMU</i> (<code>imu_upside_down</code>).</li>
+        <li>De petites variations de masse, de l'ordre de ±10 % par corps.</li>
+        <li>La fréquence de pas (<code>phase_frequency_factor_offset</code>, croix de la <i class="t" data-t="bluetooth-manette">manette</i>).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-warn"/></svg>Impose un réentraînement</h3>
+      <ul class="tight">
+        <li>Toute modification de <i class="t" data-t="cinematique">cinématique</i> (longueur de segment, axe, écartement, forme du pied).</li>
+        <li>Un autre servo (12 V, autre rapport), un autre <i class="t" data-t="gain-p">gain P</i>, une batterie 3S.</li>
+        <li>Une autre semelle que le <i class="t" data-t="tpu">TPU</i> (frottement différent).</li>
+        <li>Une redistribution importante de la masse (tête, batterie déplacée, calculateur plus lourd).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-zap"/></svg>Ce que la politique a figé</h3>
+      <ul class="tight">
+        <li>Masses et inerties du <i class="t" data-t="mjcf">MJCF</i> (2,107 kg au total).</li>
+        <li>Un modèle de servo <i class="t" data-t="sts3215">STS3215</i> 7,4 V identifié avec <i class="t" data-t="bam">BAM</i> : kp 17,11, <i class="t" data-t="couple">couple</i> max ±3,23 N·m, damping 0,56, frottement 0,068, armature 0,027.</li>
+        <li>Un sol de frottement 0,6, un jeu de ±0,5° sur les jambes.</li>
+        <li>La <i class="t" data-t="home-pose">pose « home »</i>, une <i class="t" data-t="periode-marche">période de marche</i> de 0,54 s (27 pas à <i class="t" data-t="frequence-controle">50 Hz</i>).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-walk"/></svg>La chaîne complète, et ce qui dépend de quoi</h2>
+    <div class="diag">
+      <svg viewBox="0 0 980 340" role="img" aria-label="Chaîne de génération de la marche et dépendances">
+        <rect class="box p" x="10" y="20" width="200" height="64" rx="12"/>
+        <text x="110" y="46" text-anchor="middle" font-weight="700">CAO</text>
+        <text class="s" x="110" y="64" text-anchor="middle">Onshape public (ou FreeCAD)</text>
+        <rect class="box p" x="260" y="20" width="200" height="64" rx="12"/>
+        <text x="360" y="46" text-anchor="middle" font-weight="700">MJCF Playground</text>
+        <text class="s" x="360" y="64" text-anchor="middle">onshape-to-robot + retouches</text>
+        <rect class="box w" x="510" y="20" width="200" height="64" rx="12"/>
+        <text x="610" y="46" text-anchor="middle" font-weight="700">BAM · STS3215 7,4 V</text>
+        <text class="s" x="610" y="64" text-anchor="middle">P = 30, Vin = 7,4 → kp, couple…</text>
+        <rect class="box b" x="10" y="120" width="200" height="64" rx="12"/>
+        <text x="110" y="146" text-anchor="middle" font-weight="700">URDF Placo</text>
+        <text class="s" x="110" y="164" text-anchor="middle">copie propre au générateur</text>
+        <rect class="box w" x="260" y="120" width="200" height="64" rx="12"/>
+        <text x="360" y="146" text-anchor="middle" font-weight="700">Mouvements de référence</text>
+        <text class="s" x="360" y="164" text-anchor="middle">medium.json · 240 démarches · pkl</text>
+        <rect class="box g" x="510" y="120" width="200" height="64" rx="12"/>
+        <text x="610" y="146" text-anchor="middle" font-weight="700">PPO (Brax) sur GPU</text>
+        <text class="s" x="610" y="164" text-anchor="middle">8192 envs · 300 M pas · ≈ 1 h 10</text>
+        <rect class="box g" x="760" y="120" width="110" height="64" rx="12"/>
+        <text x="815" y="146" text-anchor="middle" font-weight="700">ONNX</text>
+        <text class="s" x="815" y="164" text-anchor="middle">MLP 101 → 14</text>
+        <rect class="box b" x="760" y="220" width="210" height="110" rx="12"/>
+        <text x="865" y="244" text-anchor="middle" font-weight="700">Runtime Pi Zero</text>
+        <text class="s" x="865" y="263" text-anchor="middle">50 Hz · P = 30 · scale 0,25</text>
+        <text class="s" x="865" y="279" text-anchor="middle">duck_config.json (offsets)</text>
+        <text class="s" x="865" y="295" text-anchor="middle">imu_calib_data.pkl</text>
+        <text class="s" x="865" y="311" text-anchor="middle">init_pos = pose home · pkl 0,54 s</text>
+        <path class="arr" d="M210 52 H255"/>
+        <path class="arr" d="M510 52 H465"/>
+        <path class="arr" d="M110 84 V115"/>
+        <path class="arr" d="M210 152 H255"/>
+        <path class="arr" d="M460 152 H505"/>
+        <path class="arr" d="M400 84 V100 H560 V115"/>
+        <path class="arr" d="M710 152 H755"/>
+        <path class="arr" d="M815 184 V215"/>
+        <path class="arr" d="M440 184 V300 H755"/>
+        <text class="lbl" x="420" y="96" text-anchor="start">modèle + actionneur</text>
+        <text class="lbl" x="110" y="204" text-anchor="middle">masses = estimation du slicer (15 %)</text>
+        <text class="lbl" x="452" y="296" text-anchor="start">pkl : période de marche</text>
+        <text class="lbl" x="10" y="236" text-anchor="start">Randomisation active : masses ×U(0,9 ; 1,1), kp ×U(0,9 ; 1,1), frottement articulaire,</text>
+        <text class="lbl" x="10" y="252" text-anchor="start">bruits capteurs, retards 0-40 ms, poussées.</text>
+        <text class="lbl" x="10" y="276" text-anchor="start">Inactive dans le code public (mauvais indices) : frottement du sol,</text>
+        <text class="lbl" x="10" y="292" text-anchor="start">masse et centre de masse du tronc.</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-warn"/></svg>Si je change X, je dois refaire Y</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>On change…</th><th>Ce que suppose la simulation</th><th>Remède</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Masse ou <i class="t" data-t="centre-de-masse">centre de masse</i></strong> (matériau, <i class="t" data-t="remplissage">remplissage</i>, <i class="t" data-t="insert">inserts</i>, électronique, tête)</td><td>Inertiels du MJCF ; masse de chaque corps randomisée ×U(0,9 ; 1,1)</td><td>Corriger le MJCF (et l'<i class="t" data-t="urdf">URDF</i> <i class="t" data-t="placo">Placo</i>), tester l'<i class="t" data-t="onnx">ONNX</i> avec <code>mujoco_infer</code>, réentraîner si ça tombe</td></tr>
+          <tr><td><strong>Semelle</strong> (autre matériau que le TPU 40 %)</td><td>Frottement fixe 0,6 (sa <i class="t" data-t="domain-randomization">randomisation</i> ne touche pas le sol)</td><td>Garder du TPU ; sinon ajuster <code>friction</code> et réentraîner</td></tr>
+          <tr><td><strong>Rigidité des pièces</strong></td><td>Corps parfaitement rigides, non modélisés</td><td>Correction mécanique uniquement (<i class="t" data-t="petg">PETG</i>-CF, nervures)</td></tr>
+          <tr><td><strong>Jeu mécanique</strong></td><td>±0,5° sur les jambes seulement</td><td>Mesurer le jeu ; s'il est plus grand, élargir <code>range</code> des joints <i class="t" data-t="backlash">backlash</i> et réentraîner</td></tr>
+          <tr><td><strong>Tension batterie</strong></td><td>Modèle établi à 7,4 V ; kp ±10 %, couple non randomisé</td><td>kp et couple +13,5 % à 8,4 V, −8 % à 6,8 V. Rester en <i class="t" data-t="2s">2S</i> ; ajouter une randomisation de <i class="t" data-t="tension">tension</i> si on réentraîne</td></tr>
+          <tr><td><strong>Gain P</strong> (<code>-p</code>)</td><td>kp proportionnel à P = 30</td><td>Garder 30 ; sinon réentraîner</td></tr>
+          <tr><td><strong>Servo</strong> (12 V, autre rapport)</td><td>Paramètres BAM du STS3215 7,4 V, 5,24 rad/s max</td><td>Nouvelle identification BAM, puis réentraînement complet</td></tr>
+          <tr><td><strong>Latence de la boucle</strong></td><td>50 Hz, retard d'action 0 à 40 ms</td><td>Rester sous 20 ms par cycle (<i class="t" data-t="pi-zero-2w">Pi Zero 2 W</i> suffit pour la marche seule)</td></tr>
+          <tr><td><strong>Position ou orientation de l'IMU</strong></td><td>Site <code>imu</code> du MJCF + remappage des axes</td><td>Configuration (<code>imu_upside_down</code>) ; réentraîner si l'IMU est déplacée</td></tr>
+          <tr><td><strong>Paramètres de démarche</strong> (hauteur de pas, durée d'appui)</td><td>Références Placo, pkl, période 0,54 s</td><td>Régénérer les références, le pkl (Playground + <i class="t" data-t="runtime">runtime</i>), réentraîner</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h2><svg><use href="#i-check"/></svg>La politique fournie, telle quelle : conditions</h2>
+      <p class="sub">Documenté : elle fonctionne sur un robot « built to the standard specs ». Aucune tolérance chiffrée n'est publiée.</p>
+      <ul class="tight">
+        <li>14 <i class="t" data-t="ddl">degrés de liberté</i> dans le même ordre, mêmes signes et zéros, même pose <code>home</code>.</li>
+        <li>50 Hz, <code>action_scale</code> 0,25, gain P = 30.</li>
+        <li>STS3215 7,4 V au rapport 1/345.</li>
+        <li>Batterie 2S, semelles en TPU, IMU dans un repère compatible.</li>
+        <li>Le pkl fourni (période 0,54 s) à côté du <i class="t" data-t="script">script</i>.</li>
+      </ul>
+      <div class="note ok"><svg><use href="#i-check"/></svg><div><strong>Test gratuit avant de construire</strong> (CPU, pas de <i class="t" data-t="gpu">GPU</i>) : modifier les masses dans le MJCF selon nos pièces réelles, puis <code>uv run playground/open_duck_mini_v2/mujoco_infer.py -o BEST_WALK_ONNX_2.onnx</code>. Si le canard simulé tient debout et marche, nos écarts sont dans la tolérance.</div></div>
+    </div>
+    <div class="card">
+      <h2><svg><use href="#i-cpu"/></svg>Réentraîner, si nécessaire</h2>
+      <ol class="tight">
+        <li><strong>Matériel</strong> : GPU NVIDIA avec CUDA 12 (<code>jax[cuda12]</code>), <i class="t" data-t="python">Python</i> ≥ 3.11, <code>uv</code>. Un CPU seul n'est documenté nulle part comme viable. Repère : 300 M pas en 1 h 11 sur RTX 3090.</li>
+        <li><strong>Références</strong> (si la géométrie change) : <code>uv run scripts/auto_waddle.py -j8 --duck open_duck_mini_v2 --sweep</code> puis <code>fit_poly.py</code> → <code>polynomial_coefficients.pkl</code>, copié dans <code>playground/open_duck_mini_v2/data/</code> et à côté du script du runtime.</li>
+        <li><strong>Modèle</strong> : partir de <code>open_duck_mini_v2_backlash.xml</code> (kp 17,11), corriger les <i class="t" data-t="inertie">inertiels</i>. <strong>Corriger aussi</strong> <code>FLOOR_GEOM_ID</code> (46) et <code>TORSO_BODY_ID</code> (2) dans <code>randomize.py</code>, sinon la randomisation du sol et du tronc ne fait rien.</li>
+        <li><strong>Entraînement</strong> : <code>uv run playground/open_duck_mini_v2/runner.py --task flat_terrain_backlash --num_timesteps 300000000</code>. Export ONNX automatique à chaque checkpoint.</li>
+        <li><strong>Validation</strong> : <code>mujoco_infer.py</code>, puis sur le robot suspendu, puis au sol avec la <i class="t" data-t="potence">potence</i>.</li>
+      </ol>
+      <p class="muted" style="font-size:0.85rem">Sans GPU au <i class="t" data-t="fablab">FabLab</i> : location horaire d'une instance GPU (quelques euros l'heure) ou le PC d'un membre. À trancher en phase 0.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-walk"/></svg>Paramètres de référence (pour vérifier un réexport)</h2>
+    <div class="grid c3">
+      <div>
+        <h4>Environnement</h4>
+        <dl class="def">
+          <dt>Contrôle</dt><dd>0,02 s (50 Hz) ; simulation 0,002 s</dd>
+          <dt>Épisode</dt><dd>1000 pas</dd>
+          <dt>Cible moteur</dt><dd>home + 0,25 × action, max 5,24 rad/s</dd>
+          <dt>Commandes</dt><dd>vx ±0,15, vy ±0,2 m/s, ωz ±1 rad/s</dd>
+          <dt>Observation</dt><dd>101 : <i class="t" data-t="gyroscope">gyro</i> 3, accel 3, commande 7, écart home 14, vitesses 14, 3 dernières actions 42, cibles 14, contacts 2, phase 2</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Actionneur <code>sts3215</code> (modèle backlash)</h4>
+        <dl class="def">
+          <dt>kp</dt><dd>17,11</dd>
+          <dt>forcerange</dt><dd>±3,23 N·m</dd>
+          <dt>damping</dt><dd>0,56</dd>
+          <dt>frictionloss</dt><dd>0,068</dd>
+          <dt>armature</dt><dd>0,027</dd>
+          <dt>Formule BAM</dt><dd>kp = 0,166 · P · Vin · 0,97 · kt/R</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Récompenses (poids)</h4>
+        <dl class="def">
+          <dt>Suivi vitesse linéaire</dt><dd>2,5</dd>
+          <dt>Suivi vitesse angulaire</dt><dd>6,0</dd>
+          <dt>Rester debout</dt><dd>20</dd>
+          <dt>Imitation</dt><dd>1,0 (position articulaire ×15)</dd>
+          <dt>Couples</dt><dd>−1e-3</dd>
+          <dt>Variation d'action</dt><dd>−0,5</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-check"/></svg>Calibration du robot réel, dans l'ordre</h2>
+    <p class="sub">Phase 5. Robot sur son support, batterie remplacée par l'<i class="t" data-t="alim-labo">alimentation de laboratoire</i>, mains libres pendant les scripts qui bougent.</p>
+    <div class="chklist">
+      <label class="chk"><input type="checkbox" data-k="c.1"><span class="t"><strong>Configurer chaque servo avant montage</strong> : <code>configure_motor.py --id N</code> (10-14 jambe droite, 20-24 jambe gauche, 30-33 cou/tête). Palonnier monté aligné sur la position 0.<small>Ordre dans chaque jambe : hip_yaw, hip_roll, hip_pitch, knee, ankle. Tête : 30 neck_pitch, 31 head_pitch, 32 head_yaw, 33 head_roll.</small></span></label>
+      <label class="chk"><input type="checkbox" data-k="c.2"><span class="t"><strong>Vérifier les servos</strong> : <code>check_motors.py</code> (tous répondent, bougent de 0,1 rad), <code>check_voltage.py</code>.</span></label>
+      <label class="chk"><input type="checkbox" data-k="c.3"><span class="t"><strong>Mesurer les offsets</strong> : <code>find_soft_offsets.py</code>, joint par joint, robot sur support. Reporter dans <code>~/duck_config.json</code> → <code>joints_offsets</code>, puis commiter dans notre dépôt du runtime (<code>biscalab/duck_config.json</code>).</span></label>
+      <label class="chk"><input type="checkbox" data-k="c.4"><span class="t"><strong>IMU</strong> : <code>raw_imu.py</code> stable ; <code>imu_server.py</code> / <code>imu_client.py</code> pour vérifier le repère ; <code>imu_upside_down</code> si besoin ; <code>calibrate_imu.py</code> depuis le dossier de lancement.</span></label>
+      <label class="chk"><input type="checkbox" data-k="c.5"><span class="t"><strong>Contacts de pied</strong> : <code>feet_contacts.py</code>, les quatre contacts répondent, gauche = GPIO22, droit = GPIO27.</span></label>
+      <label class="chk"><input type="checkbox" data-k="c.6"><span class="t"><strong>Test debout</strong> : <code>turn_on.py</code> (P = 2 puis montée du gain), posture home tenue 2 min, servos tièdes, pas d'erreur CRC.</span></label>
+      <label class="chk"><input type="checkbox" data-k="c.7"><span class="t"><strong>Première marche</strong> : <code>v2_rl_walk_mujoco.py</code> avec <code>start_paused: true</code>, potence attachée, sol plat et propre, bouton A, consigne nulle d'abord (piétinement), puis vx faible.</span></label>
+      <label class="chk"><input type="checkbox" data-k="c.8"><span class="t"><strong>Mesures</strong> : courant crête (dimensionnement du BMS), température des servos après 5 min, fréquence réelle de la boucle, « Policy control budget exceeded » absent. Fiche de test rédigée.</span></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-flag"/></svg>Recommandations pour BiscaLab</h2>
+    <ol class="rules">
+      <li>Acheter des STS3215 C001 7,4 V 1/345, alimenter en 2S, imprimer les semelles en TPU 40 % et respecter strictement la géométrie <i class="t" data-t="amont">amont</i>.</li>
+      <li>Peser chaque sous-ensemble et comparer aux masses du MJCF (tronc 0,699 kg ; tête + cou 0,582 kg ; jambe ≈ 0,41 kg ; total 2,107 kg). Noter les écarts dans la <i class="t" data-t="fiche-de-test">fiche de test</i>.</li>
+      <li>Ne découper au laser que des pièces non structurelles ou de l'outillage ; si une pièce du robot change, corriger son inertiel.</li>
+      <li>Avant toute construction, tester la politique fournie sur le MJCF corrigé avec <code>mujoco_infer.py</code>. C'est gratuit et ça lève le doute.</li>
+      <li>Réentraîner seulement si le test tombe ou si l'on change servo, semelle, tension ou géométrie — avec les deux indices corrigés dans <code>randomize.py</code> et le modèle backlash (kp 17,11).</li>
+      <li>Garder le filtre passe-bas désactivé, le gain P à 30 et la boucle sous 20 ms : trois réglages « innocents » qui cassent le transfert.</li>
+    </ol>
+  </div>
+</section>

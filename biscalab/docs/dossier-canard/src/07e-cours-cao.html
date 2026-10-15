@@ -1,0 +1,234 @@
+<!-- ═══════════════════════════ COURS 5 · CAO ═══════════════════════════ -->
+<section class="page" id="page-cours-cao" data-title="Cours · La CAO" data-sub="Lire, exporter, modifier les pièces" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 5 · Fabrication</div>
+    <h1>La CAO : lire, exporter, modifier les pièces du canard</h1>
+    <p class="lead">Toutes les pièces du canard existent d'abord dans un logiciel de dessin 3D. Ce cours apprend à les ouvrir, à en sortir le bon fichier, et à dessiner nos propres pièces sans gêner l'équipe ni fausser le robot virtuel sur lequel la marche a été apprise.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 60 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : Cours 1 (Git)</span>
+      <span class="pill p">Rôles : CAO, impression, laser</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Distinguer une pièce « recette » modifiable d'une simple coque de triangles, et choisir le bon format de fichier.</li>
+      <li>Ouvrir le document de conception du canard, en faire une copie et exporter une pièce.</li>
+      <li>Dessiner une pièce simple dans notre logiciel libre, puis l'exporter.</li>
+      <li>Importer une pièce du canard pour la mesurer, la percer ou y emboîter une pièce nouvelle.</li>
+      <li>Appliquer les règles d'équipe : réglages, un éditeur par fichier, nommage, suivi des pièces.</li>
+      <li>Reconnaître quand une modification de pièce change aussi le robot virtuel.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Ce qu'est la CAO</h2>
+    <p>La <i class="t" data-t="cao">CAO</i> (conception assistée par ordinateur) consiste à dessiner une pièce en 3D dans un logiciel avant de la fabriquer. Le fichier de CAO est la « source » : c'est lui qu'on modifie, et tout le reste (fichier d'impression, tracé laser, modèle physique du robot) en est tiré.</p>
+    <p>Deux logiciels servent au projet. <i class="t" data-t="onshape">Onshape</i> fonctionne dans le navigateur, sans installation : le canard y a été dessiné. <i class="t" data-t="freecad">FreeCAD</i> est un logiciel libre installé sur le PC, que le BiscaLab préfère pour ses pièces nouvelles.</p>
+    <h3>Une recette qu'on rejoue</h3>
+    <p>Pensez à une recette : « étaler une pâte de 60 × 40 cm, y découper un rond de 8 cm, arrondir les coins ». Pour un rond de 10 cm, on change un chiffre et on rejoue la recette. La <i class="t" data-t="parametrique">CAO paramétrique</i> fonctionne ainsi : une pièce est une suite d'opérations (dessiner un contour, lui donner de l'épaisseur, percer, arrondir) dont chaque cote est un paramètre. Changer un diamètre recalcule toute la pièce. Cette suite s'appelle l'historique, ou l'arbre.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le document Onshape d'Antoine Pirrone garde l'historique de chaque pièce : épaisseur des parois, position des trous d'<i class="t" data-t="insert">inserts</i> (petits écrous en laiton noyés dans le plastique), logements des <i class="t" data-t="roulement">roulements</i> à billes qui guident les axes. Une retouche d'une pièce d'origine se fait donc dans une copie de ce document, pas dans un fichier d'impression.</p></div>
+    <h3>Solide exact ou maillage</h3>
+    <ul>
+      <li>Le <i class="t" data-t="solide">solide exact</i> décrit la pièce par ses surfaces mathématiques : « ici un plan, là un cylindre de 8 mm ». Un logiciel de CAO peut encore le mesurer et le modifier, parce qu'il sait qu'un trou est un cylindre.</li>
+      <li>Le <i class="t" data-t="maillage">maillage</i> approche la même forme par des milliers de petits triangles. Un cylindre devient un prisme à facettes. Parfait pour l'imprimante, qui n'a besoin que de l'enveloppe.</li>
+    </ul>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Vouloir agrandir un trou dans un fichier d'impression. Le logiciel n'y voit pas un trou, mais des centaines de triangles en forme de tube. Le résultat d'une retouche est approximatif et fragile. Pour modifier une pièce, on repart du solide exact, ou mieux de la source paramétrique.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Les formats de fichiers, et qui les lit</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Format</th><th>Contenu</th><th>Produit par</th><th>Lu par</th><th>On le modifie ?</th></tr></thead>
+        <tbody>
+          <tr><td><i class="t" data-t="fcstd"><code>.FCStd</code></i></td><td>pièce paramétrique avec son historique</td><td>FreeCAD</td><td>FreeCAD</td><td>Oui : c'est la source</td></tr>
+          <tr><td><i class="t" data-t="step"><code>.step</code></i></td><td>solide exact, sans historique</td><td>Onshape, FreeCAD</td><td>logiciels de CAO, <i class="t" data-t="prusaslicer">PrusaSlicer</i></td><td>On le mesure, on le perce ; on ne « défait » rien</td></tr>
+          <tr><td><i class="t" data-t="stl"><code>.stl</code></i></td><td>maillage de triangles, sans unité</td><td>Onshape, FreeCAD</td><td>PrusaSlicer, <i class="t" data-t="github">GitHub</i> (aperçu 3D)</td><td>Non : on l'imprime</td></tr>
+          <tr><td><i class="t" data-t="3mf"><code>.3mf</code></i></td><td>plateau d'impression : pièces, positions, réglages, supports</td><td>PrusaSlicer</td><td>PrusaSlicer</td><td>Oui, dans PrusaSlicer</td></tr>
+          <tr><td><i class="t" data-t="dxf-svg"><code>.svg</code> / <code>.dxf</code></i></td><td>traits 2D</td><td>FreeCAD, Inkscape</td><td><i class="t" data-t="xcs">XCS</i> (laser)</td><td>Oui, en 2D</td></tr>
+          <tr><td><code>.xml</code> (<i class="t" data-t="mjcf">MJCF</i>) / <i class="t" data-t="urdf"><code>.urdf</code></i></td><td>robot décrit pour la <i class="t" data-t="simulation">simulation</i> : corps, masses, articulations</td><td>onshape-to-robot, puis retouches</td><td><i class="t" data-t="mujoco">MuJoCo</i>, <i class="t" data-t="placo">Placo</i></td><td>Avec précaution</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li>Le STL ne contient ni historique ni unité : le logiciel d'impression suppose des millimètres. Le STEP est le format d'échange des solides exacts : on en garde toujours un à côté de chaque fichier source.</li>
+      <li>Le 3MF n'est pas une pièce mais un projet d'impression complet, qui rejoue exactement un plateau (<a href="#cours-impression">cours 6</a>). SVG et DXF sont des dessins 2D pour la découpeuse laser (<a href="#cours-laser">cours 7</a>).</li>
+      <li>MJCF et URDF décrivent le robot pour la simulation, ce programme qui calcule pas à pas comment le robot bougerait. MuJoCo est le simulateur ; Placo génère les démarches de référence.</li>
+      <li>PrusaSlicer est notre logiciel d'impression, XCS pilote la laser, Inkscape est un logiciel libre de dessin 2D, GitHub héberge le dossier partagé du projet.</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le <i class="t" data-t="depot">dépôt</i> <i class="t" data-t="amont">amont</i> (le dossier partagé du projet d'origine) fournit 36 fichiers STL dans <code>print/</code>, de quoi imprimer les 51 pièces. Le solide exact d'une pièce d'origine, on l'exporte nous-mêmes d'Onshape, en STEP.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. Onshape : ouvrir, copier, exporter</h2>
+    <p>L'offre gratuite d'Onshape impose que tous les documents soient publics, ce qui convient à un projet libre.</p>
+    <h3>Ouvrir le document du canard et le copier</h3>
+    <ol class="steps">
+      <li><div><b>Créer un compte</b> Un compte gratuit par personne.</div></li>
+      <li><div><b>Ouvrir le document</b> Son lien figure sur la page <a href="#cao">CAO et fichiers</a>. Il s'ouvre en lecture seule : on regarde tout, on ne modifie rien.</div></li>
+      <li><div><b>Faire une copie</b> Commande « Make a copy » (faire une copie). La copie garde tout l'historique. Une seule copie « BiscaLab » est faite par la personne chargée de la CAO, puis partagée avec l'équipe par le bouton « Share » (partager).</div></li>
+    </ol>
+    <h3>Naviguer dans un assemblage</h3>
+    <p>En bas de l'écran, des onglets : les « Part Studios » (ateliers de pièces) contiennent les pièces, les « Assemblies » (assemblages) les montrent montées, reliées par des liaisons. À gauche, la liste des pièces placées.</p>
+    <ul>
+      <li>Tourner : clic droit maintenu. Zoomer : molette. Déplacer la vue : bouton du milieu maintenu.</li>
+      <li>Voir une pièce seule : clic droit, « Isolate » (isoler). Mesurer : sélectionner une arête ou deux faces, la mesure s'affiche en bas à droite.</li>
+      <li>Glisser une pièce à la souris la fait tourner autour de sa liaison : le meilleur moyen de comprendre ce que fait chaque <i class="t" data-t="servo">servo</i>, le moteur d'une articulation.</li>
+    </ul>
+    <h3>Exporter une pièce en STL et en STEP</h3>
+    <ol class="steps">
+      <li><div><b>Exporter</b> Clic droit sur l'onglet de la pièce (ou sur la pièce dans la liste « Parts »), puis « Export ».</div></li>
+      <li><div><b>Choisir le format</b> STL pour imprimer, STEP pour réutiliser en CAO.</div></li>
+      <li><div><b>Régler les unités</b> Pour le STL : « Millimeter », résolution fine. Exportée en pouces, la pièce arriverait 25,4 fois trop petite.</div></li>
+      <li><div><b>Télécharger et ranger</b> Cocher « Download » (télécharger), valider, puis ranger le fichier dans le dépôt sous le bon nom (section 5).</div></li>
+    </ol>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Exporter <code>leg_spacer</code> en STEP puis l'ouvrir dans FreeCAD permet de relever le diamètre exact de ses trous d'inserts au lieu de le deviner. C'est ainsi qu'on dessinera la pièce test d'inserts du cours suivant.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. FreeCAD 1.x : dessiner, importer, vérifier</h2>
+    <p>FreeCAD est paramétrique comme Onshape, mais il fonctionne hors ligne et les fichiers restent chez nous. Ce cours vise les versions 1.0 et suivantes.</p>
+    <h3>L'interface</h3>
+    <dl class="def">
+      <dt>Ateliers</dt><dd>Un atelier (workbench) est une boîte à outils spécialisée, choisie dans la liste déroulante de la barre d'outils : Part Design (pièces), Sketcher (esquisses), Assembly (assemblages), Draft et TechDraw (dessins 2D).</dd>
+      <dt>Vue combinée</dt><dd>Le panneau de gauche. Onglet « Modèle » : l'arbre du document et, dessous, les propriétés de l'objet sélectionné. Onglet « Tâches » : la boîte de dialogue de l'outil en cours.</dd>
+      <dt>Arbre</dt><dd>Les opérations de la pièce, dans l'ordre. Double-cliquer sur l'une d'elles la rouvre pour changer ses cotes : c'est la recette.</dd>
+      <dt>Navigation</dt><dd>Le style de navigation à la souris se choisit en bas à droite de la fenêtre. Prenons tous le même.</dd>
+    </dl>
+    <h3>Part Design en 8 étapes</h3>
+    <ol class="steps">
+      <li><div><b>Créer un corps</b> Atelier Part Design, « Créer un corps » (Body). Un corps est une pièce.</div></li>
+      <li><div><b>Créer une esquisse sur un plan</b> « Créer une esquisse », plan XY. Une esquisse (sketch) est un dessin 2D posé sur un plan.</div></li>
+      <li><div><b>Dessiner le contour</b> Rectangle, cercle, fente, sans se soucier des cotes, en contours fermés.</div></li>
+      <li><div><b>Contraindre</b> Contraintes géométriques (horizontal, symétrique, coïncident) pour les formes, contraintes de cote (distance, diamètre) pour les dimensions, jusqu'au message « Esquisse entièrement contrainte ». Fermer l'esquisse.</div></li>
+      <li><div><b>Protrusion</b> Outil « Protrusion » (Pad) : on donne l'épaisseur, le contour devient un volume.</div></li>
+      <li><div><b>Perçage</b> Esquisse sur la face du dessus, cercle coté et placé par des cotes, puis « Cavité » (Pocket) « À travers tout », ou l'outil « Perçage » (Hole).</div></li>
+      <li><div><b>Congé</b> Un congé arrondit une arête. Sélectionner les arêtes, outil « Congé » (Fillet), donner le rayon. Toujours en dernier : posé trop tôt, il casse souvent les opérations suivantes.</div></li>
+      <li><div><b>Enregistrer et exporter</b> Enregistrer le FCStd. Sélectionner le corps, « Fichier → Exporter », type STEP ; recommencer avec le type STL.</div></li>
+    </ol>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi « entièrement contrainte ».</strong> Une esquisse incomplètement contrainte peut se déformer toute seule quand on change une cote ailleurs. Entièrement contrainte, elle ne bouge que si on le décide.</div></div>
+    <h3>Importer une pièce du canard</h3>
+    <p>« Fichier → Importer », choisir le STEP exporté d'Onshape. FreeCAD crée un solide exact, mais sans recette.</p>
+    <ul>
+      <li><strong>On peut</strong> le mesurer, le couper pour voir l'intérieur, s'appuyer sur ses faces pour dessiner une pièce nouvelle. Glissé dans un corps Part Design, il en devient la « base » : on perce ou on ajoute par-dessus.</li>
+      <li><strong>On ne peut pas</strong> « défaire » une opération d'origine : changer le rayon d'un congé ou le diamètre d'un logement de roulement dessiné par Antoine demanderait de reboucher puis repercer, avec un résultat fragile.</li>
+    </ul>
+    <h3>Vérifier un emboîtement avec Assembly</h3>
+    <ol class="steps">
+      <li><div><b>Assembler</b> « Créer un assemblage », puis « Insérer un composant » : la pièce amont importée et la pièce nouvelle. Rendre la pièce amont fixe (ground).</div></li>
+      <li><div><b>Lier</b> Liaison « Fixe » entre deux éléments qui doivent coïncider, par exemple les bords de deux trous de vis : FreeCAD aligne les pièces.</div></li>
+      <li><div><b>Contrôler</b> Tourner autour, mesurer les jeux. Pour détecter un chevauchement : sélectionner les deux solides, « Intersection » (atelier Part). Si un volume apparaît, les pièces se rentrent dedans.</div></li>
+    </ol>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Une patte pour tenir des câbles sous <code>trunk_bottom</code> ? On importe son STEP, on dessine la patte dans un corps séparé, on vérifie l'emboîtement dans Assembly. La patte est une pièce nouvelle ; <code>trunk_bottom</code> reste intacte.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Travailler à plusieurs</h2>
+    <h3>Les réglages d'équipe</h3>
+    <p>Dans « Édition → Préférences → Général → Document » :</p>
+    <ul>
+      <li><strong>Niveau de compression : 0.</strong> Le fichier est un peu plus gros, mais l'historique du dépôt grossit beaucoup moins d'une version à l'autre.</li>
+      <li><strong>Nom de l'auteur</strong> : votre prénom, écrit dans chaque fichier enregistré.</li>
+      <li><strong>Sauvegardes</strong> : FreeCAD crée des copies <code>.FCBak</code>. Elles restent sur le PC ; le dépôt les ignore (ligne <code>*.FCBak</code> du <code>.gitignore</code>).</li>
+    </ul>
+    <h3>Pourquoi un FCStd ne se fusionne pas</h3>
+    <p>Un fichier FCStd est en réalité une archive zip, un dossier compressé. Pour <i class="t" data-t="git">Git</i>, l'outil qui garde l'historique de nos fichiers, c'est un bloc opaque. Deux modifications d'un fichier texte se combinent ligne par ligne ; deux modifications d'un zip, non : Git ne peut garder qu'une version. C'est un <i class="t" data-t="conflit">conflit</i> sans solution, et le travail de quelqu'un est perdu.</p>
+    <div class="note ok"><svg><use href="#i-check"/></svg><div><strong>La règle : un éditeur par fichier.</strong> Avant de modifier un fichier de CAO, on s'assigne l'<i class="t" data-t="issue">issue</i> correspondante, la fiche de tâche sur GitHub (<a href="#cours-git">cours 1</a>). Tant qu'elle est à quelqu'un, les autres ne touchent pas au fichier.</div></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Ouvrir le fichier d'un collègue « juste pour regarder », tourner la vue, enregistrer par réflexe, puis envoyer. FreeCAD a réécrit le fichier : Git voit une nouvelle version, en conflit avec celle du collègue. Pour regarder, on ferme sans enregistrer.</div></div>
+    <h3>Nommer les fichiers</h3>
+    <ul>
+      <li>Minuscules, sans accents ni espaces, tirets entre les mots, même nom de base pour toutes les déclinaisons : <code>gabarit-zero-servo.FCStd</code>, <code>.step</code>, <code>.stl</code>, <code>.svg</code>.</li>
+      <li>Jamais de <code>_v2_final</code> : Git garde l'historique, et les projets d'impression retrouvent les pièces par leur nom. La révision se note dans <code>pieces.csv</code> (colonne <code>rev</code>) et <code>CHANGELOG.md</code>.</li>
+      <li>Les fichiers amont gardent leur nom d'origine, tirets bas compris (<code>leg_spacer.stl</code>).</li>
+      <li>Rangement : <code>biscalab/cad/freecad/</code>, <code>biscalab/cad/step/</code>, <code>biscalab/print/stl/</code>, <code>biscalab/laser/svg-dxf/</code>.</li>
+    </ul>
+    <h3>Le fichier pieces.csv</h3>
+    <p>Un fichier <i class="t" data-t="csv">CSV</i> est un tableau écrit en texte : une ligne par enregistrement, colonnes séparées par des virgules ; GitHub l'affiche en tableau. <code>biscalab/print/pieces.csv</code> suit les 51 pièces et nos pièces nouvelles. Chemins écrits depuis la racine du dépôt.</p>
+    <dl class="def">
+      <dt><code>piece</code>, <code>fichier</code></dt><dd>nom de la pièce, chemin du STL</dd>
+      <dt><code>rev</code></dt><dd><code>amont</code> pour une pièce d'origine, sinon notre révision (<code>b1</code>, <code>b2</code>…)</dd>
+      <dt><code>qte</code> … <code>3mf</code></dt><dd>quantité, réglages d'impression, projet de plateau</dd>
+      <dt><code>imprimee_par</code>, <code>date</code>, <code>statut</code></dt><dd><code>a_imprimer</code>, <code>imprimee</code>, <code>controlee</code>, <code>montee</code> ou <code>a_refaire</code></dd>
+      <dt><code>remarque</code></dt><dd>inserts, masse, défaut constaté</dd>
+    </dl>
+<pre><code>piece,fichier,rev,qte,matiere,remplissage,couche,supports,3mf,imprimee_par,date,statut,remarque
+trunk_bottom,print/trunk_bottom.stl,amont,1,PLA,15%,0.2,oui,biscalab/print/3mf/plateau-tronc.3mf,,,a_imprimer,inserts M3 + roulements
+cale-sts3215,biscalab/print/stl/cale-sts3215.stl,b1,14,PLA,15%,0.2,non,biscalab/print/3mf/plateau-cales.3mf,,,a_imprimer,cotes relevées sur le modèle du servo</code></pre>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Retoucher ou créer : deux chemins</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Besoin</th><th>Outil</th><th>Ce qu'on produit</th></tr></thead>
+        <tbody>
+          <tr><td>Retoucher une pièce amont (élargir un passage de câble, épaissir une paroi)</td><td>Copie Onshape BiscaLab</td><td>STL et STEP ; nom amont conservé, nouvelle révision ; STL dans <code>biscalab/print/stl/</code>, jamais à la place du fichier amont</td></tr>
+          <tr><td>Créer une pièce nouvelle (gabarit, support, banc, potence, cale)</td><td>FreeCAD</td><td>FCStd + STEP + STL ou SVG, même nom de base</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Pourquoi deux outils ? L'historique des pièces amont n'existe que dans Onshape, et l'outil qui fabrique le modèle de simulation, onshape-to-robot, ne lit qu'Onshape. Les pièces nouvelles n'entrent pas dans la simulation : FreeCAD leur convient.</p>
+    <h3>Les tolérances d'impression, dès le dessin</h3>
+    <p>La <i class="t" data-t="tolerance">tolérance</i> est l'écart admis entre la cote dessinée et la cote réelle. Une imprimante 3D fait des trous un peu trop petits et des bossages un peu trop gros. On le prévoit :</p>
+    <ul>
+      <li>trou de passage (vis, axe) : diamètre voulu + 0,2 mm ;</li>
+      <li>emboîtement : 0,2 à 0,3 mm de jeu, c'est-à-dire d'espace libre, entre les deux pièces ;</li>
+      <li>trou d'insert : reprendre la cote des pièces amont, dimensionnées pour les inserts de la <i class="t" data-t="bom">BOM</i> (la liste des composants à acheter).</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le gabarit de l'exercice a un trou de 8 mm. Imprimé, on le dessinerait à 8,2 mm pour qu'un cylindre de 8 mm y entre. Découpé au laser, c'est l'inverse : le trou sort plus grand que le dessin (cours 7). Avec le paramétrique, un seul chiffre change selon le procédé.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Une pièce qui change, c'est un robot qui change</h2>
+    <p>Le modèle MJCF contient pour chaque pièce sa masse, son <i class="t" data-t="centre-de-masse">centre de masse</i> (le point où sa masse semble concentrée) et son <i class="t" data-t="inertie">inertie</i> (sa résistance à être mise en rotation). Ces masses sont celles estimées par le logiciel d'impression, avec un <i class="t" data-t="remplissage">remplissage</i> de 15 % : la pièce est pleine à 15 %, le reste est un motif creux.</p>
+    <ul>
+      <li>Changer la forme, la matière ou le remplissage d'une pièce change sa masse.</li>
+      <li>Pendant l'apprentissage de la marche, les masses ont varié de ±10 % : au-delà, rien ne garantit que la marche tienne.</li>
+      <li>Une pièce modifiée dans FreeCAD n'arrive pas toute seule dans la simulation : on corrige le MJCF à la main (option B de la page <a href="#cao">CAO et fichiers</a>, méthode dans le <a href="#cours-rl">cours sur l'apprentissage</a>).</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p><code>head_bot_sheet</code> est une plaque de 3 mm de 194 × 192 mm, soit 65,9 cm³. En acrylique plein, elle pèserait environ 78 g, autre chose que la version imprimée. Or le cou et la tête portent déjà 28 % de la masse du robot (0,582 kg sur 2,107 kg). Un tel changement se décide en équipe et se reporte dans le modèle.</p></div>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : PC du FabLab avec FreeCAD 1.x réglé (section 5), dépôt à jour, PrusaSlicer et XCS. Durée : 30 min environ.</p>
+    <ol class="steps">
+      <li><div><b>Réserver</b> S'assigner l'issue « Gabarit de zéro servo » ; récupérer les dernières modifications du dépôt.</div></li>
+      <li><div><b>Plaque</b> Corps, esquisse sur XY : rectangle de 60 × 40 mm, centré sur l'origine (symétrie entre deux coins opposés et l'origine), entièrement contraint. Protrusion de 3 mm.</div></li>
+      <li><div><b>Trou et fente</b> Esquisse sur la face du dessus : un cercle de 8 mm placé par deux cotes, et une fente (outil « Fente ») de longueur et largeur cotées, par exemple 20 × 3 mm. Cavité à travers tout.</div></li>
+      <li><div><b>Enregistrer et exporter</b> <code>biscalab/cad/freecad/gabarit-zero-servo.FCStd</code> ; STEP dans <code>biscalab/cad/step/</code>, STL dans <code>biscalab/print/stl/</code>.</div></li>
+      <li><div><b>SVG pour la laser</b> Vue de dessus (touche <kbd>2</kbd>). Atelier Draft, corps sélectionné, « Vue 2D de forme » (Shape 2D view). Sélectionner l'objet obtenu, « Fichier → Exporter », type « Flattened SVG », dans <code>biscalab/laser/svg-dxf/</code>.</div></li>
+      <li><div><b>Contrôler</b> Le STL ouvert dans PrusaSlicer mesure 60 × 40 × 3 mm ; le SVG ouvert dans XCS, 60 × 40 mm. Passer le trou à 10 mm : toute la pièce se recalcule. Remettre 8 mm.</div></li>
+      <li><div><b>Documenter</b> Ajouter la ligne dans <code>pieces.csv</code>, enregistrer dans Git (« Ajoute gabarit zéro servo ») et envoyer sur GitHub.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> quatre fichiers de même nom de base (FCStd, STEP, STL, SVG) aux bonnes cotes et une ligne de suivi. Trou et fente sont des cotes d'exercice : celles du gabarit définitif seront relevées au pied à coulisse sur un vrai servo et son <i class="t" data-t="palonnier">palonnier</i> (la pièce vissée sur l'axe du servo). Le SVG servira au <a href="#cours-laser">cours 7</a>.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi ne modifie-t-on pas un fichier STL ?</summary><p>C'est un maillage de triangles, sans trous ni cotes, seulement une enveloppe approchée. On repart du STEP ou, mieux, de la source paramétrique.</p></details>
+    <details class="quiz"><summary>Que peut-on faire d'un STEP importé dans FreeCAD, et que ne peut-on pas faire ?</summary><p>On peut le mesurer, le couper, s'appuyer dessus, ajouter ou retirer de la matière. On ne peut pas modifier proprement une opération d'origine : l'historique n'a pas suivi.</p></details>
+    <details class="quiz"><summary>Deux personnes ont modifié le même FCStd la même semaine. Que se passe-t-il ?</summary><p>Git ne sait pas fusionner une archive zip : on gardera une version et on perdra l'autre. D'où la règle « un éditeur par fichier », avec l'issue assignée comme verrou.</p></details>
+    <details class="quiz"><summary>Pourquoi exporter le STL en millimètres ?</summary><p>Le STL n'a pas d'unité et le logiciel d'impression suppose des millimètres. En pouces, la pièce arriverait 25,4 fois trop petite.</p></details>
+    <details class="quiz"><summary>On veut élargir un passage de câble dans <code>foot_top</code>. Avec quel outil, et que faut-il noter ?</summary><p>Dans la copie Onshape BiscaLab, qui garde l'historique. STL exporté dans <code>biscalab/print/stl/</code> sous le nom d'origine, révision <code>b1</code> dans <code>pieces.csv</code> et <code>CHANGELOG.md</code>, et vérification que la masse reste proche de l'originale.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>La source d'une pièce est sa recette paramétrique ; le STL n'est qu'une coque à imprimer.</li>
+      <li>Toujours un STEP à côté de chaque fichier source.</li>
+      <li>Pièce amont à retoucher : copie Onshape. Pièce nouvelle : FreeCAD.</li>
+      <li>Exports en millimètres, esquisses entièrement contraintes, congés en dernier.</li>
+      <li>Un éditeur par fichier de CAO, réservé par l'issue. Compression à 0, <code>.FCBak</code> jamais envoyés.</li>
+      <li>Noms en minuscules avec tirets, jamais de <code>_v2_final</code> ; la révision vit dans <code>pieces.csv</code>.</li>
+      <li>À l'impression : trous + 0,2 mm, emboîtements 0,2 à 0,3 mm de jeu.</li>
+      <li>Une pièce qui change de masse change le robot simulé : au-delà de ±10 %, on corrige le modèle.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-impression">Impression 3D : de la bobine à la pièce contrôlée</a>.</p>
+  </div>
+</section>

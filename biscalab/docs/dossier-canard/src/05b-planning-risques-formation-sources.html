@@ -1,0 +1,326 @@
+<!-- ═══════════════════════════ PLANNING ═══════════════════════════ -->
+<section class="page" id="page-planning" data-title="Planning et jalons" data-sub="7 phases, listes de contrôle" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Feuille de route</div>
+    <h1>Sept phases, un jalon testable à chaque fois</h1>
+    <p class="lead">Le plan d'achats de septembre fixait six phases ; nous ajoutons une phase 0 d'organisation. Les mois sont indicatifs : ce qui compte, c'est que chaque phase se ferme par une <i class="t" data-t="fiche-de-test">fiche de test</i> lue en réunion. Les cases ci-dessous sont mémorisées sur cet appareil ; l'état de référence reste le tableau <i class="t" data-t="github">GitHub</i>.</p>
+    <div class="read-first"><span>Pour comprendre cette page, lire d'abord :</span> <a href="#cours-methode"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>4 · Mener le projet</a></div>
+  </div>
+
+  <div class="phases">
+    <div class="phase" style="--ph: var(--color-primary)"><div class="n">Phase 0</div><div class="t">Organisation</div><div class="m">oct. 2026</div><div class="amt">0 €</div><div class="m">GitHub, rôles, outils, sécurité</div></div>
+    <div class="phase" style="--ph: var(--color-consumption)"><div class="n">Phase 1</div><div class="t">Structure imprimée</div><div class="m">oct. 2026</div><div class="amt">55,70 €</div><div class="m">Pièces imprimées, assemblage à blanc</div></div>
+    <div class="phase" style="--ph: var(--color-cyan)"><div class="n">Phase 2</div><div class="t">Cerveau + banc servo</div><div class="m">nov. 2026</div><div class="amt">99,55 €</div><div class="m">IMU + bus validés · GO/NO-GO</div></div>
+    <div class="phase" style="--ph: var(--color-battery)"><div class="n">Phase 3</div><div class="t">Jambe 1</div><div class="m">déc. 2026</div><div class="amt">63,10 €</div><div class="m">Jambe pilotée, contacts lus</div></div>
+    <div class="phase" style="--ph: var(--color-lime)"><div class="n">Phase 4</div><div class="t">Jambe 2</div><div class="m">janv. 2027</div><div class="amt">99,50 €</div><div class="m">Bas du corps debout sur banc</div></div>
+    <div class="phase" style="--ph: var(--color-solar)"><div class="n">Phase 5</div><div class="t">Tête + calibration</div><div class="m">févr. 2027</div><div class="amt">95,25 €</div><div class="m">14 servos, offsets, 1re marche filaire</div></div>
+    <div class="phase" style="--ph: var(--color-hp)"><div class="n">Phase 6</div><div class="t">Énergie embarquée</div><div class="m">mars 2027</div><div class="amt">63,15 €</div><div class="m">Marche autonome sur batterie</div></div>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h3><svg><use href="#i-cal"/></svg>Phase 0 · Organisation <span class="pill p" id="pct-p0">0 %</span></h3>
+      <div class="chklist">
+        <label class="chk"><input type="checkbox" data-k="p0.1"><span class="t">Rôles attribués et notés dans <code>biscalab/README.md</code></span></label>
+        <label class="chk"><input type="checkbox" data-k="p0.2"><span class="t">Dépôt du club <code>JMTRIP/Open_Duck_Mini_Fablab</code> créé (fait le 5 oct.), chaque membre ajouté comme collaborateur, 2FA activée pour tous</span></label>
+        <label class="chk"><input type="checkbox" data-k="p0.3"><span class="t">Second dépôt du club (copie de <code>Open_Duck_Mini_Runtime</code>) créé ; Issues activées, labels, 7 jalons, tableau Projects</span></label>
+        <label class="chk"><input type="checkbox" data-k="p0.4"><span class="t">Arborescence <code>biscalab/</code>, <code>.gitattributes</code>, <code>.gitignore</code>, <code>CREDITS.md</code> poussés</span></label>
+        <label class="chk"><input type="checkbox" data-k="p0.5"><span class="t">GitHub Desktop installé sur chaque PC, 5 gestes répétés en séance</span></label>
+        <label class="chk"><input type="checkbox" data-k="p0.6"><span class="t">Copie Onshape BiscaLab créée ; FreeCAD réglé (compression 0, auteur)</span></label>
+        <label class="chk"><input type="checkbox" data-k="p0.7"><span class="t">Groupe Signal/WhatsApp, dossier Nextcloud « Canard », référents inscrits au Discord amont</span></label>
+        <label class="chk"><input type="checkbox" data-k="p0.8"><span class="t"><code>securite.md</code> rédigé et affiché (batteries, laser, banc)</span></label>
+        <label class="chk"><input type="checkbox" data-k="p0.9"><span class="t">Décisions tranchées : chargeur 2S, politique CAO, GPU disponible, hébergement du dossier</span></label>
+        <label class="chk"><input type="checkbox" data-k="p0.10"><span class="t">Issues de la phase 1 créées, issue « Achat phase 1 » validée</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-printer"/></svg>Phase 1 · Structure imprimée <span class="pill p" id="pct-p1">0 %</span></h3>
+      <div class="chklist">
+        <label class="chk"><input type="checkbox" data-k="p1.1"><span class="t">Filament, inserts M3 (réf. BOM), 3 × 608ZZ, consommables reçus</span></label>
+        <label class="chk"><input type="checkbox" data-k="p1.2"><span class="t">Lot de profils PrusaSlicer exporté et commité ; pièce test inserts validée</span></label>
+        <label class="chk"><input type="checkbox" data-k="p1.3"><span class="t">36 STL amont vérifiés (branche v2), <code>pieces.csv</code> initialisé avec les 51 lignes</span></label>
+        <label class="chk"><input type="checkbox" data-k="p1.4"><span class="t">Plateaux 3MF créés par sous-ensemble (orientation et supports figés)</span></label>
+        <label class="chk"><input type="checkbox" data-k="p1.5"><span class="t">Pieds (8 pièces, dont 2 TPU 40 %) imprimés et contrôlés</span></label>
+        <label class="chk"><input type="checkbox" data-k="p1.6"><span class="t">Jambes (18 pièces) imprimées ; gauche/droite identifiées au marqueur</span></label>
+        <label class="chk"><input type="checkbox" data-k="p1.7"><span class="t">Tronc, cou, tête (9 pièces) imprimés ; roulements et inserts posés</span></label>
+        <label class="chk"><input type="checkbox" data-k="p1.8"><span class="t">Carrosserie (9 pièces) imprimée</span></label>
+        <label class="chk"><input type="checkbox" data-k="p1.9"><span class="t">Chaque sous-ensemble pesé et comparé aux masses du MJCF (fiche de test)</span></label>
+        <label class="chk"><input type="checkbox" data-k="p1.10"><span class="t">Assemblage à blanc sans servos (cales de la taille d'un STS3215) ; photos dans <code>docs/photos/</code></span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h3><svg><use href="#i-cpu"/></svg>Phase 2 · Cerveau + banc servo <span class="pill p" id="pct-p2">0 %</span></h3>
+      <div class="chklist">
+        <label class="chk"><input type="checkbox" data-k="p2.1"><span class="t">Pi Zero 2 W, microSD 32 Go, Waveshare, BNO055, 2 × STS3215 7,4 V C001 reçus (référence vérifiée à la réception)</span></label>
+        <label class="chk"><input type="checkbox" data-k="p2.2"><span class="t">Socle de banc découpé au laser (servos + carte + Pi), alimentation labo 7,4 V limitée</span></label>
+        <label class="chk"><input type="checkbox" data-k="p2.3"><span class="t">Image v0.2.3 flashée, identifiants changés, SSH et Wi-Fi fonctionnels</span></label>
+        <label class="chk"><input type="checkbox" data-k="p2.4"><span class="t">Checklist « banc servo » de la rubrique Électronique entièrement verte</span></label>
+        <label class="chk"><input type="checkbox" data-k="p2.5"><span class="t">Manette Xbox appairée, <code>pygame</code> voit les axes</span></label>
+        <label class="chk"><input type="checkbox" data-k="p2.6"><span class="t"><code>mujoco_infer.py</code> lancé sur un PC avec le MJCF corrigé par nos masses réelles : le canard simulé marche</span></label>
+        <label class="chk"><input type="checkbox" data-k="p2.7"><span class="t"><strong>GO / NO-GO</strong> noté dans le journal → commande des 12 servos restants (même lot)</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-walk"/></svg>Phases 3 et 4 · Jambes <span class="pill p" id="pct-p3">0 %</span></h3>
+      <div class="chklist">
+        <label class="chk"><input type="checkbox" data-k="p3.1"><span class="t">Servos 12-14 configurés avant montage (jambe droite), palonniers alignés au gabarit</span></label>
+        <label class="chk"><input type="checkbox" data-k="p3.2"><span class="t">Jambe droite montée ; orientation du hip_pitch vérifiée (position zéro)</span></label>
+        <label class="chk"><input type="checkbox" data-k="p3.3"><span class="t">4 contacts SS-10 pressés dans les semelles, lus par <code>feet_contacts.py</code></span></label>
+        <label class="chk"><input type="checkbox" data-k="p3.4"><span class="t">Jambe droite pilotée joint par joint sur le banc, jeu mesuré à chaque articulation</span></label>
+        <label class="chk"><input type="checkbox" data-k="p3.5"><span class="t">Servos 20-24 configurés, jambe gauche montée (pièces miroir : ne pas inverser)</span></label>
+        <label class="chk"><input type="checkbox" data-k="p3.6"><span class="t">Tronc + deux jambes : posture debout tenue sur le banc avec <code>turn_on.py</code> (servos 10, 11, 20, 21 configurés)</span></label>
+        <label class="chk"><input type="checkbox" data-k="p3.7"><span class="t">Câblage du bus en chaîne, gaine spirale, aucun câble pincé sur toute l'amplitude</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h3><svg><use href="#i-zap"/></svg>Phase 5 · Tête, calibration, première marche <span class="pill p" id="pct-p5">0 %</span></h3>
+      <div class="chklist">
+        <label class="chk"><input type="checkbox" data-k="p5.1"><span class="t">Servos 30-33 configurés, cou et tête montés (roulements, inserts), micro-servos des antennes</span></label>
+        <label class="chk"><input type="checkbox" data-k="p5.2"><span class="t">IMU montée, orientation vérifiée avec <code>imu_client.py</code>, calibrée</span></label>
+        <label class="chk"><input type="checkbox" data-k="p5.3"><span class="t">Offsets mesurés avec <code>find_soft_offsets.py</code>, <code>duck_config.json</code> commité</span></label>
+        <label class="chk"><input type="checkbox" data-k="p5.4"><span class="t">Potence/harnais découpé et installé au-dessus du centre de masse</span></label>
+        <label class="chk"><input type="checkbox" data-k="p5.5"><span class="t">Checklist « Calibration » de la rubrique Marche entièrement verte</span></label>
+        <label class="chk"><input type="checkbox" data-k="p5.6"><span class="t">Courant crête mesuré sur alimentation labo → calibre du BMS décidé</span></label>
+        <label class="chk"><input type="checkbox" data-k="p5.7"><span class="t">Première marche filaire filmée, fiche de test rédigée, démo au FabLab</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-shield"/></svg>Phase 6 · Énergie embarquée <span class="pill p" id="pct-p6">0 %</span></h3>
+      <div class="chklist">
+        <label class="chk"><input type="checkbox" data-k="p6.1"><span class="t">2 × P30B, support, BMS (calibre validé), UBEC, interrupteur, chargeur 2S, jacks, XT30 reçus</span></label>
+        <label class="chk"><input type="checkbox" data-k="p6.2"><span class="t">Pack assemblé hors robot, cellules à la même tension, BMS testé (coupure basse, équilibrage), sac ignifuge pour la charge</span></label>
+        <label class="chk"><input type="checkbox" data-k="p6.3"><span class="t"><code>check_voltage.py</code> sous batterie : tension vue par les servos en charge, pas d'erreur CRC</span></label>
+        <label class="chk"><input type="checkbox" data-k="p6.4"><span class="t">Marche sur batterie, potence puis libre ; autonomie mesurée (minutes de marche) et notée</span></label>
+        <label class="chk"><input type="checkbox" data-k="p6.5"><span class="t">Carrosserie fermée, <code>battery_pack_lid</code> en place, interrupteur accessible</span></label>
+        <label class="chk"><input type="checkbox" data-k="p6.6"><span class="t">Release GitHub « canard-biscalab v1.0 » : STL modifiés, 3MF, config, fiches de test, vidéo</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><svg><use href="#i-copy"/></svg>Partager l'état des listes</h3>
+    <p class="sub">Les cases sont enregistrées dans ce navigateur seulement. Pour synchroniser avec un collègue : copier l'export, le coller dans l'import de l'autre appareil.</p>
+    <div class="row">
+      <button class="btn primary" type="button" id="btn-export"><svg><use href="#i-copy"/></svg>Exporter (copier)</button>
+      <button class="btn" type="button" id="btn-import">Importer depuis le texte ci-dessous</button>
+      <button class="btn" type="button" id="btn-reset">Tout décocher</button>
+    </div>
+    <textarea class="io" id="io" placeholder="L'export apparaît ici. Pour importer, coller un export puis cliquer « Importer »."></textarea>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ RISQUES ═══════════════════════════ -->
+<section class="page" id="page-risques" data-title="Risques et sécurité" data-sub="Registre, parades" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Anticiper</div>
+    <h1>Registre des risques</h1>
+    <p class="lead">Tout ce que la communauté a déjà rencontré, et ce que notre contexte ajoute. Chaque ligne a une parade et une phase où on la vérifie. À relire au début de chaque phase.</p>
+    <div class="read-first"><span>Pour comprendre cette page, lire d'abord :</span> <a href="#cours-securite"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>12 · Sécurité</a> <a href="#cours-depannage"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>16 · Dépannage</a></div>
+  </div>
+  <div class="card">
+    <div class="tw">
+      <table>
+        <thead><tr><th>Risque</th><th>Impact</th><th>Prob.</th><th>Parade</th><th>Phase</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Mauvaise variante de <i class="t" data-t="servo">servo</i></strong> (12 V, 1/191, 1/147)</td><td><span class="pill bad">fort</span> <i class="t" data-t="politique">politique</i> inutilisable, réentraînement + nouvelle identification <i class="t" data-t="bam">BAM</i></td><td>moyen</td><td>Référence C001 7,4 V 1/345 écrite dans l'<i class="t" data-t="issue">issue</i> Achat ; contrôle à réception ; 2 servos d'abord</td><td>2</td></tr>
+          <tr><td><strong>Chute de <i class="t" data-t="tension">tension</i> sous charge</strong> (cellules molles, câbles fins)</td><td><span class="pill bad">fort</span> erreurs <i class="t" data-t="crc">CRC</i>, chutes du robot (issue #49)</td><td>moyen</td><td>Molicel P30B ≥ 25 A, <i class="t" data-t="xt30">XT30</i>, câbles courts ; test <code>check_voltage</code> en charge</td><td>6</td></tr>
+          <tr><td><strong>Firmwares de servos hétérogènes</strong></td><td><span class="pill warn">moyen</span> « Parsing error in set_kps() » (Runtime #26)</td><td>moyen</td><td>Même lot ; vérifier la version au banc ; mise à jour Feetech sous Windows si besoin</td><td>2, 3</td></tr>
+          <tr><td><strong><i class="t" data-t="python">Python</i> 3.13 sur image récente</strong></td><td><span class="pill warn">moyen</span> onnxruntime 1.18.1 introuvable (Runtime #38)</td><td>fort</td><td>Image v0.2.3 (Bookworm) ou <code>uv</code> + Python 3.11</td><td>2</td></tr>
+          <tr><td><strong>Casse pendant <code>find_soft_offsets</code></strong></td><td><span class="pill warn">moyen</span> pièces cassées (Runtime #32)</td><td>moyen</td><td>Robot sur support, un joint à la fois, pièces de rechange imprimées d'avance (sheets, spacers)</td><td>5</td></tr>
+          <tr><td><strong>Contrôle de tête (bouton Y)</strong></td><td><span class="pill warn">moyen</span> « can break your duck's head »</td><td>fort si utilisé</td><td>Ne pas l'utiliser en démo ; <code>head_puppet.py</code> à la place</td><td>5+</td></tr>
+          <tr><td><strong><i class="t" data-t="imu">IMU</i> <i class="t" data-t="i2c">I²C</i> instable</strong> (<i class="t" data-t="clock-stretching">clock stretching</i>)</td><td><span class="pill warn">moyen</span> données manquantes → chute</td><td>moyen</td><td>Test 10 min au banc ; <code>i2c_arm_baudrate=10000</code> ou <i class="t" data-t="uart">UART</i></td><td>2</td></tr>
+          <tr><td><strong>Carte <i class="t" data-t="waveshare">Waveshare</i> hors plage <i class="t" data-t="2s">2S</i></strong></td><td><span class="pill warn">moyen</span> bus instable à 7,4 V</td><td>faible (le projet l'utilise ainsi)</td><td>Mesure au banc avant la commande des 12 servos</td><td>2</td></tr>
+          <tr><td><strong><i class="t" data-t="pi-zero-2w">Pi Zero 2 W</i> en rupture</strong></td><td><span class="pill warn">moyen</span> retard phase 2</td><td>fort</td><td>Commander dès la phase 0 chez Kubii ; alternative Pi 5 (<code>lgpio</code>) plus chère</td><td>0</td></tr>
+          <tr><td><strong>Masses hors tolérance</strong> (matériau, <i class="t" data-t="remplissage">remplissage</i>, laser)</td><td><span class="pill warn">moyen</span> instabilité, réentraînement</td><td>moyen</td><td>Suivre l'<i class="t" data-t="amont">amont</i> (<i class="t" data-t="pla">PLA</i> 15 %) ; peser ; <code>mujoco_infer</code> avec masses réelles</td><td>1, 2</td></tr>
+          <tr><td><strong>Documentation amont incomplète</strong> (vis, carte servo, expression)</td><td><span class="pill mute">faible</span> tâtonnements</td><td>certain</td><td>Guide Tnkr, journaux de construction tiers, Discord ; documenter ce que nous trouvons</td><td>1-5</td></tr>
+          <tr><td><strong>Douane / délais</strong> hors UE</td><td><span class="pill mute">faible</span> surcoût, retard</td><td>moyen</td><td>Fournisseurs UE ; un seul écart assumé possible (servos), décision du bureau</td><td>toutes</td></tr>
+          <tr><td><strong>Pas de <i class="t" data-t="gpu">GPU</i></strong> pour réentraîner</td><td><span class="pill mute">faible</span> si la politique fournie convient</td><td>moyen</td><td>Rester dans les specs ; sinon location cloud ou PC d'un membre</td><td>0, 5</td></tr>
+          <tr><td><strong>Fichiers <i class="t" data-t="cao">CAO</i> écrasés</strong> (deux éditeurs)</td><td><span class="pill mute">faible</span> travail perdu</td><td>moyen</td><td>Un éditeur par fichier (issue assignée), <code>pull</code> avant, <code>push</code> après</td><td>toutes</td></tr>
+          <tr><td><strong>Incendie <i class="t" data-t="li-ion">Li-ion</i></strong></td><td><span class="pill bad">fort</span> sécurité des personnes et des locaux</td><td>faible</td><td>Charge surveillée en sac ignifuge, stockage 50 %, <i class="t" data-t="bms">BMS</i>, consigne affichée</td><td>6</td></tr>
+          <tr><td><strong>Laser : matériau interdit, feu</strong></td><td><span class="pill bad">fort</span> gaz toxiques, incendie</td><td>faible</td><td>Liste affichée sur la machine, présence permanente, extraction</td><td>2, 5</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="grid c3">
+    <div class="card">
+      <h3><svg><use href="#i-shield"/></svg>Batteries</h3>
+      <ul class="tight">
+        <li>Charge : surface incombustible, sac ou boîte ignifuge, présence humaine, arrêt si chauffe ou gonflement.</li>
+        <li>Stockage : ≈ 50 %, hors robot, boîte métallique, pôles protégés.</li>
+        <li>Incendie : évacuer, n'intervenir que formé et équipé.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-shield"/></svg>Laser xTool P2S</h3>
+      <ul class="tight">
+        <li>Jamais seul, jamais sans extraction.</li>
+        <li>Matériaux interdits affichés : PVC, vinyle, ABS, polycarbonate, polystyrène, fibre de carbone enduite.</li>
+        <li>Extincteur CO₂ à portée ; surveiller les découpes d'acrylique.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-shield"/></svg>Banc et robot</h3>
+      <ul class="tight">
+        <li>Alimentation labo limitée en <i class="t" data-t="courant">courant</i> tant que la batterie n'est pas validée.</li>
+        <li>Robot sur support ou <i class="t" data-t="potence">potence</i> pour tout <i class="t" data-t="script">script</i> qui bouge ; mains hors des articulations.</li>
+        <li>Bouton A (pause) toujours à portée pendant une marche.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PARCOURS ═══════════════════════════ -->
+<section class="page" id="page-parcours" data-title="Parcours d'apprentissage" data-sub="16 cours, de la page blanche au robot qui marche" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Apprendre avant de faire</div>
+    <h1>Le parcours d'apprentissage</h1>
+    <p class="lead">Seize cours, écrits pour quelqu'un qui part de zéro. Chacun dure entre 30 et 90 minutes, se lit seul ou en petit groupe, et se termine par un exercice à faire au <i class="t" data-t="fablab">FabLab</i>. Les cases cochées sont mémorisées sur cet appareil. Un mot souligné en pointillé, n'importe où dans ce dossier, s'ouvre d'un clic pour donner sa définition.</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="v">16</div><div class="l">Cours</div><div class="d">≈ 14 h au total</div></div>
+    <div class="kpi"><div class="v" id="parc-done">0</div><div class="l">Cours terminés</div><div class="d">sur cet appareil</div></div>
+    <div class="kpi"><div class="v">4</div><div class="l">Tronc commun</div><div class="d">pour tout le monde</div></div>
+    <div class="kpi"><div class="v">3</div><div class="l">Filières</div><div class="d">fabrication · électronique · marche</div></div>
+    <div class="kpi"><div class="v" id="gloss-count">0</div><div class="l">Termes définis</div><div class="d">glossaire cliquable</div></div>
+    <div class="kpi"><div class="v">0</div><div class="l">Lien externe</div><div class="d">tout est ici</div></div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-book"/></svg>Comment utiliser les cours</h2>
+    <ol class="tight">
+      <li><strong>Lire le tronc commun d'abord</strong> (cours 1, 2, 4 et 12) : c'est ce qui permet de travailler ensemble sans se gêner et sans se blesser.</li>
+      <li><strong>Choisir sa filière</strong> selon son rôle. Personne n'a besoin de tout lire ; chaque référent lit sa filière en entier.</li>
+      <li><strong>Faire l'exercice</strong> de chaque cours au FabLab, de préférence à deux, et noter dans le journal ce qui a surpris.</li>
+      <li><strong>Répondre à l'auto-contrôle</strong> sans regarder la réponse d'abord. Si une question résiste, relire la section correspondante.</li>
+      <li><strong>Cocher le cours</strong> ici quand l'exercice est fait, pas quand la lecture est finie.</li>
+    </ol>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h3><svg><use href="#i-users"/></svg>Tronc commun (tout le monde)</h3>
+      <ol class="path" data-track="commun">
+        <li data-l="cours-git"><span class="n">1</span><span class="lab"><a href="#cours-git">Git et GitHub, en partant de zéro</a><small>45 min · travailler à plusieurs sur les mêmes fichiers</small></span><input type="checkbox" data-k="l.cours-git" aria-label="Cours 1 terminé"></li>
+        <li data-l="cours-raspberry"><span class="n">2</span><span class="lab"><a href="#cours-raspberry">Raspberry Pi et Linux pour le robot</a><small>60 min · le petit ordinateur qui pilote tout</small></span><input type="checkbox" data-k="l.cours-raspberry" aria-label="Cours 2 terminé"></li>
+        <li data-l="cours-methode"><span class="n">4</span><span class="lab"><a href="#cours-methode">Mener un projet technique à plusieurs</a><small>40 min · rôles, phases, fiches de test, journal</small></span><input type="checkbox" data-k="l.cours-methode" aria-label="Cours 4 terminé"></li>
+        <li data-l="cours-securite"><span class="n">12</span><span class="lab"><a href="#cours-securite">Sécurité : batteries, laser, banc, robot</a><small>30 min · à lire avant de toucher une cellule ou la laser</small></span><input type="checkbox" data-k="l.cours-securite" aria-label="Cours 12 terminé"></li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-printer"/></svg>Filière fabrication</h3>
+      <ol class="path" data-track="fab">
+        <li data-l="cours-cao"><span class="n">5</span><span class="lab"><a href="#cours-cao">La CAO : lire, exporter, modifier les pièces</a><small>60 min · FreeCAD, Onshape, formats</small></span><input type="checkbox" data-k="l.cours-cao" aria-label="Cours 5 terminé"></li>
+        <li data-l="cours-impression"><span class="n">6</span><span class="lab"><a href="#cours-impression">Impression 3D : de la bobine à la pièce contrôlée</a><small>60 min · PrusaSlicer, orientation, inserts</small></span><input type="checkbox" data-k="l.cours-impression" aria-label="Cours 6 terminé"></li>
+        <li data-l="cours-laser"><span class="n">7</span><span class="lab"><a href="#cours-laser">Découpe laser : l'outillage du projet</a><small>45 min · xTool P2S, kerf, matériaux</small></span><input type="checkbox" data-k="l.cours-laser" aria-label="Cours 7 terminé"></li>
+        <li data-l="cours-assemblage"><span class="n">8</span><span class="lab"><a href="#cours-assemblage">Assembler le canard</a><small>60 min · visserie, inserts, roulements, jeu</small></span><input type="checkbox" data-k="l.cours-assemblage" aria-label="Cours 8 terminé"></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h3><svg><use href="#i-cpu"/></svg>Filière électronique et logiciel</h3>
+      <ol class="path" data-track="elec">
+        <li data-l="cours-electronique"><span class="n">9</span><span class="lab"><a href="#cours-electronique">L'électronique du robot, pour ceux qui n'en ont jamais fait</a><small>60 min · tension, batteries, câblage, multimètre</small></span><input type="checkbox" data-k="l.cours-electronique" aria-label="Cours 9 terminé"></li>
+        <li data-l="cours-servos"><span class="n">10</span><span class="lab"><a href="#cours-servos">Les servomoteurs intelligents STS3215</a><small>60 min · bus série, ID, couple, PID</small></span><input type="checkbox" data-k="l.cours-servos" aria-label="Cours 10 terminé"></li>
+        <li data-l="cours-capteurs"><span class="n">11</span><span class="lab"><a href="#cours-capteurs">Les capteurs : centrale inertielle et contacts</a><small>50 min · BNO055, calibration, GPIO</small></span><input type="checkbox" data-k="l.cours-capteurs" aria-label="Cours 11 terminé"></li>
+        <li data-l="cours-python"><span class="n">3</span><span class="lab"><a href="#cours-python">Lire et modifier le logiciel sans être programmeur</a><small>50 min · scripts, JSON, erreurs Python</small></span><input type="checkbox" data-k="l.cours-python" aria-label="Cours 3 terminé"></li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-walk"/></svg>Filière marche</h3>
+      <ol class="path" data-track="marche">
+        <li data-l="cours-marche"><span class="n">13</span><span class="lab"><a href="#cours-marche">Comment un robot à deux jambes tient debout et marche</a><small>45 min · équilibre, phases, centre de masse</small></span><input type="checkbox" data-k="l.cours-marche" aria-label="Cours 13 terminé"></li>
+        <li data-l="cours-rl"><span class="n">14</span><span class="lab"><a href="#cours-rl">Simulation et apprentissage par renforcement, sans formules</a><small>60 min · MuJoCo, politique, sim2real</small></span><input type="checkbox" data-k="l.cours-rl" aria-label="Cours 14 terminé"></li>
+        <li data-l="cours-calibration"><span class="n">15</span><span class="lab"><a href="#cours-calibration">Calibrer et mettre en route le robot, pas à pas</a><small>90 min · offsets, IMU, première marche</small></span><input type="checkbox" data-k="l.cours-calibration" aria-label="Cours 15 terminé"></li>
+        <li data-l="cours-depannage"><span class="n">16</span><span class="lab"><a href="#cours-depannage">Dépanner : du symptôme à la cause</a><small>45 min · 19 pannes types et leurs remèdes</small></span><input type="checkbox" data-k="l.cours-depannage" aria-label="Cours 16 terminé"></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><svg><use href="#i-flag"/></svg>Qui lit quoi</h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Rôle</th><th>Tronc commun</th><th>Filière</th><th>En plus</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Maître d'œuvre</strong></td><td>1, 2, 4, 12</td><td>les trois, au moins en lecture</td><td>13 et 14 en priorité : c'est là que se décident les achats</td></tr>
+          <tr><td><strong>Référent impression 3D</strong></td><td>1, 2, 4, 12</td><td>5, 6, 8</td><td>7 pour l'outillage</td></tr>
+          <tr><td><strong>Référent laser</strong></td><td>1, 2, 4, 12</td><td>5, 7</td><td>8 pour savoir à quoi sert chaque gabarit</td></tr>
+          <tr><td><strong>Référent électronique et code</strong></td><td>1, 2, 4, 12</td><td>9, 10, 11, 3</td><td>15 et 16, qu'il animera</td></tr>
+          <tr><td><strong>Trésorier-acheteur</strong></td><td>1, 4</td><td>—</td><td>10 (les versions de <i class="t" data-t="servo">servos</i>) et la page <i class="t" data-t="bom">BOM</i></td></tr>
+          <tr><td><strong>Référent sécurité</strong></td><td>12 en premier</td><td>9</td><td>7 (laser), 15 (robot en marche)</td></tr>
+          <tr><td><strong>Nouveau membre</strong></td><td>1, 4, 12</td><td>celle qui l'attire</td><td>la page Accueil et une première <i class="t" data-t="issue">issue</i> « aide-bienvenue »</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ GLOSSAIRE ═══════════════════════════ -->
+<section class="page" id="page-glossaire" data-title="Glossaire" data-sub="Tous les termes, définis" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Référence</div>
+    <h1>Glossaire</h1>
+    <p class="lead">Chaque terme technique du dossier, défini en deux ou trois phrases, avec le cours qui l'explique en détail. Les mêmes définitions s'ouvrent d'un clic sur les mots soulignés en pointillé dans toutes les pages.</p>
+    <label class="sheet-search" style="margin:8px 0 0; max-width: 420px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="gl-q" type="search" placeholder="Chercher un terme" autocomplete="off" />
+      <span class="sr-only">Chercher un terme</span>
+    </label>
+  </div>
+  <div class="gloss" id="gloss"></div>
+</section>
+
+<!-- ═══════════════════════════ RÉFÉRENCES ═══════════════════════════ -->
+<section class="page" id="page-references" data-title="Références" data-sub="D'où viennent les faits" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Référence</div>
+    <h1>D'où viennent les faits de ce dossier</h1>
+    <p class="lead">Tout ce qui est écrit ici a été vérifié le 1er octobre 2026 dans les documents du projet d'origine et chez les fabricants. Cette page les nomme, sans renvoyer vers l'extérieur : le dossier se suffit à lui-même. Les chiffres (prix, versions, paramètres) évoluent ; en cas de doute, c'est le dépôt du projet d'origine qui fait foi.</p>
+  </div>
+  <div class="grid c2">
+    <div class="card">
+      <h3><svg><use href="#i-git"/></svg>Documents du projet Open Duck Mini</h3>
+      <ul class="src">
+        <li><strong>Dépôt principal</strong> apirrone/Open_Duck_Mini, <i class="t" data-t="branche">branche</i> v2 : README, guide d'impression, guide d'assemblage (marqué incomplet), configuration des moteurs, note <i class="t" data-t="sim2real">sim2real</i>, dossier print/ (36 <i class="t" data-t="stl">STL</i>), licence <i class="t" data-t="licence-apache">Apache-2.0</i>, modifications « Jaime's Mods ».</li>
+        <li><strong>Dépôt du code embarqué</strong> apirrone/Open_Duck_Mini_Runtime, branche v2 : README, guide d'installation (image prête v0.2.3), fichier de dépendances, exemple de configuration, <i class="t" data-t="script">scripts</i> de configuration, de vérification, de calibration et de marche.</li>
+        <li><strong>Dépôt de <i class="t" data-t="simulation">simulation</i></strong> apirrone/Open_Duck_Playground : README, dépendances, environnement joystick, <i class="t" data-t="recompense">récompenses</i>, <i class="t" data-t="domain-randomization">randomisation</i>, lanceur d'entraînement, export <i class="t" data-t="onnx">ONNX</i>, modèles <i class="t" data-t="mjcf">MJCF</i> et scènes.</li>
+        <li><strong>Dépôt des <i class="t" data-t="mouvement-reference">démarches de référence</i></strong> apirrone/Open_Duck_reference_motion_generator : README, scripts auto_waddle et fit_poly, presets de démarche.</li>
+        <li><strong>Document de <i class="t" data-t="cao">CAO</i></strong> <i class="t" data-t="onshape">Onshape</i> public d'Open Duck Mini V2 (source des STL et du modèle de simulation).</li>
+        <li><strong>Nomenclature officielle</strong> (feuille de calcul partagée du projet) : prix et références, base 398,10 €.</li>
+        <li><strong>Outils de l'équipe Rhoban et de Pollen Robotics</strong> : <i class="t" data-t="bam">BAM</i> (identification des <i class="t" data-t="servo">servos</i>, paramètres du <i class="t" data-t="sts3215">STS3215</i> 7,4 V), onshape-to-robot (export Onshape → MJCF/<i class="t" data-t="urdf">URDF</i>), rustypot (pilote du bus servo), Open_Duck_Blender, microduck_rl (notes de transfert sim2real).</li>
+        <li><strong>Discussions publiques du projet</strong> (<i class="t" data-t="issue">issues</i> <i class="t" data-t="github">GitHub</i>) : variante de servo C001 (#48), chute de <i class="t" data-t="tension">tension</i> et erreurs <i class="t" data-t="crc">CRC</i> (#49), servos 12 V aux genoux (#52), <i class="t" data-t="firmware">firmwares</i> hétérogènes (Runtime #26), casse pendant la calibration (Runtime #32), <i class="t" data-t="python">Python</i> 3.13 (Runtime #38).</li>
+        <li><strong>Journaux de construction tiers</strong> : soyeon24 (36 STL / 51 pièces, 990 g de <i class="t" data-t="pla">PLA</i>, entraînement en 1 h 11), seanmayer (<i class="t" data-t="roulement">roulements</i> 608), <i class="t" data-t="fork">fork</i> Jetson (XiaohuiChen), variante 12 V (duck_mini_pro_headless), article Scalable Human (« configurer les moteurs avant d'assembler »), billet Frank Fu (lecture du Playground).</li>
+        <li><strong>Articles</strong> : Hackaday (avril 2025), CircuitDigest (juin 2026), Make: (août 2026), annonce Microduck (Pollen Robotics, août 2026), annonce du rachat de Pollen par Hugging Face (avril 2025), article <i class="t" data-t="mujoco">MuJoCo</i> Playground (arXiv 2502.08844).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-cart"/></svg>Fabricants, fournisseurs, outils</h3>
+      <ul class="src">
+        <li><strong>Feetech STS3215</strong> : fiche <i class="t" data-t="waveshare">Waveshare</i> et wiki ST3215, fiche technique traduite (Core Electronics), fiches OpenELAB et Eckstein (prix UE), RobotShop EU, dépôt SO-ARM100 (variantes de rapport), bibliothèque feetech-servo-sdk.</li>
+        <li><strong>Carte Waveshare Bus Servo Adapter (A)</strong> : fiche et wiki Waveshare.</li>
+        <li><strong><i class="t" data-t="pi-zero-2w">Raspberry Pi Zero 2 W</i></strong> : fiche Kubii (prix, disponibilité).</li>
+        <li><strong><i class="t" data-t="bno055">BNO055</i></strong> : fiche Adafruit 2472, guides Adafruit (<i class="t" data-t="clock-stretching">clock stretching</i> <i class="t" data-t="i2c">I²C</i>, câblage <i class="t" data-t="uart">UART</i> sur <i class="t" data-t="raspberry-pi">Raspberry Pi</i>), fiche technique Bosch.</li>
+        <li><strong>Contacts Omron SS-10</strong> : fiche RS Components.</li>
+        <li><strong>GitHub</strong> : documentation officielle en français (organisations, rôles, double authentification, forks et synchronisation, <i class="t" data-t="github-desktop">GitHub Desktop</i>, modèles d'issues, Projects, releases, limites de taille, <i class="t" data-t="git">Git</i> LFS, aperçu des STL et <i class="t" data-t="csv">CSV</i>), page des tarifs, programme pour associations.</li>
+        <li><strong><i class="t" data-t="freecad">FreeCAD</i> et Onshape</strong> : annonces FreeCAD 1.0 (nov. 2024) et 1.1 (mars 2026), documentation du format <i class="t" data-t="fcstd">FCStd</i>, préférences de document (code source), tarifs et aide Onshape (branches, export), extension RobotCAD.</li>
+        <li><strong>Impression 3D</strong> : aide <i class="t" data-t="prusaslicer">PrusaSlicer</i> (profils, projets <i class="t" data-t="3mf">3MF</i>), guide des matériaux Prusa, article CNC Kitchen sur les <i class="t" data-t="insert">inserts</i> à chaud.</li>
+        <li><strong>Laser</strong> : tests de la xTool P2S (The Gadgeteer, ArchitectureLab), support xTool (LightBurn et P2S, compensation de <i class="t" data-t="kerf">kerf</i> dans <i class="t" data-t="xcs">XCS</i>), base de connaissances 1laser (mesure du kerf), liste de matériaux du makerspace de Tulane.</li>
+        <li><strong>Sécurité</strong> : consignes batteries lithium de l'EPFL, guide de charge LiPo en sécurité.</li>
+        <li><strong>Méthode</strong> : Scrum Guide (définition de <i class="t" data-t="dod">« fini »</i>), bonnes pratiques de partage OSHWA, licence Apache-2.0 (résumé choosealicense).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card flat">
+    <p class="muted" style="font-size:0.85rem">Documents internes repris : dossier de présentation et plan d'achats de septembre 2026 (budget et phases). Pages non lisibles le 1er octobre 2026 : guide d'assemblage Tnkr, vidéo « 4 Days of Soldering », historique des <i class="t" data-t="commit">commits</i> via l'API GitHub ; leurs informations sont citées d'après des sources secondaires.</p>
+  </div>
+</section>

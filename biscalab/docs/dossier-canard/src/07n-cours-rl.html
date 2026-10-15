@@ -1,0 +1,269 @@
+<section class="page" id="page-cours-rl" data-title="Cours · Simulation et RL" data-sub="Comment la marche a été apprise" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 14 · Marche</div>
+    <h1>Simulation et apprentissage par renforcement, expliqués sans formules</h1>
+    <p class="lead">La marche du canard n'a été écrite par personne : elle a été apprise dans un monde calculé. Ce cours explique ce monde, l'apprentissage, et ce qu'ils imposent à notre robot réel.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 60 min</span>
+      <span class="pill mute">Niveau : intermédiaire</span>
+      <span class="pill mute">Prérequis : cours Marche</span>
+      <span class="pill p">Rôles : logiciel, curieux</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Expliquer simplement simulation, politique, récompense et apprentissage.</li>
+      <li>Dire d'où vient le modèle informatique du canard et pourquoi nos masses réelles comptent.</li>
+      <li>Lire ce que le programme de marche reçoit (101 nombres) et ce qu'il produit (14 nombres).</li>
+      <li>Expliquer pourquoi l'apprentissage demande une carte graphique et pas le robot.</li>
+      <li>Tester gratuitement la marche fournie sur un PC, et savoir quand réentraîner.</li>
+      <li>Reconnaître les réglages « innocents » qui cassent la marche.</li>
+    </ul>
+    <p class="muted"><strong>Prérequis :</strong> le cours <a href="#cours-marche">Marche</a> ; savoir ouvrir un terminal (cours <a href="#cours-python">Python</a>).</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. L'idée : apprendre comme un enfant</h2>
+    <p>Un enfant n'apprend pas à marcher en lisant un manuel. Il essaie, tombe, recommence ; on l'encourage quand il fait un pas. L'<i class="t" data-t="rl">apprentissage par renforcement</i> (RL, de l'anglais <em>reinforcement learning</em>) fait la même chose avec un programme : il agit, reçoit un score, et s'ajuste pour obtenir un meilleur score.</p>
+    <p>Personne n'écrit « lever le genou de tant » : on écrit comment noter un essai, et le programme cherche. Avantage sur l'enfant : un robot simulé tombe des millions de fois sans rien casser.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>La recette d'entraînement du canard compte 300 millions de pas de calcul, avec 8192 canards simulés en même temps.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Le monde simulé</h2>
+    <p>Une <i class="t" data-t="simulation">simulation physique</i> est un programme qui calcule, pas de temps par pas de temps, comment bouge le robot sous l'effet des moteurs, de la gravité et des contacts. Le simulateur utilisé est <i class="t" data-t="mujoco">MuJoCo</i>, un logiciel libre. Il avance par pas de 0,002 s : son monde est recalculé 500 fois par seconde. Le programme de marche, lui, décide toutes les 0,02 s : dix pas de physique par décision. Un essai (un épisode) dure 1000 décisions, soit 20 secondes simulées.</p>
+    <h3>Le robot décrit dans un fichier</h3>
+    <p>MuJoCo lit le robot dans un fichier <i class="t" data-t="mjcf">MJCF</i>, un texte structuré qui liste ses corps (les pièces rigides), leurs masses et leurs inerties, les articulations, les moteurs et les surfaces de contact. C'est le « jumeau numérique » du canard. Pour nous, le fichier de référence est <code>open_duck_mini_v2_backlash.xml</code>.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Dans ce fichier, seules les semelles en TPU touchent le sol ; le reste du robot n'a pas de surface de contact. Le sol a un frottement de 0,6 et les articulations des jambes ont un jeu de ±0,5°.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. D'où vient le modèle du canard</h2>
+    <p>Le canard a été dessiné sur <i class="t" data-t="onshape">Onshape</i>, un logiciel de CAO en ligne. Un outil, <code>onshape-to-robot</code>, lit l'assemblage Onshape et écrit le MJCF ; l'auteur a ensuite retouché le fichier à la main (position de l'IMU, jeu des articulations, posture de repos). Les masses n'ont pas été pesées : elles sont l'estimation du <i class="t" data-t="slicer">slicer</i> (logiciel d'impression) pour un remplissage de 15 %.</p>
+    <p>Problème pour nous : <code>onshape-to-robot</code> ne lit qu'Onshape, ni <i class="t" data-t="freecad">FreeCAD</i>, ni les fichiers <i class="t" data-t="step">STEP</i>. Trois options :</p>
+    <div class="tw"><table>
+      <thead><tr><th>Option</th><th>Principe</th><th>Pour</th><th>Contre</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>Rester sur Onshape : copier le document, corriger, réexporter</td><td>chaîne d'origine</td><td>retouches à refaire ; un réexport ne redonne pas les paramètres de référence</td></tr>
+        <tr><td><strong>B (par défaut)</strong></td><td>Corriger le MJCF à la main : masse, centre de masse et inertie des pièces modifiées</td><td>tout le reste reste identique</td><td>minutieux ; à refaire aussi dans le modèle des démarches (section 5) si on les regénère</td></tr>
+        <tr><td>C</td><td>RobotCAD : FreeCAD vers <i class="t" data-t="urdf">URDF</i> (un autre format de robot), puis conversion</td><td>reste dans FreeCAD</td><td>ne produit pas de MJCF ; conversions et renommages en plus</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Nous gardons la géométrie d'origine ; nos écarts seront surtout des masses. L'option B suffit : pièce par pièce, la masse pesée (ou calculée dans FreeCAD) remplace l'estimation.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Réexporter depuis Onshape « pour mettre à jour ». Le fichier de propriétés des articulations actuel du dépôt contient d'autres valeurs que celles de l'entraînement de référence (par exemple 17,8 au lieu de 17,11) : on perdrait le modèle qui a servi.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Le modèle du servo</h2>
+    <p>Un servo réel n'obéit pas instantanément : il frotte, il a de l'inertie, son <i class="t" data-t="couple">couple</i> (sa force de rotation) est limité. <i class="t" data-t="bam">BAM</i> est une méthode de l'équipe Rhoban qui mesure un vrai servo au banc et en tire les paramètres de simulation. Elle a été appliquée à un <i class="t" data-t="sts3215">STS3215</i> 7,4 V :</p>
+    <div class="tw"><table>
+      <thead><tr><th>Paramètre</th><th>Valeur</th><th>En mots</th></tr></thead>
+      <tbody>
+        <tr><td>kp</td><td>17,11</td><td>raideur : l'effort pour un écart donné à la cible</td></tr>
+        <tr><td>Couple maximal</td><td>±3,23 N·m</td><td>la force de rotation la plus grande possible</td></tr>
+        <tr><td>Amortissement</td><td>0,56</td><td>un freinage qui croît avec la vitesse</td></tr>
+        <tr><td>Frottement sec</td><td>0,068</td><td>l'effort perdu dès que ça bouge</td></tr>
+        <tr><td>Armature</td><td>0,027</td><td>l'inertie du moteur et des engrenages</td></tr>
+      </tbody>
+    </table></div>
+    <p>La raideur kp est proportionnelle au <i class="t" data-t="gain-p">gain P</i> réglé dans le servo (30 pour la marche) et à la tension d'alimentation (7,4 V). Changer de servo, de gain ou de tension, c'est sortir du modèle.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Par rapport à 7,4 V, le couple et la raideur montent de 13,5 % avec un pack plein (8,4 V) et baissent de 8 % à 6,8 V. Le +13,5 % dépasse les ±10 % vus à l'entraînement. Un servo 12 V ou à autre rapport de réduction est un autre moteur : le modèle ne s'applique plus. Question ouverte (issue n° 48, sans réponse) : la C001 plafonnerait vers 2,7 rad/s, contre 5,24 rad/s simulés.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Les démarches modèles</h2>
+    <p><i class="t" data-t="placo">Placo</i>, autre outil de Rhoban, calcule des démarches « idéales » à partir du modèle du robot : où poser les pieds, comment déplacer le bassin. Ce sont les <i class="t" data-t="mouvement-reference">mouvements de référence</i>. Pour le canard, 240 démarches ont été calculées : en avant et en arrière (de −0,04 à 0,06 m), de côté (±0,03 m), en tournant (±0,3 rad). Elles sont résumées par des courbes dans le fichier <code>polynomial_coefficients.pkl</code>.</p>
+    <p>L'apprentissage encourage l'imitation de ces démarches, comme un élève qui décalque un dessin tout en gardant l'équilibre.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Ce fichier pkl sert deux fois : à l'apprentissage, et sur le robot, qui y lit la période de 0,54 s. Les deux copies doivent être identiques.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Ce que le programme reçoit et ce qu'il produit</h2>
+    <p>Le programme qui apprend s'appelle l'agent. Ce qu'il devient à la fin, le « cerveau » de la marche, s'appelle la <i class="t" data-t="politique">politique</i>. À chaque décision, elle reçoit une <i class="t" data-t="observation">observation</i> (ce qu'elle perçoit) et produit une <i class="t" data-t="action">action</i> (ce qu'elle commande aux servos). L'observation compte 101 nombres :</p>
+    <div class="tw"><table>
+      <thead><tr><th>Groupe</th><th>Nombres</th><th>À quoi ça sert</th></tr></thead>
+      <tbody>
+        <tr><td>Gyroscope</td><td>3</td><td>vitesse de rotation du tronc</td></tr>
+        <tr><td>Accéléromètre</td><td>3</td><td>où est le bas, secousses</td></tr>
+        <tr><td>Commande</td><td>7</td><td>vitesse avant, de côté, rotation, et 4 consignes de tête</td></tr>
+        <tr><td>Écart à la position de repos</td><td>14</td><td>position de chaque articulation</td></tr>
+        <tr><td>Vitesses articulaires (× 0,05)</td><td>14</td><td>à quelle vitesse bouge chaque articulation</td></tr>
+        <tr><td>3 dernières actions</td><td>42</td><td>mémoire courte de ce qu'il vient de faire</td></tr>
+        <tr><td>Cibles moteur</td><td>14</td><td>ce qui a été demandé aux servos</td></tr>
+        <tr><td>Contacts de pied</td><td>2</td><td>quel pied touche le sol</td></tr>
+        <tr><td>Phase (cosinus, sinus)</td><td>2</td><td>l'horloge de marche : une aiguille décrite par deux nombres</td></tr>
+      </tbody>
+    </table></div>
+    <p>L'action compte 14 nombres entre −1 et 1, un par articulation. Chacun est multiplié par 0,25 (l'<i class="t" data-t="action-scale">action_scale</i>) et ajouté à la <i class="t" data-t="home-pose">posture home</i>, la position de repos de référence. Le résultat est la cible envoyée au servo, avec une vitesse limitée à 5,24 rad/s.</p>
+    <div class="diag">
+      <svg viewBox="0 0 680 170" role="img" aria-label="Boucle de contrôle : capteurs, observation, réseau, action, servos, toutes les 20 ms">
+        <rect class="box b" x="8" y="20" width="124" height="70" rx="10"/>
+        <text x="70" y="48" text-anchor="middle" font-weight="700">Capteurs</text>
+        <text x="70" y="68" text-anchor="middle">IMU, pieds, servos</text>
+        <rect class="box p" x="142" y="20" width="124" height="70" rx="10"/>
+        <text x="204" y="48" text-anchor="middle" font-weight="700">Observation</text>
+        <text x="204" y="68" text-anchor="middle">101 nombres</text>
+        <rect class="box g" x="276" y="20" width="124" height="70" rx="10"/>
+        <text x="338" y="48" text-anchor="middle" font-weight="700">Réseau</text>
+        <text x="338" y="68" text-anchor="middle">512 · 256 · 128</text>
+        <rect class="box p" x="410" y="20" width="124" height="70" rx="10"/>
+        <text x="472" y="48" text-anchor="middle" font-weight="700">Action</text>
+        <text x="472" y="68" text-anchor="middle">14 nombres</text>
+        <rect class="box w" x="544" y="20" width="128" height="70" rx="10"/>
+        <text x="608" y="42" text-anchor="middle" font-weight="700">Servos</text>
+        <text x="608" y="60" text-anchor="middle">cible = home</text>
+        <text x="608" y="78" text-anchor="middle">+ 0,25 × action</text>
+        <path class="arr" d="M132 55 H140"/>
+        <path class="arr" d="M266 55 H274"/>
+        <path class="arr" d="M400 55 H408"/>
+        <path class="arr" d="M534 55 H542"/>
+        <path class="arr" d="M608 90 V125 H70 V94"/>
+        <text x="340" y="150" text-anchor="middle">le robot bouge, les capteurs mesurent : un tour toutes les 20 ms</text>
+      </svg>
+    </div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Si la politique sort 0,4 pour le genou gauche, la cible vaut la position home du genou plus 0,1 rad (0,4 × 0,25). Une sortie de 1 donne l'écart maximal : 0,25 rad, environ 14°.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. La récompense</h2>
+    <p>La <i class="t" data-t="recompense">récompense</i> est le score donné à chaque décision, pas une note finale. Elle additionne des termes ; le poids dit l'importance de chacun.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Terme</th><th>Poids</th><th>Ce qu'il encourage ou punit</th></tr></thead>
+      <tbody>
+        <tr><td>Suivre la vitesse demandée</td><td>2,5</td><td>avancer ou se décaler comme le stick le demande</td></tr>
+        <tr><td>Suivre la rotation demandée</td><td>6,0</td><td>tourner à la bonne vitesse</td></tr>
+        <tr><td>Rester debout</td><td>20</td><td>ne pas tomber : une chute arrête l'essai</td></tr>
+        <tr><td>Imiter la démarche modèle</td><td>1,0</td><td>ressembler aux démarches de Placo</td></tr>
+        <tr><td>Couples</td><td>−0,001</td><td>punit les efforts inutiles</td></tr>
+        <tr><td>Variation d'action</td><td>−0,5</td><td>punit les changements brusques</td></tr>
+        <tr><td>Immobilité</td><td>−0,2</td><td>terme appliqué quand la consigne est nulle</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>« Rester debout » pèse 20 et une chute arrête l'essai : tomber coûte tous les points des décisions suivantes. Pour le programme, ne pas tomber passe avant tout le reste.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Le réseau de neurones</h2>
+    <p>La politique est un <i class="t" data-t="reseau-neurones">réseau de neurones</i>. Imaginez une machine avec des milliers de petits boutons de réglage. Les 101 nombres entrent d'un côté ; ils sont mélangés par trois couches successives de 512, 256 puis 128 « neurones », de simples multiplications et additions ; 14 nombres sortent de l'autre côté.</p>
+    <p>Personne ne règle ces boutons à la main : c'est le travail de l'apprentissage. Au départ réglés au hasard, ils finissent par produire une marche.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>9. PPO, ou progresser à petits pas prudents</h2>
+    <p>L'algorithme d'apprentissage est <i class="t" data-t="ppo">PPO</i> (<em>Proximal Policy Optimization</em>, optimisation prudente de la politique). À chaque tour, il essaie la politique sur des milliers de robots, repère les décisions qui ont rapporté des points, et tourne les boutons dans ce sens, un peu seulement, pour ne pas détruire ce qui marchait.</p>
+    <p>Recette du canard : 8192 robots simulés en parallèle, 300 millions de pas. Un constructeur l'a fait tourner en environ 1 h 11 sur une carte graphique RTX 3090. Un <i class="t" data-t="gpu">GPU</i> (carte graphique) contient des milliers de petits calculateurs qui font la même opération en même temps : idéal pour 8192 robots identiques, qu'un PC ordinaire traiterait l'un après l'autre.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le Pi Zero 2 W n'a pas besoin de GPU : exécuter le réseau une fois toutes les 20 ms est un petit calcul. Le gros du travail est fait une fois pour toutes.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>10. Rendre la politique robuste</h2>
+    <h3>Bruits, retards et poussées</h3>
+    <p>Un monde simulé parfait donnerait une politique fragile. On le salit volontairement : bruit sur les positions mesurées (0,03 rad aux hanches, 0,05 aux genoux, 0,08 aux chevilles), sur les vitesses (2,5 rad/s), sur le gyroscope (0,1) et l'accéléromètre (0,05) ; retard des ordres de 0 à 40 ms ; poussées de 0,1 à 1 m/s toutes les 5 à 10 s.</p>
+    <h3>La randomisation de domaine</h3>
+    <p>La <i class="t" data-t="domain-randomization">randomisation de domaine</i> fait varier le robot lui-même d'un essai à l'autre : masses × 0,9 à 1,1 (±10 %), raideur kp ±10 %, frottement des articulations ±10 %, armature de +0 à +5 %. La politique apprend ainsi à marcher sur une famille de canards, dont, espère-t-on, le nôtre.</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Croire que tout ce que le code annonce est appliqué. Dans le code public, la variation du frottement du sol et celle de la masse du tronc visent de mauvais numéros d'objets et ne s'appliquent pas. On ne sait pas si la politique fournie a été entraînée avec ce code. Si nous réentraînons : <code>FLOOR_GEOM_ID</code> doit valoir 46 et <code>TORSO_BODY_ID</code> 2.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>11. Du fichier au robot</h2>
+    <p>À la fin, les réglages du réseau sont exportés dans un fichier <i class="t" data-t="onnx">ONNX</i>, un format standard. Celui du canard s'appelle <code>BEST_WALK_ONNX_2.onnx</code>. Sur le Pi, le <i class="t" data-t="runtime">runtime</i> (le programme de marche du robot) l'exécute avec la bibliothèque <code>onnxruntime</code>.</p>
+    <p>La <i class="t" data-t="frequence-controle">fréquence de contrôle</i> est de 50 Hz : en 20 ms, il faut lire les capteurs, calculer le réseau et envoyer les 14 cibles. Si le Pi dépasse, le message « Policy control budget exceeded » (budget de temps dépassé) apparaît.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le runtime demande Python 3.11 et <code>onnxruntime</code> 1.18.1. Les images récentes du Pi fournissent Python 3.13, pour lequel cette version d'onnxruntime n'existe pas : d'où l'image prête v0.2.3 ou une installation sur Bookworm.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>12. Du simulé au réel</h2>
+    <p>Le <i class="t" data-t="sim2real">sim2real</i> (de la simulation au réel) est le passage au vrai robot. Tout écart entre les deux mondes peut faire échouer la marche.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Si je change…</th><th>Je refais…</th></tr></thead>
+      <tbody>
+        <tr><td>la géométrie</td><td>URDF, MJCF, posture home, démarches, fichier pkl, apprentissage</td></tr>
+        <tr><td>les masses</td><td>masses du MJCF (et de l'URDF), test en simulation, apprentissage si besoin</td></tr>
+        <tr><td>la semelle</td><td>frottement, apprentissage</td></tr>
+        <tr><td>le servo, le gain P, la tension (3S)</td><td>mesure BAM, propriétés des articulations, apprentissage</td></tr>
+        <tr><td>la démarche</td><td>démarches modèles, fichier pkl, apprentissage</td></tr>
+        <tr><td>les ID, les palonniers</td><td>la configuration du robot seulement</td></tr>
+        <tr><td>le sens de l'IMU</td><td>réglage <code>imu_upside_down</code>, calibration</td></tr>
+        <tr><td>la place de l'IMU</td><td>position dans le MJCF, apprentissage</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>13. Le test gratuit, et la politique fournie</h2>
+    <p>Le script <code>mujoco_infer.py</code> fait marcher l'ONNX dans MuJoCo sur un PC ordinaire, sans GPU, avec un MJCF corrigé par <strong>nos</strong> masses réelles. Si le canard simulé marche, nos écarts sont tolérés, au moins en simulation : bon signe, pas une garantie.</p>
+    <p>La politique fournie se réutilise telle quelle si :</p>
+    <ul>
+      <li>les 14 articulations ont même ordre, mêmes sens et mêmes zéros, et la même posture home ;</li>
+      <li>50 Hz, action_scale 0,25, P = 30 ;</li>
+      <li>servos STS3215 7,4 V rapport 1/345, batterie 2S ;</li>
+      <li>semelles TPU, IMU compatible, fichier pkl de 0,54 s ;</li>
+      <li>masses à ±10 %.</li>
+    </ul>
+    <p>Aucune tolérance chiffrée n'est publiée.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Dès que tronc, tête et jambes seront pesés, on reporte ces masses dans le MJCF et on lance le test. C'est l'étape à faire avant toute modification non standard.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>14. Quand et comment réentraîner</h2>
+    <p>On réentraîne si une condition ci-dessus est rompue, ou si le test gratuit échoue avec nos masses. Il faut un PC avec GPU NVIDIA compatible CUDA 12, Python 3.11 ou plus, et l'outil <code>uv</code> (gestionnaire d'environnements Python, qui installe la version de Python voulue par chaque dépôt). Si la géométrie a changé, on regénère d'abord les démarches, dans le dépôt du générateur de références :</p>
+    <pre><code>uv run scripts/auto_waddle.py -j8 --duck open_duck_mini_v2 --sweep
+uv run scripts/fit_poly.py --ref_motion recordings/</code></pre>
+    <p>On copie le <code>polynomial_coefficients.pkl</code> obtenu dans <code>playground/open_duck_mini_v2/data/</code> du Playground et dans le runtime du robot, on corrige les deux numéros de la section 10, puis :</p>
+    <pre><code>uv run playground/open_duck_mini_v2/runner.py --task flat_terrain_backlash --num_timesteps 300000000</code></pre>
+    <p>Un ONNX est exporté à chaque étape de sauvegarde ; on le teste avec <code>mujoco_infer.py</code> avant de le copier sur le robot.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>15. Les réglages « innocents » qui cassent tout</h2>
+    <div class="tw"><table>
+      <thead><tr><th>Réglage</th><th>Valeur apprise</th><th>Pourquoi on n'y touche pas</th></tr></thead>
+      <tbody>
+        <tr><td>Gain P</td><td>30 (jambes)</td><td>la raideur des servos change : ce n'est plus le robot appris</td></tr>
+        <tr><td>Filtre passe-bas <code>--cutoff_frequency</code></td><td>désactivé</td><td>absent à l'apprentissage ; il ajoute un retard que la politique ne connaît pas</td></tr>
+        <tr><td>Fréquence</td><td>50 Hz</td><td>l'horloge de marche et les réflexes sont calés dessus</td></tr>
+        <tr><td>action_scale</td><td>0,25</td><td>toutes les amplitudes seraient fausses</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> « Il tremble, je baisse P » ou « j'ajoute un filtre ». Ces réflexes de régleur dégradent une politique apprise : on cherche la cause (<a href="#cours-depannage">Dépannage</a>).</div></div>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : un PC (Linux de préférence) avec Python 3.11 ou plus, GitHub Desktop, le journal de bord. Pas besoin de GPU. Durée : 60 min.</p>
+    <ol class="steps">
+      <li><div><b>Installer uv</b> Dans un terminal : <code>pip install uv</code>, puis <code>uv --version</code> pour vérifier.</div></li>
+      <li><div><b>Récupérer les dépôts</b> Avec GitHub Desktop (Clone repository, onglet URL), cloner <code>apirrone/Open_Duck_Playground</code> et <code>apirrone/Open_Duck_Mini</code> (branche <code>v2</code>). Chercher <code>BEST_WALK_ONNX_2.onnx</code> dans le second et le copier à la racine du premier.</div></li>
+      <li><div><b>Lancer le test</b> Dans le dossier du Playground, en donnant la scène explicitement pour savoir quel fichier est chargé :<pre><code>uv run playground/open_duck_mini_v2/mujoco_infer.py -o BEST_WALK_ONNX_2.onnx --model_path playground/open_duck_mini_v2/xmls/scene_flat_terrain_backlash.xml</code></pre>Le premier lancement installe les dépendances. Si une dépendance réservée à Linux échoue sous Windows, noter l'erreur exacte et refaire l'exercice sous Linux.</div></li>
+      <li><div><b>Observer</b> Le canard tient-il debout ? Piétine-t-il régulièrement ? Lire les options du script avec <code>--help</code>. Noter.</div></li>
+      <li><div><b>Alourdir la tête</b> Dans <code>playground/open_duck_mini_v2/xmls/open_duck_mini_v2_backlash.xml</code>, repérer le ou les corps de la tête et leur ligne <code>inertial</code> ; multiplier la valeur <code>mass</code> par 1,2. Enregistrer.</div></li>
+      <li><div><b>Comparer</b> Relancer, observer, noter. Puis annuler la modification dans GitHub Desktop (Discard changes).</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> une entrée de journal décrivant les deux comportements, avec la commande exacte et la masse avant et après.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi 8192 robots en parallèle, et pourquoi un GPU ?</summary><p>Pour accumuler des millions d'essais en une heure environ ; un GPU fait la même opération sur des milliers de données à la fois.</p></details>
+    <details class="quiz"><summary>Que reçoit la politique, et combien de fois par seconde ?</summary><p>101 nombres (gyroscope, accéléromètre, commande, positions et vitesses articulaires, 3 dernières actions, cibles, contacts, phase), 50 fois par seconde.</p></details>
+    <details class="quiz"><summary>La politique sort 1 pour une articulation. Que devient la cible ?</summary><p>Posture home plus 0,25 rad (environ 14°), car l'action est multipliée par 0,25.</p></details>
+    <details class="quiz"><summary>Pourquoi ne pas activer le filtre passe-bas ?</summary><p>Il n'existait pas à l'apprentissage : il ajoute un retard que la politique n'a jamais connu.</p></details>
+    <details class="quiz"><summary>Notre tronc pèse 15 % de plus que le modèle. Que faire ?</summary><p>C'est hors des ±10 % appris. Corriger la masse dans le MJCF (option B), lancer <code>mujoco_infer.py</code> ; si le canard simulé ne marche plus, alléger ou réentraîner.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>La marche est apprise par essais et récompenses dans MuJoCo, pas programmée.</li>
+      <li>Le MJCF est le jumeau numérique du canard ; on y met nos masses (option B).</li>
+      <li>Le modèle de servo vient de mesures BAM sur un STS3215 7,4 V : autre servo, gain ou tension, autre robot.</li>
+      <li>101 nombres entrent, 14 sortent (× 0,25 autour de la posture home), 50 fois par seconde.</li>
+      <li>L'apprentissage demande un GPU NVIDIA ; le Pi exécute seulement le fichier ONNX.</li>
+      <li><code>mujoco_infer.py</code> avec nos masses : le test gratuit avant tout essai réel.</li>
+      <li>Gain P, filtre, fréquence, action_scale : on n'y touche pas.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-calibration">Calibrer et mettre en route le robot</a>.</p>
+  </div>
+</section>

@@ -1,0 +1,306 @@
+</main>
+
+<nav class="tabbar" aria-label="Navigation principale">
+  <div class="tabbar-row" id="tabbar-row"></div>
+</nav>
+
+<div class="sheet-backdrop" id="sheet-backdrop" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Toutes les rubriques" hidden>
+  <div class="sheet-head">
+    <h2>Rubriques</h2>
+    <button class="tb-btn" type="button" id="sheet-close" aria-label="Fermer" style="width:36px;height:36px;border-radius:9999px;border:1px solid var(--color-border);background:var(--color-card);color:var(--color-fg);display:grid;place-items:center"><svg style="width:18px;height:18px"><use href="#i-x"/></svg></button>
+  </div>
+  <label class="sheet-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="sheet-q" type="search" placeholder="Rechercher" autocomplete="off" />
+    <span class="sr-only">Rechercher une rubrique</span>
+  </label>
+  <div class="sheet-body" id="sheet-body"></div>
+  <div class="sheet-grab" aria-hidden="true"></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ─── Registre de navigation (une source : sidebar, rail, tabbar, feuille) ───
+  var NAV = [
+    { id: 'accueil',      label: 'Accueil',               short: 'Accueil', group: 'Pilotage',     icon: 'i-home',    tint: 'oklch(0.546 0.215 262)', kw: 'tableau de bord résumé règles décisions' },
+    { id: 'projet',       label: 'Le projet',             short: 'Projet',  group: 'Pilotage',     icon: 'i-flag',    tint: 'oklch(0.541 0.281 293)', kw: 'open duck mini v2 présentation dépôts communauté licence microduck' },
+    { id: 'parcours',     label: "Parcours d'apprentissage", short: 'Cours', group: 'Apprendre',  icon: 'i-book',    tint: 'oklch(0.84 0.18 78)',    kw: 'cours leçons formation débuter apprendre filières' },
+    { id: 'cours-git',    label: '1 · Git et GitHub',     group: 'Apprendre', icon: 'i-git',     tint: 'oklch(0.3 0.03 286)',    kw: 'cours git github desktop commit fork clone pull push issue', lesson: true },
+    { id: 'cours-raspberry', label: '2 · Raspberry Pi et Linux', group: 'Apprendre', icon: 'i-cpu', tint: 'oklch(0.546 0.215 262)', kw: 'cours raspberry pi linux ssh terminal flasher carte sd', lesson: true },
+    { id: 'cours-python', label: '3 · Lire le logiciel',  group: 'Apprendre', icon: 'i-code',    tint: 'oklch(0.435 0.042 286)', kw: 'cours python script json erreur venv pip runtime', lesson: true },
+    { id: 'cours-methode', label: '4 · Mener le projet',  group: 'Apprendre', icon: 'i-users',   tint: 'oklch(0.627 0.194 149)', kw: 'cours méthode rôles phases fiche de test journal issue', lesson: true },
+    { id: 'cours-cao',    label: '5 · CAO',               group: 'Apprendre', icon: 'i-cube',    tint: 'oklch(0.58 0.21 300)',   kw: 'cours cao freecad onshape stl step', lesson: true },
+    { id: 'cours-impression', label: '6 · Impression 3D', group: 'Apprendre', icon: 'i-printer', tint: 'oklch(0.8 0.2 60)',      kw: 'cours impression 3d prusaslicer pla tpu inserts', lesson: true },
+    { id: 'cours-laser',  label: '7 · Découpe laser',     group: 'Apprendre', icon: 'i-zap',     tint: 'oklch(0.74 0.19 30)',    kw: 'cours laser xtool p2s kerf xcs', lesson: true },
+    { id: 'cours-assemblage', label: '8 · Assemblage',    group: 'Apprendre', icon: 'i-cube',    tint: 'oklch(0.8 0.2 60)',      kw: 'cours assemblage vis inserts roulements jeu montage', lesson: true },
+    { id: 'cours-electronique', label: '9 · Électronique', group: 'Apprendre', icon: 'i-cpu',  tint: 'oklch(0.82 0.15 200)',   kw: 'cours électronique tension courant batterie bms ubec multimètre', lesson: true },
+    { id: 'cours-servos', label: '10 · Servomoteurs',     group: 'Apprendre', icon: 'i-zap',     tint: 'oklch(0.82 0.15 200)',   kw: 'cours servos sts3215 bus série id couple pid', lesson: true },
+    { id: 'cours-capteurs', label: '11 · Capteurs',       group: 'Apprendre', icon: 'i-walk',    tint: 'oklch(0.82 0.15 200)',   kw: 'cours capteurs imu bno055 contacts gyroscope', lesson: true },
+    { id: 'cours-securite', label: '12 · Sécurité',       group: 'Apprendre', icon: 'i-shield',  tint: 'oklch(0.577 0.245 27.3)', kw: 'cours sécurité li-ion batterie laser banc incendie', lesson: true },
+    { id: 'cours-marche', label: '13 · Marche bipède',    group: 'Apprendre', icon: 'i-walk',    tint: 'oklch(0.627 0.194 149)', kw: 'cours marche équilibre centre de masse phases', lesson: true },
+    { id: 'cours-rl',     label: '14 · Simulation et RL', group: 'Apprendre', icon: 'i-walk',    tint: 'oklch(0.627 0.194 149)', kw: 'cours simulation mujoco apprentissage renforcement politique onnx sim2real', lesson: true },
+    { id: 'cours-calibration', label: '15 · Calibration', group: 'Apprendre', icon: 'i-check',   tint: 'oklch(0.627 0.194 149)', kw: 'cours calibration offsets imu première marche', lesson: true },
+    { id: 'cours-depannage', label: '16 · Dépannage',     group: 'Apprendre', icon: 'i-warn',    tint: 'oklch(0.577 0.245 27.3)', kw: 'cours dépannage panne symptôme erreur crc', lesson: true },
+    { id: 'equipe',       label: 'Équipe et méthode',     group: 'Organisation', icon: 'i-users',   tint: 'oklch(0.627 0.194 149)', kw: 'rôles rituels journal fiche de test réunion communication signal' },
+    { id: 'github',       label: 'Dépôt GitHub',          group: 'Organisation', icon: 'i-git',     tint: 'oklch(0.3 0.03 286)',    kw: 'fork clone commit push pull desktop conventions labels licence apache' },
+    { id: 'cao',          label: 'CAO et fichiers',       group: 'Organisation', icon: 'i-cube',    tint: 'oklch(0.58 0.21 300)',   kw: 'onshape freecad step stl 3mf mjcf urdf robotcad onshape-to-robot' },
+    { id: 'fabrication',  label: 'Fabrication',           short: 'Fabrication', group: 'Technique', icon: 'i-printer', tint: 'oklch(0.8 0.2 60)', kw: 'impression 3d prusa prusaslicer laser xtool p2s inserts pla tpu pièces' },
+    { id: 'bom',          label: 'BOM et achats',         group: 'Technique',    icon: 'i-cart',    tint: 'oklch(0.74 0.19 30)',    kw: 'nomenclature prix fournisseurs servo budget phases commandes' },
+    { id: 'electronique', label: 'Électronique',          group: 'Technique',    icon: 'i-cpu',     tint: 'oklch(0.82 0.15 200)',   kw: 'câblage gpio sts3215 waveshare bno055 imu batterie bms ubec banc' },
+    { id: 'logiciel',     label: 'Logiciel embarqué',     group: 'Technique',    icon: 'i-code',    tint: 'oklch(0.435 0.042 286)', kw: 'runtime raspberry pi image scripts duck_config manette xbox python' },
+    { id: 'marche',       label: 'Marche et calibration', short: 'Marche', group: 'Technique', icon: 'i-walk', tint: 'oklch(0.627 0.194 149)', kw: 'rl ppo mujoco sim2real onnx offsets réentraînement gpu bam kp' },
+    { id: 'planning',     label: 'Planning et jalons',    group: 'Suivi',        icon: 'i-cal',     tint: 'oklch(0.546 0.215 262)', kw: 'phases jalons checklist go no-go export import' },
+    { id: 'risques',      label: 'Risques et sécurité',   group: 'Suivi',        icon: 'i-shield',  tint: 'oklch(0.577 0.245 27.3)', kw: 'registre parades li-ion laser incendie' },
+    { id: 'glossaire',    label: 'Glossaire',             group: 'Référence',    icon: 'i-book',    tint: 'oklch(0.84 0.18 78)',    kw: 'vocabulaire définitions termes' },
+    { id: 'references',   label: 'Références',            group: 'Référence',    icon: 'i-link',    tint: 'oklch(0.708 0.012 280)', kw: 'sources bibliographie origine des faits' }
+  ];
+  var TABS = ['accueil', 'parcours', 'fabrication', 'marche'];
+  var GROUPS = ['Pilotage', 'Apprendre', 'Organisation', 'Technique', 'Suivi', 'Référence'];
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  function norm(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  function svgUse(id, cls) { return '<svg' + (cls ? ' class="' + cls + '"' : '') + ' aria-hidden="true"><use href="#' + id + '"/></svg>'; }
+
+  // ─── Stockage local, best-effort ───
+  var KEY = 'canard.progress.v1';
+  var THEME_KEY = 'canard.theme.v1';
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+  function save(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+  var state = load();
+
+  // ─── Thème ───
+  function applyTheme(t) {
+    var root = document.documentElement;
+    if (t === 'dark' || t === 'light') root.setAttribute('data-theme', t); else root.removeAttribute('data-theme');
+    try { if (t) localStorage.setItem(THEME_KEY, t); else localStorage.removeItem(THEME_KEY); } catch (e) {}
+  }
+  function currentDark() {
+    var t = document.documentElement.getAttribute('data-theme');
+    if (t) return t === 'dark';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  try { var saved = localStorage.getItem(THEME_KEY); if (saved) applyTheme(saved); } catch (e) {}
+  function toggleTheme() { applyTheme(currentDark() ? 'light' : 'dark'); }
+  $('#theme-btn').addEventListener('click', toggleTheme);
+  $('#tb-theme').addEventListener('click', toggleTheme);
+
+  // ─── Rendu de la navigation ───
+  var sbList = $('#sb-list'), tabRow = $('#tabbar-row'), sheetBody = $('#sheet-body');
+  function renderSidebar(q) {
+    var f = norm(q);
+    var html = '';
+    GROUPS.forEach(function (g) {
+      var items = NAV.filter(function (n) { return n.group === g && (!f || norm(n.label + ' ' + n.kw).indexOf(f) >= 0); });
+      if (!items.length) return;
+      html += '<div class="sb-sec">' + g + '</div>';
+      items.forEach(function (n) {
+        var done = n.lesson && state['l.' + n.id] ? ' sb-done' : '';
+        html += '<a class="sb-item' + (n.lesson ? ' sb-lesson' : '') + done + '" href="#' + n.id + '" data-nav="' + n.id + '" title="' + n.label + '">' + svgUse(n.icon) + '<span>' + n.label + '</span><span class="sb-pct" data-pct="' + n.id + '"></span></a>';
+      });
+    });
+    sbList.innerHTML = html || '<div class="sb-sec">Aucune rubrique</div>';
+    markActive();
+  }
+  function renderTabs() {
+    var html = '';
+    TABS.forEach(function (id) {
+      var n = NAV.filter(function (x) { return x.id === id; })[0];
+      html += '<a class="tabbar-item" href="#' + n.id + '" data-nav="' + n.id + '">' + svgUse(n.icon) + '<span>' + (n.short || n.label) + '</span></a>';
+    });
+    html += '<button class="tabbar-item" type="button" id="tab-menu" aria-haspopup="dialog">' + svgUse('i-menu') + '<span>Menu</span></button>';
+    tabRow.innerHTML = html;
+    $('#tab-menu').addEventListener('click', openSheet);
+  }
+  function renderSheet(q) {
+    var f = norm(q);
+    var html = '';
+    GROUPS.forEach(function (g) {
+      var items = NAV.filter(function (n) { return n.group === g && (!f || norm(n.label + ' ' + n.kw).indexOf(f) >= 0); });
+      if (!items.length) return;
+      html += '<div class="sheet-sec">' + g + '</div>';
+      items.forEach(function (n) {
+        html += '<a class="sheet-item" href="#' + n.id + '" data-nav="' + n.id + '"><span class="ico" style="background:' + n.tint + '">' + svgUse(n.icon) + '</span><span>' + n.label + '</span><span class="sb-pct" data-pct="' + n.id + '"></span></a>';
+      });
+    });
+    sheetBody.innerHTML = html || '<p class="muted" style="padding:12px 4px">Aucune rubrique ne correspond.</p>';
+    markActive();
+    updateProgress();
+  }
+
+  // ─── Feuille ☰ ───
+  var sheet = $('#sheet'), backdrop = $('#sheet-backdrop'), lastFocus = null;
+  function openSheet() { lastFocus = document.activeElement; sheet.hidden = false; backdrop.hidden = false; $('#sheet-q').value = ''; renderSheet(''); setTimeout(function () { $('#sheet-q').focus(); }, 30); }
+  function closeSheet() { sheet.hidden = true; backdrop.hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  $('#sheet-close').addEventListener('click', closeSheet);
+  backdrop.addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
+  $('#sheet-q').addEventListener('input', function (e) { renderSheet(e.target.value); });
+  $('#sb-q').addEventListener('input', function (e) { renderSidebar(e.target.value); });
+
+  // ─── Routage par ancre ───
+  var pages = $$('.page');
+  var current = null;
+  function show(id, noScroll) {
+    var ok = NAV.some(function (n) { return n.id === id; });
+    if (!ok) id = 'accueil';
+    pages.forEach(function (p) { p.hidden = p.id !== 'page-' + id; });
+    current = id;
+    var p = $('#page-' + id);
+    $('#tb-title').textContent = p.getAttribute('data-title') || 'Canard BiscaLab';
+    $('#tb-sub').textContent = p.getAttribute('data-sub') || '';
+    document.title = (p.getAttribute('data-title') || 'Canard BiscaLab') + ' · Canard BiscaLab';
+    markActive();
+    if (!noScroll) window.scrollTo({ top: 0, behavior: 'auto' });
+    closeSheet();
+  }
+  function markActive() {
+    $$('[data-nav]').forEach(function (a) {
+      if (a.getAttribute('data-nav') === current) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+  }
+  function route() {
+    var h = (location.hash || '#accueil').replace('#', '');
+    show(h);
+  }
+  window.addEventListener('hashchange', route);
+
+  // ─── Checklists persistées + progression ───
+  var boxes = $$('input[type=checkbox][data-k]');
+  boxes.forEach(function (b) {
+    b.checked = !!state[b.getAttribute('data-k')];
+    b.addEventListener('change', function () {
+      state[b.getAttribute('data-k')] = b.checked;
+      if (!b.checked) delete state[b.getAttribute('data-k')];
+      save(state); updateProgress();
+    });
+  });
+  var PHASES = [
+    { k: 'p0', label: 'Phase 0 · Organisation', pct: '#pct-p0' },
+    { k: 'p1', label: 'Phase 1 · Structure', pct: '#pct-p1' },
+    { k: 'p2', label: 'Phase 2 · Cerveau + banc', pct: '#pct-p2' },
+    { k: 'p3', label: 'Phases 3-4 · Jambes', pct: '#pct-p3' },
+    { k: 'p5', label: 'Phase 5 · Tête + calibration', pct: '#pct-p5' },
+    { k: 'p6', label: 'Phase 6 · Énergie', pct: '#pct-p6' }
+  ];
+  var PAGE_KEYS = { planning: ['p0', 'p1', 'p2', 'p3', 'p5', 'p6'], equipe: ['m'], electronique: ['b'], marche: ['c'], parcours: ['l'] };
+  function pctOf(prefixes) {
+    var tot = 0, done = 0;
+    boxes.forEach(function (b) {
+      var k = b.getAttribute('data-k');
+      if (prefixes.some(function (p) { return k.indexOf(p + '.') === 0; })) { tot++; if (b.checked) done++; }
+    });
+    return tot ? Math.round(100 * done / tot) : 0;
+  }
+  function updateProgress() {
+    var all = pctOf(['p0', 'p1', 'p2', 'p3', 'p5', 'p6', 'm', 'b', 'c']);
+    $('#prog-all').style.width = all + '%';
+    $('#prog-all-n').textContent = all + ' %';
+    var html = '';
+    PHASES.forEach(function (ph) {
+      var v = pctOf([ph.k]);
+      html += '<div class="prog-row"><span class="lab">' + ph.label + '</span><span class="n">' + v + ' %</span></div><div class="bar thin"><span style="width:' + v + '%"></span></div>';
+      var el = $(ph.pct); if (el) el.textContent = v + ' %';
+    });
+    $('#prog-phases').innerHTML = html;
+    $$('[data-pct]').forEach(function (el) {
+      var id = el.getAttribute('data-pct');
+      if (PAGE_KEYS[id]) { var v = pctOf(PAGE_KEYS[id]); el.textContent = v ? v + ' %' : ''; } else el.textContent = '';
+    });
+    // Parcours : cours terminés
+    var ldone = 0; $$('.path li').forEach(function (li) { var k = 'l.' + li.getAttribute('data-l'); var d = !!state[k]; li.classList.toggle('done', d); if (d) ldone++; });
+    var pd = $('#parc-done'); if (pd) pd.textContent = ldone;
+    $$('.sb-lesson').forEach(function (a) { a.classList.toggle('sb-done', !!state['l.' + a.getAttribute('data-nav')]); });
+  }
+
+  // ─── Export / import / reset ───
+  var toastEl = $('#toast'), toastT = null;
+  function toast(msg) { toastEl.textContent = msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { toastEl.classList.remove('on'); }, 2200); }
+  var io = $('#io');
+  $('#btn-export').addEventListener('click', function () {
+    var payload = JSON.stringify({ app: 'canard-biscalab', v: 1, date: new Date().toISOString(), progress: state });
+    io.value = payload;
+    var done = function () { toast('Export copié dans le presse-papiers'); };
+    var fallback = function () { io.focus(); io.select(); toast('Texte sélectionné : copier avec Ctrl+C'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(payload).then(done, fallback); else fallback();
+  });
+  $('#btn-import').addEventListener('click', function () {
+    try {
+      var o = JSON.parse(io.value);
+      var p = o && o.progress ? o.progress : o;
+      if (!p || typeof p !== 'object') throw new Error('format');
+      Object.keys(p).forEach(function (k) { if (p[k]) state[k] = true; });
+      save(state);
+      boxes.forEach(function (b) { b.checked = !!state[b.getAttribute('data-k')]; });
+      updateProgress(); toast('Import fusionné (' + Object.keys(p).length + ' cases)');
+    } catch (e) { toast('Texte illisible : coller un export complet'); }
+  });
+  $('#btn-reset').addEventListener('click', function () {
+    if ($('#btn-reset').getAttribute('data-arm') !== '1') { $('#btn-reset').setAttribute('data-arm', '1'); $('#btn-reset').textContent = 'Confirmer : tout décocher'; setTimeout(function () { $('#btn-reset').removeAttribute('data-arm'); $('#btn-reset').textContent = 'Tout décocher'; }, 4000); return; }
+    state = {}; save(state); boxes.forEach(function (b) { b.checked = false; }); updateProgress(); toast('Listes remises à zéro');
+    $('#btn-reset').removeAttribute('data-arm'); $('#btn-reset').textContent = 'Tout décocher';
+  });
+
+
+  // ─── Termes : popover de définition + glossaire ───
+  var TERMS = __TERMS__;
+  var NAV_BY_ID = {}; NAV.forEach(function (n) { NAV_BY_ID[n.id] = n; });
+  var gc = $('#gloss-count'); if (gc) gc.textContent = Object.keys(TERMS).length;
+  var pop = null;
+  function closePop() { if (pop) { pop.remove(); pop = null; } }
+  function openPop(el) {
+    closePop();
+    var slug = el.getAttribute('data-t'); var t = TERMS[slug]; if (!t) return;
+    pop = document.createElement('div'); pop.className = 'pop'; pop.setAttribute('role', 'dialog');
+    var course = t.c && NAV_BY_ID[t.c] ? '<a href="#' + t.c + '">Voir le cours : ' + NAV_BY_ID[t.c].label.replace(/^\d+ · /, '') + ' →</a>' : '';
+    pop.innerHTML = '<button class="pop-x" type="button" aria-label="Fermer">' + svgUse('i-x') + '</button><b>' + t.t + '</b><span>' + t.d + '</span>' + course + '<a href="#glossaire" style="font-weight:500">Tout le glossaire</a>';
+    document.body.appendChild(pop);
+    var r = el.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+    var pw = Math.min(380, W * 0.92);
+    var left = Math.max(8, Math.min(r.left, W - pw - 8));
+    pop.style.left = left + 'px'; pop.style.width = pw + 'px';
+    var ph = pop.offsetHeight;
+    var top = r.bottom + 8; if (top + ph > H - 8) top = Math.max(8, r.top - ph - 8);
+    pop.style.top = top + 'px';
+    pop.querySelector('.pop-x').addEventListener('click', closePop);
+    pop.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closePop); });
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('.t');
+    if (t) { e.preventDefault(); openPop(t); return; }
+    if (pop && !e.target.closest('.pop')) closePop();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePop(); });
+  window.addEventListener('scroll', closePop, { passive: true });
+  $$('.t').forEach(function (el) { el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPop(el); } }); });
+
+  function renderGloss(q) {
+    var box = $('#gloss'); if (!box) return;
+    var f = norm(q);
+    var keys = Object.keys(TERMS).sort(function (a, b) { return TERMS[a].t.localeCompare(TERMS[b].t, 'fr', { sensitivity: 'base' }); });
+    var html = '', letter = '';
+    keys.forEach(function (k) {
+      var t = TERMS[k];
+      if (f && norm(t.t + ' ' + t.d).indexOf(f) < 0) return;
+      var L = norm(t.t).charAt(0).toUpperCase();
+      if (L !== letter && !f) { letter = L; html += '<div class="gl-letter">' + L + '</div>'; }
+      var course = t.c && NAV_BY_ID[t.c] ? '<a href="#' + t.c + '">' + NAV_BY_ID[t.c].label.replace(/^\d+ · /, 'Cours ') + ' →</a>' : '';
+      html += '<div class="gl" id="gl-' + k + '"><b>' + t.t + '</b><p>' + t.d + '</p>' + course + '</div>';
+    });
+    box.innerHTML = html || '<p class="muted">Aucun terme ne correspond.</p>';
+  }
+  var glq = $('#gl-q'); if (glq) glq.addEventListener('input', function (e) { renderGloss(e.target.value); });
+  renderGloss('');
+
+  // ─── Démarrage ───
+  renderSidebar(''); renderTabs(); renderSheet('');
+  updateProgress();
+  route();
+})();
+</script>

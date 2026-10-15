@@ -1,0 +1,243 @@
+<!-- ═══════════════════════════ COURS 6 · IMPRESSION 3D ═══════════════════════════ -->
+<section class="page" id="page-cours-impression" data-title="Cours · Impression 3D" data-sub="De la bobine à la pièce contrôlée" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 6 · Fabrication</div>
+    <h1>Impression 3D : de la bobine à la pièce contrôlée</h1>
+    <p class="lead">Le canard est fait de 51 pièces imprimées. Ce cours explique comment l'imprimante fabrique une pièce, comment la régler pour qu'elle soit solide et à la bonne masse, et comment contrôler ce qui sort de la machine avant de le monter.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 60 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : Cours 5 (CAO)</span>
+      <span class="pill p">Rôles : impression</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Expliquer comment l'imprimante dépose le plastique, et ce qui rend une pièce solide.</li>
+      <li>Choisir matière, orientation et supports pour une pièce du canard.</li>
+      <li>Préparer un plateau dans le logiciel d'impression et l'enregistrer comme documentation.</li>
+      <li>Contrôler, peser et noter une pièce imprimée, et savoir quand la refaire.</li>
+      <li>Poser un écrou fileté à chaud proprement.</li>
+      <li>Imprimer les 51 pièces dans un ordre qui limite les risques.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Le principe : un pistolet à colle piloté</h2>
+    <p>Image mentale : un pistolet à colle chaude tenu par un robot très précis. Il dessine une tranche de la pièce, monte d'un cran, dessine la suivante. C'est le <i class="t" data-t="fdm">FDM</i> (dépôt de fil fondu), la technique de notre imprimante Prusa.</p>
+    <ul>
+      <li>Le <i class="t" data-t="filament">filament</i> est le plastique en bobine, de 1,75 mm de diamètre, poussé par un moteur.</li>
+      <li>La <i class="t" data-t="buse">buse</i> est la pointe chauffée par laquelle sort le plastique fondu, en général de 0,4 mm : le cordon déposé fait à peu près cette largeur.</li>
+      <li>La <i class="t" data-t="couche">hauteur de couche</i> est l'épaisseur de chaque tranche, typiquement 0,2 mm. Plus fin est plus précis, mais plus long.</li>
+    </ul>
+    <p>Le logiciel qui découpe la pièce en tranches et calcule le trajet de la buse s'appelle un <i class="t" data-t="slicer">slicer</i> (trancheur). Le nôtre est <i class="t" data-t="prusaslicer">PrusaSlicer</i>. Il lit un fichier <i class="t" data-t="stl">STL</i> (la forme de la pièce en triangles) et produit un <i class="t" data-t="gcode">G-code</i> : la liste des instructions de la machine (déplacements, températures, quantité de plastique). On ne modifie jamais un G-code à la main ; on le régénère.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le gabarit de 3 mm d'épaisseur dessiné au cours 5, imprimé en couches de 0,2 mm, compte 15 couches. Une pièce haute en compte des centaines : c'est pourquoi certaines impressions prennent des heures.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Anatomie d'une pièce imprimée</h2>
+    <ul>
+      <li>Les <i class="t" data-t="perimetre">périmètres</i> sont les contours de chaque couche, déposés en premier. 2 à 4 périmètres font une paroi de 0,8 à 1,7 mm.</li>
+      <li>Les couches pleines du dessus et du dessous forment la peau de la pièce.</li>
+      <li>Le <i class="t" data-t="remplissage">remplissage</i> (infill) est le motif creux de l'intérieur : à 15 %, l'intérieur est plein à 15 %.</li>
+      <li>Les <i class="t" data-t="support">supports</i> sont des échafaudages jetables sous les parties en surplomb, retirés après impression.</li>
+    </ul>
+    <div class="diag">
+      <svg viewBox="0 0 640 220" role="img" aria-label="Coupe d'une pièce imprimée : périmètres, couches pleines, remplissage">
+        <rect class="box p" x="30" y="30" width="280" height="160" rx="6"/>
+        <rect class="box p" x="38" y="38" width="264" height="144" rx="4"/>
+        <rect class="box g" x="46" y="46" width="248" height="16"/>
+        <rect class="box g" x="46" y="158" width="248" height="16"/>
+        <line class="box" x1="80" y1="62" x2="80" y2="158"/>
+        <line class="box" x1="130" y1="62" x2="130" y2="158"/>
+        <line class="box" x1="180" y1="62" x2="180" y2="158"/>
+        <line class="box" x1="230" y1="62" x2="230" y2="158"/>
+        <line class="box" x1="270" y1="62" x2="270" y2="158"/>
+        <line class="box" x1="46" y1="110" x2="294" y2="110"/>
+        <text x="360" y="44">Couches pleines du dessus</text>
+        <text x="360" y="98">Périmètres (parois) : la solidité</text>
+        <text x="360" y="134">Remplissage 15 % : un motif creux</text>
+        <text x="360" y="174">Couches pleines du dessous</text>
+        <path class="arr" d="M354 40 L298 54"/>
+        <path class="arr" d="M354 94 L314 100"/>
+        <path class="arr" d="M354 130 L274 120"/>
+        <path class="arr" d="M354 170 L298 166"/>
+        <text class="s" x="30" y="212">Coupe d'une pièce imprimée. Les couches de 0,2 mm sont horizontales, empilées de bas en haut.</text>
+      </svg>
+    </div>
+    <h3>Ce qui fait la solidité</h3>
+    <p>Deux idées à retenir. D'abord, la solidité vient surtout des périmètres, là où passent les efforts, et pas du remplissage : doubler le remplissage alourdit beaucoup la pièce pour un gain modeste. Ensuite, les couches se décollent plus facilement que le fil ne casse. Une pièce imprimée ressemble à un mille-feuille : solide dans le plan des feuilles, fragile quand on tire pour les séparer. On oriente donc chaque pièce pour que l'effort principal passe dans le plan des couches.</p>
+    <h3>Pourquoi 15 % compte pour le canard</h3>
+    <p>L'<i class="t" data-t="amont">amont</i>, le projet d'origine d'Antoine Pirrone, imprime tout en <i class="t" data-t="pla">PLA</i> (le filament le plus courant, rigide et facile) à 15 %, sauf les semelles en <i class="t" data-t="tpu">TPU</i> (un caoutchouc imprimable) à 40 %. Les masses du modèle de <i class="t" data-t="simulation">simulation</i>, le robot virtuel sur lequel la marche a été apprise, sont celles qu'estime le slicer avec ces réglages. Pendant l'apprentissage, ces masses ont varié de ±10 % : imprimer à 30 % « pour la solidité » peut sortir de cette plage.</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Ajouter du remplissage ou des périmètres à une pièce de jambe sans le noter. La pièce s'alourdit, le robot réel s'éloigne du robot simulé, et personne ne comprend plus tard pourquoi la marche est moins stable. Tout écart à l'amont se note dans <code>pieces.csv</code> et reste visible dans le projet <i class="t" data-t="3mf">3MF</i>, le fichier qui rejoue un plateau d'impression (section 6).</div></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Un constructeur tiers a consommé 990 g de PLA et 34 g de TPU pour l'ensemble des pièces. C'est l'ordre de grandeur que nos pesées devront retrouver.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. Les matières</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Matière</th><th>Sur le canard</th><th>Buse, à titre indicatif</th><th>Attention</th></tr></thead>
+        <tbody>
+          <tr><td>PLA</td><td>toutes les pièces (amont)</td><td>de l'ordre de 205 à 215 °C</td><td>ramollit vers 60 °C et flue (se déforme lentement) sous charge continue</td></tr>
+          <tr><td><i class="t" data-t="petg">PETG</i></td><td>remplacement ciblé d'une pièce qui chauffe ou qui plie</td><td>de l'ordre de 225 à 235 °C</td><td>plus délicat (fils, adhérence) ; autre masse, donc modèle à corriger</td></tr>
+          <tr><td>TPU</td><td>semelles <code>foot_bottom_tpu</code>, à 40 %</td><td>lire la bobine</td><td>souple et lent ; son adhérence au sol est celle que la simulation a apprise : ne pas le remplacer</td></tr>
+          <tr><td>PLA-CF, PETG-CF</td><td>rigidité, si un segment se révèle trop souple</td><td>lire la bobine</td><td>chargés de fibres de carbone, ils usent la buse : buse durcie obligatoire</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>D'où viennent ces températures.</strong> Elles se déduisent de la règle de pose des écrous à chaud (section 7) : le fer y est réglé 10 à 20 °C au-dessus de la température d'impression, soit environ 225 °C pour le PLA et 245 °C pour le PETG. La valeur exacte est imprimée sur l'étiquette de chaque bobine et dans le profil filament : c'est elle qui fait foi.</div></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>La protection thermique des <i class="t" data-t="servo">servos</i>, les moteurs des articulations, ne les coupe qu'à 70 °C. Le PLA ramollissant vers 60 °C, une pièce collée à un servo qui travaille longtemps peut se déformer. On surveillera ces pièces pendant les essais au lieu de tout passer en PETG d'emblée.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. L'orientation et les supports</h2>
+    <p>L'<i class="t" data-t="orientation">orientation</i> est la façon de poser la pièce sur le plateau. Elle décide de la solidité, des supports nécessaires et de l'état de surface. L'amont ne l'a pas documentée, pas plus que les supports ou la hauteur de couche : c'est à nous de la choisir pièce par pièce, puis de la figer dans un projet 3MF.</p>
+    <h3>Quatre règles</h3>
+    <ol class="steps">
+      <li><div><b>Grande face plate en bas</b> Bonne adhérence, pas de support.</div></li>
+      <li><div><b>Surplombs au-delà de 45° : supports</b> Une paroi qui penche de plus de 45° par rapport à la verticale ne s'appuie plus assez sur la couche précédente.</div></li>
+      <li><div><b>Trous horizontaux imparfaits</b> Le haut d'un trou horizontal est un pont, légèrement affaissé. Un trou précis se fait de préférence vertical : passage d'axe, logement de <i class="t" data-t="roulement">roulement</i> (roulement à billes qui guide un axe), trou d'<i class="t" data-t="insert">insert</i> (petit écrou en laiton noyé dans le plastique, section 7).</div></li>
+      <li><div><b>Effort dans le plan des couches</b> Une patte qui sera tirée ou pliée s'imprime couchée, pas debout.</div></li>
+    </ol>
+    <p>Ces règles se contredisent parfois. On privilégie alors ce qui compte pour la pièce : la solidité pour une pièce de jambe, la précision pour un logement de roulement, l'aspect pour la carrosserie.</p>
+    <h3>Les supports</h3>
+    <ul>
+      <li><strong>Où</strong> : PrusaSlicer les place seul (« partout » ou « sur le plateau uniquement »), ou on les peint à la main sur les zones voulues. Les supports peints sont enregistrés dans le 3MF.</li>
+      <li><strong>Comment les retirer</strong> : pièce refroidie, à la pince plate et au cutter, en tirant vers l'extérieur, doigts hors de la trajectoire de la lame.</li>
+      <li><strong>Ce qu'ils coûtent</strong> : du temps, de la matière, et une surface rugueuse là où ils touchaient. On évite d'en mettre dans un logement de roulement ou un trou d'insert : les restes empêchent l'ajustement.</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p><code>leg_spacer</code> reçoit 4 inserts. On cherche l'orientation où ses trous d'inserts sont verticaux : ils sortent ronds et l'insert entre droit. On le vérifie dans PrusaSlicer en tournant autour de la pièce avant de trancher.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. PrusaSlicer pas à pas</h2>
+    <ol class="steps">
+      <li><div><b>Choisir les profils</b> En haut à droite, trois listes : réglages d'impression, filament, imprimante. Prendre ceux du lot BiscaLab (section 6). Le mode « Expert » montre tous les réglages.</div></li>
+      <li><div><b>Importer</b> « Fichier → Importer → Importer STL » (<kbd>Ctrl</kbd>+<kbd>I</kbd>), ou glisser le fichier sur le plateau.</div></li>
+      <li><div><b>Placer</b> La touche <kbd>A</kbd> range les pièces sur le plateau. Plusieurs exemplaires : clic droit, « Définir le nombre d'instances ».</div></li>
+      <li><div><b>Orienter</b> Outil « Poser sur une face » (touche <kbd>F</kbd>), puis cliquer la face qui doit toucher le plateau.</div></li>
+      <li><div><b>Régler</b> Remplissage 15 % (40 % pour le TPU), supports, bordure si besoin (une collerette autour de la première couche qui empêche les coins de se soulever). Vérifier la hauteur de couche.</div></li>
+      <li><div><b>Trancher</b> Bouton « Découper maintenant ». Faire défiler l'aperçu couche par couche avec le curseur vertical pour repérer surplombs et supports.</div></li>
+      <li><div><b>Lire le résultat</b> En bas à droite : temps estimé et filament utilisé, en mètres et en grammes. Noter la masse annoncée.</div></li>
+      <li><div><b>Exporter et enregistrer</b> « Exporter le G-code » vers l'imprimante, puis « Fichier → Enregistrer le projet » (<kbd>Ctrl</kbd>+<kbd>S</kbd>) : c'est le 3MF.</div></li>
+    </ol>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>La masse annoncée dépend du profil filament.</strong> PrusaSlicer calcule les grammes avec la densité inscrite dans le profil. Un profil générique donne une masse approchée : raison de plus pour peser.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Travailler en équipe</h2>
+    <h3>Un lot de profils partagé</h3>
+    <p>Nos réglages sont exportés dans un seul fichier : « Fichier → Exporter → Exporter le lot de configuration ». Il est rangé dans <code>biscalab/print/profiles/biscalab-bundle.ini</code> et versionné. Chaque PC l'importe par « Fichier → Importer → Importer le lot de configuration ». Tout le monde imprime ainsi avec les mêmes réglages.</p>
+    <div class="note bad"><svg><use href="#i-warn"/></svg><div><strong>Jamais la variante « with Physical Printers ».</strong> Elle contient les adresses réseau et les clés d'accès de l'imprimante : publiée sur <i class="t" data-t="github">GitHub</i>, le site qui héberge notre dossier partagé, elle les donne à tout le monde. Toujours la variante simple.</div></div>
+    <h3>Un projet 3MF par plateau</h3>
+    <p>Le 3MF enregistre tout : pièces, positions, orientation, supports peints, réglages. Le rouvrir rejoue exactement l'impression. Un 3MF par plateau, nommé par sous-ensemble (<code>plateau-pieds.3mf</code>, <code>plateau-jambe-gauche.3mf</code>), rangé dans <code>biscalab/print/3mf/</code> : c'est notre documentation d'orientation et de supports. Le G-code, lui, n'est pas versionné puisqu'il se régénère.</p>
+    <h3>Le suivi dans pieces.csv</h3>
+    <p>Chaque pièce sortie de la machine fait avancer sa ligne dans <code>biscalab/print/pieces.csv</code> (colonnes au <a href="#cours-cao">cours 5</a>) : <code>a_imprimer</code>, <code>imprimee</code>, <code>controlee</code>, <code>montee</code>, ou <code>a_refaire</code>. Une pièce n'est finie que contrôlée, inserts posés, ligne à jour et photo prise : c'est notre <i class="t" data-t="dod">définition de « fini »</i>, qui évite les « c'est presque fait ».</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Contrôler, peser, poser les inserts</h2>
+    <h3>Les contrôles</h3>
+    <ul>
+      <li><strong>Cotes</strong> : au pied à coulisse, comparer deux ou trois cotes à celles du dessin, mesurées dans <i class="t" data-t="onshape">Onshape</i> ou <i class="t" data-t="freecad">FreeCAD</i>, nos logiciels de <i class="t" data-t="cao">CAO</i>.</li>
+      <li><strong>Trous</strong> : une vis M3 passe-t-elle ? Un roulement entre-t-il sans forcer exagérément ?</li>
+      <li><strong>Planéité</strong> : posée sur une surface plane, la face d'appui ne doit pas basculer.</li>
+      <li><strong>Délaminage</strong> : regarder les flancs en lumière rasante ; une fente entre deux couches condamne la pièce.</li>
+      <li><strong>Fils</strong> : les retirer au cutter.</li>
+    </ul>
+    <p>On refait une pièce si une cote fonctionnelle (logement, entraxe de trous) est fausse, si une couche est fendue ou si la face d'appui n'est pas plane. Une pièce de carrosserie un peu marquée se garde.</p>
+    <h3>Les ratés courants</h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Défaut</th><th>Ce qu'on voit</th><th>Causes probables</th><th>Remède</th></tr></thead>
+        <tbody>
+          <tr><td>Gondolage (warping)</td><td>coins qui se soulèvent</td><td>plateau gras, première couche trop haute, courant d'air</td><td>nettoyer le plateau, bordure, fermer les fenêtres</td></tr>
+          <tr><td>Sous-extrusion</td><td>parois trouées, couches maigres</td><td>buse partiellement bouchée, filament humide, température trop basse</td><td>purger la buse, sécher le filament, vérifier le profil</td></tr>
+          <tr><td>Décollement de couches</td><td>fente entre deux couches</td><td>température trop basse, ventilation trop forte, effort mal orienté</td><td>revoir le profil et l'orientation</td></tr>
+          <tr><td>Fils (stringing)</td><td>toiles d'araignée entre deux parties</td><td>filament humide, température trop haute</td><td>sécher le filament, baisser un peu la température</td></tr>
+          <tr><td>Trous trop petits</td><td>vis ou axe qui n'entre pas</td><td>comportement normal du FDM</td><td>+ 0,2 mm dans la CAO, ou repasser au foret de la bonne cote</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Peser chaque pièce</h3>
+    <p>Une balance de cuisine au gramme suffit. On pèse la pièce nue, avant d'y poser des inserts, et on note la masse à côté de celle annoncée par PrusaSlicer, dans la colonne <code>remarque</code>. Un écart de plus de 10 % s'explique avant de continuer : remplissage différent, profil filament faux, sous-extrusion. C'est aussi la plage que la simulation tolère.</p>
+    <h3>Poser un insert fileté à chaud</h3>
+    <p>Un insert fileté à chaud est un petit écrou en laiton, cranté à l'extérieur. Enfoncé à chaud, il fait fondre le plastique autour de ses crans, qui se fige en refroidissant : on peut ensuite visser et dévisser une vis M3 autant qu'on veut. Le canard en reçoit dans <code>trunk_bottom</code> (y compris 4 sous la pièce), <code>foot_bottom_pla</code>, <code>foot_top</code>, <code>leg_spacer</code> (4 chacune), la tête, <code>body_middle_bottom</code> et <code>body_middle_top</code>.</p>
+    <ol class="steps">
+      <li><div><b>Vérifier le trou</b> Droit, propre, environ 1 mm plus profond que l'insert, pour loger le plastique refoulé. Les trous amont sont dimensionnés pour les inserts de la <i class="t" data-t="bom">BOM</i>, la liste d'achats du projet : on achète ceux-là.</div></li>
+      <li><div><b>Régler le fer</b> Le Pinecil V2 du FabLab, avec une panne réservée aux inserts ; consigne 10 à 20 °C au-dessus de la température d'impression, soit environ 225 °C pour le PLA et 245 °C pour le PETG.</div></li>
+      <li><div><b>Enfoncer à 90 %</b> Insert posé droit sur le trou, l'enfoncer au fer sans forcer, bien perpendiculaire : la chaleur travaille. S'arrêter à 90 % de la profondeur.</div></li>
+      <li><div><b>Finir à plat</b> Retirer le fer, appuyer l'insert avec un outil plat jusqu'à ce qu'il affleure, et maintenir quelques secondes, le temps que le plastique se fige.</div></li>
+      <li><div><b>Contrôler</b> Une vis M3 entre à la main sans point dur, l'insert ne tourne pas, aucun bourrelet ne dépasse.</div></li>
+    </ol>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Fer trop chaud ou trop d'appui : l'insert s'enfonce vite, de travers, et le plastique fondu remonte dans le filetage. Léger, on réchauffe et on redresse ; sinon, la pièce est à refaire. D'où la pièce test avant toute pièce réelle.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Les 51 pièces, et dans quel ordre</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Sous-ensemble</th><th>Pièces</th><th class="num">Qté</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Pieds</strong></td><td>foot_top, foot_side, foot_bottom_pla, foot_bottom_tpu (TPU 40 %), chacune ×2</td><td class="num">8</td></tr>
+          <tr><td><strong>Jambes</strong></td><td>knee_to_ankle_left_sheet ×4, knee_to_ankle_right_sheet ×4, leg_spacer ×4, left_roll_to_pitch, right_roll_to_pitch, roll_motor_bottom ×2, roll_motor_top ×2</td><td class="num">18</td></tr>
+          <tr><td><strong>Tronc, cou, tête</strong></td><td>trunk_bottom, trunk_top, neck_left_sheet, neck_right_sheet, head_pitch_to_yaw, head_yaw_to_roll, head_roll_mount, head, head_bot_sheet</td><td class="num">9</td></tr>
+          <tr><td><strong>Carrosserie</strong></td><td>left_antenna_holder, right_antenna_holder, left_cache, right_cache, body_front, body_middle_bottom, body_middle_top, body_back, battery_pack_lid</td><td class="num">9</td></tr>
+          <tr><td><strong>Expression (option)</strong></td><td>bulb, flash_light_module, flash_reflector_interface, left_eye, right_eye, speaker_interface, speaker_stand</td><td class="num">7</td></tr>
+        </tbody>
+        <tfoot><tr><td>Total</td><td>36 fichiers STL</td><td class="num">51</td></tr></tfoot>
+      </table>
+    </div>
+    <h3>L'ordre conseillé</h3>
+    <ol class="steps">
+      <li><div><b>Pieds</b> Petites pièces rapides : on y rode les inserts, et on y teste le TPU, la matière la plus délicate.</div></li>
+      <li><div><b>Jambes</b> Les pièces gauche et droite se ressemblent : marquer G ou D dès la sortie de l'imprimante.</div></li>
+      <li><div><b>Tronc</b> <code>trunk_bottom</code> et <code>trunk_top</code> sont grandes et longues à imprimer : on les lance quand les réglages sont rodés.</div></li>
+      <li><div><b>Cou et tête</b></div></li>
+      <li><div><b>Carrosserie</b> En dernier : elle ne sert ni au banc ni aux premiers essais, et profite de toute l'expérience acquise. Les pièces d'expression, optionnelles, viennent après.</div></li>
+    </ol>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : imprimante Prusa et PLA, PC avec PrusaSlicer et le lot BiscaLab, Pinecil V2 avec panne à inserts, inserts M3 de la BOM, vis M3, pied à coulisse, balance de cuisine. Durée : impression lancée en début de séance, puis 30 min de travail.</p>
+    <ol class="steps">
+      <li><div><b>Plateau</b> Importer la pièce test d'inserts (un petit bloc percé aux cotes relevées sur le STEP de <code>leg_spacer</code>, cours 5) et <code>print/leg_spacer.stl</code>. PLA à 15 %, trous d'inserts verticaux, trancher.</div></li>
+      <li><div><b>Documenter avant de lancer</b> Noter temps et masse annoncés, enregistrer <code>biscalab/print/3mf/plateau-test-inserts.3mf</code>, exporter le G-code et lancer.</div></li>
+      <li><div><b>Contrôler</b> Pièces refroidies : cotes, trous, planéité, délaminage.</div></li>
+      <li><div><b>Peser</b> <code>leg_spacer</code> nue, à comparer à l'estimation du slicer.</div></li>
+      <li><div><b>Inserts</b> D'abord dans la pièce test, en ajustant la température si besoin ; puis les 4 inserts de <code>leg_spacer</code>. Vérifier chacun avec une vis.</div></li>
+      <li><div><b>Remplir la ligne</b> Dans <code>pieces.csv</code>, puis enregistrer dans <i class="t" data-t="git">Git</i> (l'historique du projet), avec une photo dans le <i class="t" data-t="journal-de-bord">journal de bord</i> de la séance :</div></li>
+    </ol>
+<pre><code>leg_spacer,print/leg_spacer.stl,amont,4,PLA,15%,0.2,non,biscalab/print/3mf/plateau-test-inserts.3mf,prenom,2026-10-15,controlee,"1 sur 4 imprimée ; masse slicer … g, pesée … g ; 4 inserts OK"</code></pre>
+    <p><strong>Résultat attendu :</strong> une <code>leg_spacer</code> contrôlée avec 4 inserts droits, l'écart de masse connu, un 3MF et une ligne de suivi versionnés, et une température de fer validée pour toute l'équipe.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi imprime-t-on couchée une patte qui sera tirée ?</summary><p>Les couches se décollent plus facilement que le fil ne casse. Couchée, l'effort passe dans le plan des couches ; debout, il les séparerait.</p></details>
+    <details class="quiz"><summary>Passer de 15 % à 30 % de remplissage rend-il une pièce beaucoup plus solide ?</summary><p>Non, surtout plus lourde. La solidité vient des périmètres. Et la masse compte : la simulation n'a vu que ±10 % d'écart.</p></details>
+    <details class="quiz"><summary>Pourquoi ne jamais partager le lot de profils « with Physical Printers » ?</summary><p>Il contient les adresses réseau et les clés d'accès de l'imprimante, qui deviendraient publiques sur GitHub.</p></details>
+    <details class="quiz"><summary>Comment poser un insert dans une pièce en PLA ?</summary><p>Trou droit environ 1 mm plus profond que l'insert, fer vers 225 °C, enfoncer à 90 % bien perpendiculaire, finir à plat avec un outil plat, contrôler avec une vis.</p></details>
+    <details class="quiz"><summary><code>leg_spacer</code> pèse nettement plus que l'estimation du slicer. Pistes ?</summary><p>Inserts déjà posés lors de la pesée, remplissage ou nombre de périmètres différent du profil, densité fausse dans le profil filament, ou mauvais profil sélectionné.</p></details>
+    <details class="quiz"><summary>Pourquoi commencer par les pieds ?</summary><p>Ce sont de petites pièces rapides : on y rode les inserts et on y teste le TPU, sans immobiliser l'imprimante des heures.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>Filament de 1,75 mm, buse de 0,4 mm, couches de 0,2 mm : la pièce est un mille-feuille.</li>
+      <li>La solidité vient des périmètres ; l'effort principal se place dans le plan des couches.</li>
+      <li>PLA à 15 %, semelles TPU à 40 % : ces réglages fixent la masse, donc le robot simulé.</li>
+      <li>Surplomb au-delà de 45° : support. Trou précis : vertical.</li>
+      <li>Un lot de profils partagé (jamais « with Physical Printers »), un 3MF par plateau, une ligne <code>pieces.csv</code> par pièce.</li>
+      <li>Chaque pièce est contrôlée et pesée ; plus de 10 % d'écart avec le slicer s'explique.</li>
+      <li>Insert : trou 1 mm plus profond, fer 10 à 20 °C au-dessus de l'impression, 90 % au fer, fin à plat.</li>
+      <li>Ordre : pieds, jambes, tronc, cou et tête, carrosserie.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-laser">Découpe laser : l'outillage du projet avec la xTool P2S</a>.</p>
+  </div>
+</section>

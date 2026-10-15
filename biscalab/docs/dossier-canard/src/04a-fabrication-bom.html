@@ -1,0 +1,210 @@
+<!-- ═══════════════════════════ FABRICATION ═══════════════════════════ -->
+<section class="page" id="page-fabrication" data-title="Fabrication" data-sub="Impression 3D, laser, inserts" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Atelier</div>
+    <h1>Fabrication : Prusa, xTool P2S, inserts</h1>
+    <p class="lead">Le canard est conçu pour l'impression 3D : 36 fichiers <i class="t" data-t="stl">STL</i>, 51 pièces, du <i class="t" data-t="pla">PLA</i> standard à 15 % et des semelles en <i class="t" data-t="tpu">TPU</i>. La découpeuse laser ne remplace aucune pièce structurelle ; elle sert à l'outillage qui rend le montage et les essais plus sûrs.</p>
+    <div class="read-first"><span>Pour comprendre cette page, lire d'abord :</span> <a href="#cours-impression"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>6 · Impression 3D</a> <a href="#cours-laser"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>7 · Découpe laser</a> <a href="#cours-assemblage"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>8 · Assemblage</a></div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="v">36</div><div class="l">Fichiers STL</div><div class="d">dossier <code>print/</code>, branche v2</div></div>
+    <div class="kpi"><div class="v">51</div><div class="l">Pièces à imprimer</div><div class="d">dont 2 semelles TPU</div></div>
+    <div class="kpi"><div class="v">15<small>%</small></div><div class="l">Remplissage PLA</div><div class="d">TPU : 40 %</div></div>
+    <div class="kpi"><div class="v">≈ 990<small>g</small></div><div class="l">PLA consommé</div><div class="d">+ 34 g TPU (retour tiers)</div></div>
+    <div class="kpi"><div class="v">3</div><div class="l">Roulements 608</div><div class="d">8 × 22 × 7 mm</div></div>
+    <div class="kpi"><div class="v">M3</div><div class="l">Inserts à chaud</div><div class="d">lot de 100, réf. BOM</div></div>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h2><svg><use href="#i-printer"/></svg>Paramètres d'impression documentés</h2>
+      <ul class="tight">
+        <li><strong>Toutes les pièces en PLA standard, 15 % de <i class="t" data-t="remplissage">remplissage</i>.</strong> Seule exception : <code>foot_bottom_tpu.stl</code> en <strong>TPU à 40 %</strong>.</li>
+        <li><strong>Orientation, supports et hauteur de couche ne sont pas documentés</strong> par l'<i class="t" data-t="amont">amont</i>. Nous les fixerons nous-mêmes, pièce par pièce, et les figerons dans un projet <i class="t" data-t="3mf">3MF</i> par plateau.</li>
+        <li>La première version suit l'amont à la lettre : la <i class="t" data-t="politique">politique</i> de marche a été entraînée avec les masses de ces réglages.</li>
+        <li>Masse : un constructeur tiers rapporte 990 g de PLA et 34 g de TPU. Le plan d'achats prévoit 1,3 kg : c'est la marge pour les ratés et les pièces test.</li>
+      </ul>
+      <div class="note warn"><svg><use href="#i-warn"/></svg><div>Changer de matériau ou de remplissage change la masse, donc le modèle physique de la <i class="t" data-t="simulation">simulation</i>. Tolérance de la politique fournie : ±10 % de masse par corps. Au-delà, voir la rubrique Marche.</div></div>
+    </div>
+    <div class="card">
+      <h2><svg><use href="#i-cube"/></svg>Matériaux</h2>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Matériau</th><th>Usage</th><th>Attention</th></tr></thead>
+          <tbody>
+            <tr><td><strong>PLA</strong></td><td>Toutes les pièces (v1 du robot)</td><td>Fluage possible près des <i class="t" data-t="servo">servos</i> qui chauffent ; à surveiller sur la durée</td></tr>
+            <tr><td><strong>TPU</strong></td><td>Semelles <code>foot_bottom_tpu</code></td><td>Impression lente ; frottement pied/sol = celui de la simulation, ne pas substituer</td></tr>
+            <tr><td><strong><i class="t" data-t="petg">PETG</i></strong></td><td>Pièces mécaniques sollicitées, en remplacement ciblé</td><td>Plus délicat à imprimer ; masse différente → <i class="t" data-t="inertie">inertiels</i> à corriger</td></tr>
+            <tr><td><strong>PLA-CF / PETG-CF</strong></td><td>Rigidité, si un segment se révèle trop souple</td><td>Buse durcie obligatoire</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-printer"/></svg>Les 51 pièces par sous-ensemble</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Sous-ensemble</th><th>Fichiers STL</th><th class="num">Qté</th><th>Inserts / roulements</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Pieds</strong></td><td>foot_top, foot_side, foot_bottom_pla, foot_bottom_tpu (TPU 40 %)</td><td class="num">2 × 4 = 8</td><td>Inserts M3 dans foot_top et foot_bottom_pla ; contacts SS-10 pressés à force ; TPU vissé par 2 × M3×6</td></tr>
+          <tr><td><strong>Jambes</strong></td><td>knee_to_ankle_left_sheet ×4, knee_to_ankle_right_sheet ×4, leg_spacer ×4, left_roll_to_pitch, right_roll_to_pitch, roll_motor_bottom ×2, roll_motor_top ×2</td><td class="num">18</td><td>4 <i class="t" data-t="insert">inserts</i> par leg_spacer ; pièces gauche / droite asymétriques ; <i class="t" data-t="orientation">orientation</i> du hip_pitch « importante pour la position zéro »</td></tr>
+          <tr><td><strong>Tronc, cou, tête</strong></td><td>trunk_bottom, trunk_top, neck_left_sheet, neck_right_sheet, head_pitch_to_yaw, head_yaw_to_roll, head_roll_mount, head, head_bot_sheet</td><td class="num">9</td><td>Roulements + inserts dans trunk_bottom (dont 4 sous la pièce pour la carrosserie) et dans la tête</td></tr>
+          <tr><td><strong>Carrosserie</strong></td><td>left_antenna_holder, right_antenna_holder, left_cache, right_cache, body_front, body_middle_bottom, body_middle_top, body_back, battery_pack_lid</td><td class="num">9</td><td>Inserts dans body_middle_bottom et body_middle_top</td></tr>
+          <tr><td><strong>Expression (option)</strong></td><td>bulb, flash_light_module, flash_reflector_interface, left_eye, right_eye, speaker_interface, speaker_stand</td><td class="num">7</td><td>Non nécessaires à la marche</td></tr>
+        </tbody>
+        <tfoot><tr><td>Total</td><td>36 fichiers</td><td class="num">51</td><td>Visserie M3 : nombre non documenté (« TODO » dans le guide)</td></tr></tfoot>
+      </table>
+    </div>
+    <p class="muted" style="font-size:0.85rem">Source : print/ et assembly_guide.md. Prévoir un assortiment M3 (×6, ×8, ×10, ×12) et des M3×6 pour les semelles.</p>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h3><svg><use href="#i-code"/></svg>PrusaSlicer en équipe</h3>
+      <ul class="tight">
+        <li><strong>Lot de profils partagé</strong> : <em>Fichier → Exporter → Exporter le lot de configuration</em> → <code>print/profiles/biscalab-bundle.ini</code>, commité. <strong>Jamais</strong> la variante « with Physical Printers » : elle contient clés API et adresses IP.</li>
+        <li><strong>Un projet 3MF par plateau</strong> : objets, positions, modificateurs, réglages et supports peints sont embarqués. C'est notre documentation d'orientation et de supports.</li>
+        <li>Nommer les plateaux par sous-ensemble : <code>plateau-pieds.3mf</code>, <code>plateau-jambe-gauche.3mf</code>…</li>
+        <li>Mettre à jour <code>pieces.csv</code> à chaque pièce sortie de la machine (statut, qui, date).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-zap"/></svg>Inserts M3 à chaud</h3>
+      <ol class="tight">
+        <li>Acheter les inserts listés dans la <i class="t" data-t="bom">BOM</i> amont : les trous de la <i class="t" data-t="cao">CAO</i> sont dimensionnés pour eux. Faire d'abord une pièce test.</li>
+        <li>Trou droit, sans cône, environ 1 mm plus profond que l'insert.</li>
+        <li>Fer réglé 10 à 20 °C au-dessus de la température d'impression (≈ 225 °C pour le PLA, ≈ 245 °C pour le PETG). Le Pinecil V2 du <i class="t" data-t="fablab">FabLab</i> convient avec une panne adaptée.</li>
+        <li>Enfoncer l'insert à 90 % avec le fer, finir avec un outil plat et maintenir quelques secondes, bien perpendiculaire.</li>
+      </ol>
+      <p class="muted" style="font-size:0.85rem">Loctite 243 sur le métal/métal uniquement, jamais sur une vis dans le plastique.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-zap"/></svg>Découpe laser xTool P2S : où elle a sa place</h2>
+    <div class="grid c2">
+      <div>
+        <h4>Ce que la machine fait</h4>
+        <ul class="tight">
+          <li><i class="t" data-t="laser-co2">CO₂ 55 W</i>, zone 600 × 305 mm, entrée SVG / DXF / PNG / JPG.</li>
+          <li><strong><i class="t" data-t="xcs">XCS</i> (xTool Creative Space) suffit</strong> : gratuit, pilote les caméras. LightBurn (99 à 199 $) perd les caméras et l'axe Z sur la P2S.</li>
+          <li>Kerf à compter : 0,15 à 0,25 mm sur contreplaqué 3 mm, 0,10 à 0,20 mm sur acrylique 3 mm. Mesure : (cote du trou − cote du carré) / 2. XCS a un réglage de compensation de −1 à +1 mm.</li>
+          <li>Matériaux : contreplaqué peuplier, PMMA <strong>coulé</strong>. <strong>Interdits</strong> : PVC/vinyle (chlore), ABS, polycarbonate, polystyrène expansé, fibre de carbone enduite.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Ce qu'on lui confie</h4>
+        <ul class="tight">
+          <li><strong>Banc servo</strong> : socle percé pour fixer 1 à 5 <i class="t" data-t="sts3215">STS3215</i> et la carte <i class="t" data-t="waveshare">Waveshare</i> pendant la configuration (phase 2).</li>
+          <li><strong>Gabarits de mise à zéro</strong> : plaques à rainures pour aligner les <i class="t" data-t="palonnier">palonniers</i> à la position 0 avant montage.</li>
+          <li><strong>Potence ou harnais</strong> pour les premiers essais debout et les premiers pas (phase 5), avec un point d'attache au-dessus du <i class="t" data-t="centre-de-masse">centre de masse</i>.</li>
+          <li><strong>Caisse de transport</strong> et plaques signalétiques (<i class="t" data-t="id-servo">ID</i> des servos, sens de câblage).</li>
+        </ul>
+        <div class="note warn"><svg><use href="#i-warn"/></svg><div>Les pièces « sheet » des jambes et du cou font 7 à 8 mm d'épaisseur : ce ne sont pas des plaques découpables en 3 mm. Seul <code>head_bot_sheet</code> est une vraie plaque de 3 mm (194 × 192 mm). En PMMA plein elle pèserait ≈ 78 g, nettement plus qu'en PLA à 15 % : si on la découpe, corriger l'inertiel de la tête.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ BOM & ACHATS ═══════════════════════════ -->
+<section class="page" id="page-bom" data-title="BOM et achats" data-sub="Nomenclature, fournisseurs UE, phases" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Approvisionnement</div>
+    <h1>Nomenclature et plan d'achats</h1>
+    <p class="lead">La <i class="t" data-t="bom">BOM</i> officielle totalise 398,10 € (432,34 € avec le pack expression), à des prix qui supposent des achats directs en Asie. Avec des fournisseurs européens vérifiés, le socle revient plutôt autour de 590 € hors port. Les achats sont échelonnés en six phases, chacune close par un <i class="t" data-t="milestone">jalon</i> testable.</p>
+    <div class="read-first"><span>Pour comprendre cette page, lire d'abord :</span> <a href="#cours-methode"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>4 · Mener le projet</a> <a href="#cours-servos"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>10 · Servomoteurs</a> <a href="#cours-electronique"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>9 · Électronique</a></div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="v">398<small>€</small></div><div class="l">BOM officielle</div><div class="d">base, prix Asie</div></div>
+    <div class="kpi"><div class="v">476<small>€</small></div><div class="l">Plan BiscaLab (sept.)</div><div class="d">socle + fabrication</div></div>
+    <div class="kpi"><div class="v">≈ 590<small>€</small></div><div class="l">Estimation UE</div><div class="d">prix vérifiés 01/10/2026, hors port</div></div>
+    <div class="kpi"><div class="v">6</div><div class="l">Commandes</div><div class="d">compter le port à chaque fois</div></div>
+    <div class="kpi"><div class="v">+75<small>€</small></div><div class="l">Option RC</div><div class="d">+35 € option caméra</div></div>
+    <div class="kpi"><div class="v">0</div><div class="l">AliExpress / Temu</div><div class="d">bannis : frais de douane</div></div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-cart"/></svg>Socle commun (marche autonome)</h2>
+    <p class="sub">PU officiel = BOM Google Sheets du projet. « Fournisseur UE » = prix vérifié le 1er octobre 2026, à reconfirmer avant commande.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Article</th><th>Référence</th><th class="num">Qté</th><th class="num">PU officiel</th><th class="num">Total</th><th>Fournisseur UE vérifié / remarque</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Servo <i class="t" data-t="bus-serie">bus série</i></strong></td><td>Feetech <i class="t" data-t="sts3215">STS3215</i> <strong>7,4 V, 1/345 (C001)</strong></td><td class="num">14</td><td class="num">14,00 €</td><td class="num">196,00 €</td><td>Eckstein (DE) 24,35 € ; OpenELAB (DE) 29,95 € ; RobotShop EU 31,35 €. <strong>Pas la 12 V, pas C044/C046.</strong> Acheter 2 d'abord (phase 2), 12 ensuite, même lot si possible (<i class="t" data-t="firmware">firmware</i> homogène).</td></tr>
+          <tr><td>Carte bus <i class="t" data-t="servo">servo</i></td><td><i class="t" data-t="waveshare">Waveshare</i> Bus Servo Adapter (A)</td><td class="num">1</td><td class="num">5,00 €</td><td class="num">5,00 €</td><td>Waveshare direct 4,99 $ ou revendeur EU. Fiche : entrée 9 à 12,6 V, à vérifier en <i class="t" data-t="2s">2S</i> sur le banc.</td></tr>
+          <tr><td>Calculateur</td><td><i class="t" data-t="pi-zero-2w">Raspberry Pi Zero 2 W</i></td><td class="num">1</td><td class="num">26,08 €</td><td class="num">26,08 €</td><td>Kubii 19,50 € (rupture fréquente : commander tôt).</td></tr>
+          <tr><td>Carte <i class="t" data-t="carte-sd">microSD</i></td><td>32 Go, classe U3/A1</td><td class="num">1</td><td class="num">10,00 €</td><td class="num">10,00 €</td><td>Amazon.fr. L'image prête à <i class="t" data-t="flasher">flasher</i> vise 32 Go.</td></tr>
+          <tr><td><i class="t" data-t="imu">IMU</i></td><td><i class="t" data-t="bno055">BNO055</i> (Adafruit 2472 ou équivalent <i class="t" data-t="i2c">I²C</i>)</td><td class="num">1</td><td class="num">40,00 €</td><td class="num">40,00 €</td><td>Adafruit 34,95 $ via Mouser / Lextronic. La BOM note « need cheaper alternative » : rester sur la BNO055, c'est celle du code.</td></tr>
+          <tr><td>Accus <i class="t" data-t="18650">18650</i></td><td>Molicel P30B 3000 mAh, ≥ 25 A</td><td class="num">2</td><td class="num">5,00 €</td><td class="num">10,00 €</td><td>NKON (NL). Cellules « molles » = erreurs <i class="t" data-t="crc">CRC</i> sur le bus en charge (<i class="t" data-t="issue">issue</i> #49).</td></tr>
+          <tr><td>Support 2S</td><td>2 × 18650 avec câbles</td><td class="num">1</td><td class="num">4,99 €</td><td class="num">4,99 €</td><td>Amazon.fr</td></tr>
+          <tr><td><i class="t" data-t="bms">BMS</i></td><td><i class="t" data-t="li-ion">Li-ion</i> 2S équilibrage 6 A (calibre à confirmer phase 5)</td><td class="num">1</td><td class="num">8,40 €</td><td class="num">8,40 €</td><td>Amazon.fr / Gotronic</td></tr>
+          <tr><td>Régulateur 5 V</td><td><i class="t" data-t="ubec">UBEC</i> 5 V 8 A (Pi + périphériques)</td><td class="num">1</td><td class="num">4,00 €</td><td class="num">4,00 €</td><td>Amazon.fr (lien officiel Alibaba)</td></tr>
+          <tr><td>Interrupteur</td><td>à verrouillage, lumineux</td><td class="num">1</td><td class="num">4,49 €</td><td class="num">4,49 €</td><td>Amazon.fr</td></tr>
+          <tr><td>Chargeur</td><td>USB-C Li-ion <strong>2S</strong> (8,4 V) — le « TP4056 2S » du plan est à remplacer</td><td class="num">1</td><td class="num">9,99 €</td><td class="num">9,99 €</td><td>À trancher : chargeur 2S équilibré, ou charge externe par les jacks.</td></tr>
+          <tr><td>Prises jack DC</td><td>2,1 mm, montage panneau</td><td class="num">2</td><td class="num">1,00 €</td><td class="num">2,00 €</td><td>Amazon.fr / Gotronic</td></tr>
+          <tr><td>Connecteurs <i class="t" data-t="xt30">XT30</i></td><td>paires</td><td class="num">4</td><td class="num">2,00 €</td><td class="num">8,00 €</td><td>Amazon.fr</td></tr>
+          <tr><td>Contacts de pied</td><td>Omron SS-10 (micro-switch)</td><td class="num">4</td><td class="num">1,00 €</td><td class="num">4,00 €</td><td><strong>RS Components</strong> 3,79 € pièce, en stock (lien officiel = AliExpress, exclu).</td></tr>
+          <tr><td>Micro-servos</td><td>9 g (antennes)</td><td class="num">2</td><td class="num">3,33 €</td><td class="num">6,66 €</td><td>Amazon.fr / Gotronic</td></tr>
+          <tr><td>Roulements</td><td>608ZZ 8 × 22 × 7</td><td class="num">3</td><td class="num">3,50 €</td><td class="num">10,50 €</td><td>Amazon.fr, lot de 10</td></tr>
+          <tr><td>Inserts filetés</td><td>M3, lot de 100, référence BOM</td><td class="num">1</td><td class="num">5,99 €</td><td class="num">5,99 €</td><td>Amazon.fr ; Prusa vend aussi des M3 standard</td></tr>
+          <tr><td>Gaine spirale</td><td>3 m, 6 mm</td><td class="num">1</td><td class="num">9,00 €</td><td class="num">9,00 €</td><td>Amazon.fr</td></tr>
+          <tr><td>Câbles USB</td><td>micro-USB → USB-C, 15 cm et 50 cm</td><td class="num">2</td><td class="num">—</td><td class="num">13,00 €</td><td>Amazon.fr</td></tr>
+          <tr><td>Filament</td><td><i class="t" data-t="pla">PLA</i> ≈ 1 kg + <i class="t" data-t="tpu">TPU</i></td><td class="num">1</td><td class="num">20,00 €</td><td class="num">20,00 €</td><td>Prusament / Sunlu ; plan BiscaLab : 1,3 kg, 36,40 €</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="4">Total BOM officielle (base)</td><td class="num">398,10 €</td><td>Estimation fournisseurs UE ≈ 590 € hors port</td></tr></tfoot>
+      </table>
+    </div>
+    <p class="muted" style="font-size:0.85rem">Pack expression (option, +34 €) : réflecteur, haut-parleur, 3 LED, micro, diffuseurs, ampli MAX98357A, caméra Pi (« not integrated yet »). Non nécessaire à la marche.</p>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h3><svg><use href="#i-cal"/></svg>Plan d'achats en six phases</h3>
+      <p class="sub">Repris du plan de septembre. On ne passe à la phase suivante qu'une fois le jalon validé par une <i class="t" data-t="fiche-de-test">fiche de test</i>.</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Phase</th><th>Mois</th><th>Contenu</th><th class="num">Montant</th><th>Jalon</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1</strong> Structure</td><td>oct. 2026</td><td>Filament 1,3 kg, consommables, <i class="t" data-t="insert">inserts</i> M3, 3 × 608ZZ</td><td class="num">55,70 €</td><td>Pièces imprimées, assemblage à blanc</td></tr>
+            <tr><td><strong>2</strong> Cerveau + banc</td><td>nov. 2026</td><td>Pi Zero 2 W, microSD, Waveshare, BNO055, 2 × STS3215</td><td class="num">99,55 €</td><td>IMU et bus validés → <strong><i class="t" data-t="go-no-go">GO/NO-GO</i></strong> pour les 12 servos restants</td></tr>
+            <tr><td><strong>3</strong> Jambe 1</td><td>déc. 2026</td><td>3 × STS3215, 4 × SS-10</td><td class="num">63,10 €</td><td>Jambe 1 pilotée, contacts lus</td></tr>
+            <tr><td><strong>4</strong> Jambe 2</td><td>janv. 2027</td><td>5 × STS3215</td><td class="num">99,50 €</td><td>Bas du corps complet, posture debout sur banc</td></tr>
+            <tr><td><strong>5</strong> Tête + finitions</td><td>févr. 2027</td><td>4 × STS3215, 2 micro-servos, gaine</td><td class="num">95,25 €</td><td>14 servos, <i class="t" data-t="offset">offsets</i> calibrés, <i class="t" data-t="courant">courant</i> crête mesuré, 1er essai de marche filaire</td></tr>
+            <tr><td><strong>6</strong> Énergie</td><td>mars 2027</td><td>2 × P30B, support, BMS, UBEC, interrupteur, chargeur 2S, jacks, XT30</td><td class="num">63,15 €</td><td>Marche autonome sur batterie</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="3">Socle (prix du plan)</td><td class="num">476,25 €</td><td>+ port, 6 commandes · + prix réels UE</td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-check"/></svg>Circuit d'achat</h3>
+      <ol class="steps">
+        <li><div><b>Besoin</b> Le référent ouvre une issue « Achat » : lien, quantité, prix, phase, justification.</div></li>
+        <li><div><b>Validation</b> Le maître d'œuvre vérifie la cohérence avec la phase ; le bureau de l'association valide le montant.</div></li>
+        <li><div><b>Commande</b> Le trésorier-acheteur commande, seul. Il note le numéro de commande dans l'issue.</div></li>
+        <li><div><b>Réception</b> Contrôle à l'arrivée (quantité, référence exacte : « 7,4 V » sur les servos), photo dans l'issue, ligne dans <code>achats/achats.csv</code>.</div></li>
+        <li><div><b>Comptabilité</b> Facture sur le Nextcloud (pas dans le dépôt public), remboursement par note de frais.</div></li>
+      </ol>
+      <div class="note bad"><svg><use href="#i-warn"/></svg><div><strong>Fournisseurs</strong> : privilégier l'UE (Eckstein, OpenELAB, RobotShop EU, Kubii, RS, Mouser, Gotronic, Lextronic, NKON, Amazon.fr, Prusa). AliExpress et Temu sont exclus : frais de douane et délais. Un seul achat hors UE possible et assumé : les servos, si l'écart de prix dépasse 150 € sur 14 pièces, décision du bureau.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><svg><use href="#i-flag"/></svg>Options après la phase 6</h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Option</th><th>Ajout matériel</th><th class="num">Coût</th><th>Remarque</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Manette Xbox Bluetooth</strong></td><td><i class="t" data-t="bluetooth-manette">manette</i> seule</td><td class="num">≈ 50 €</td><td>C'est le pilotage du <i class="t" data-t="runtime">runtime</i> officiel. Souvent déjà disponible chez un membre.</td></tr>
+          <tr><td>Version RC</td><td>émetteur + récepteur, interface récepteur → <i class="t" data-t="gpio">GPIO</i></td><td class="num">+75 €</td><td>Hors runtime officiel : code à écrire.</td></tr>
+          <tr><td>Autonome basique</td><td>caméra <i class="t" data-t="raspberry-pi">Raspberry Pi</i>, micro USB</td><td class="num">+35 €</td><td>Caméra « not integrated yet » côté <i class="t" data-t="amont">amont</i>.</td></tr>
+          <tr><td>Autonomie avancée</td><td>Jetson Orin Nano</td><td class="num">+250 à 400 €</td><td>Impose de modifier le tronc et de réentraîner (<i class="t" data-t="fork">fork</i> Jetson).</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

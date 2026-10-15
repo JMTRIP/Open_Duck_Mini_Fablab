@@ -1,0 +1,229 @@
+<!-- ═══════════════════════════ GITHUB ═══════════════════════════ -->
+<section class="page" id="page-github" data-title="Dépôt GitHub" data-sub="Dépôt du club, conventions, 5 gestes" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Mutualiser le travail</div>
+    <h1>GitHub pour une équipe qui débute</h1>
+    <p class="lead">Un seul dépôt pour toute l'équipe : le <strong>dépôt du club</strong>, <code>JMTRIP/Open_Duck_Mini_Fablab</code>, copie du dépôt d'Antoine Pirrone créée par Jean-Marie le 5 octobre 2026. On y ajoute un dossier <code>biscalab/</code> qui contient tout ce qui est à nous, et on ne touche jamais aux fichiers d'Antoine. Ainsi un clic sur « Sync fork » suffit pour récupérer ses nouveautés, sans jamais de <i class="t" data-t="conflit">conflit</i>.</p>
+    <div class="read-first"><span>Pour comprendre cette page, lire d'abord :</span> <a href="#cours-git"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>1 · Git et GitHub</a> <a href="#cours-methode"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>4 · Mener le projet</a></div>
+  </div>
+
+  <div class="grid c3">
+    <div class="card">
+      <h3><svg><use href="#i-git"/></svg>Trois étages, un seul dépôt</h3>
+      <ul class="tight">
+        <li><strong>Dépôt d'Antoine</strong> (<code>apirrone/Open_Duck_Mini</code>) : l'original, l'<i class="t" data-t="amont">amont</i>. On n'y écrit jamais.</li>
+        <li><strong>Dépôt du club</strong> (<code>JMTRIP/Open_Duck_Mini_Fablab</code>, <i class="t" data-t="branche">branche</i> <code>v2</code>) : le seul où l'on travaille. GitHub l'appelle un <i class="t" data-t="fork">fork</i> ; personne n'a à en créer un autre.</li>
+        <li><strong>Votre PC</strong> : votre copie de travail (<i class="t" data-t="clone">clone</i>), téléchargée une fois avec <i class="t" data-t="github-desktop">GitHub Desktop</i> en répondant <strong>« For my own purposes »</strong>.</li>
+        <li><strong>À créer</strong> par Jean-Marie, de la même façon : le second dépôt du club, copie de <code>Open_Duck_Mini_Runtime</code> (code du Pi).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-users"/></svg>Accès et sécurité</h3>
+      <ul class="tight">
+        <li><strong>Accès</strong> : Jean-Marie ajoute chaque membre dans <em>Settings → Collaborators → Add people</em> ; le membre accepte l'invitation reçue par e-mail.</li>
+        <li><strong>Issues</strong> : désactivées par défaut sur une copie ; Jean-Marie les active dans <em>Settings → General → Features → Issues</em>.</li>
+        <li><strong>2FA</strong> (double authentification) : exigée par GitHub pour contribuer. Appli TOTP (pas de SMS). Le faire ensemble en réunion, imprimer les codes de récupération.</li>
+        <li><strong>Public</strong>, comme le dépôt d'Antoine : jamais de mot de passe ni de clé dedans.</li>
+        <li><strong>Plus tard</strong> : transfert possible dans une organisation gratuite « biscalab », pour avoir deux administrateurs. Rien ne change pour les membres : l'ancienne adresse redirige.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-info"/></svg>Tailles et gros fichiers</h3>
+      <ul class="tight">
+        <li>Avertissement au-delà de 50 Mio par fichier, <strong>blocage à 100 Mio</strong>, 25 Mio maximum par envoi depuis le navigateur.</li>
+        <li>Les STL du canard sont petits : <strong><i class="t" data-t="git">Git</i> LFS est inutile</strong> au départ (et sa configuration demande la ligne de commande).</li>
+        <li>GitHub affiche les <strong>STL en 3D</strong> (&lt; 10 Mo) et les <strong><i class="t" data-t="csv">CSV</i> en tableau</strong> (&lt; 512 Ko) : <code>pieces.csv</code> devient un tableau consultable en ligne.</li>
+        <li>L'app GitHub Desktop n'a pas de version française ; la documentation officielle, elle, existe en français.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h2><svg><use href="#i-cube"/></svg>Structure du dépôt</h2>
+      <p class="sub">Dépôt du club <code>JMTRIP/Open_Duck_Mini_Fablab</code>, branche <code>v2</code>. Seul le dossier <code>biscalab/</code> est à nous.</p>
+<div class="tree"><span class="d">Open_Duck_Mini_Fablab/</span>        <span class="c">← fichiers d'Antoine : NE PAS MODIFIER</span>
+├── print/  docs/  mini_bdx/ …
+└── <span class="d">biscalab/</span>
+    ├── README.md             <span class="c">but, état d'avancement, liens</span>
+    ├── CREDITS.md            <span class="c">attribution Apache-2.0</span>
+    ├── CHANGELOG.md          <span class="c">pièces modifiées / ajoutées</span>
+    ├── <span class="d">docs/</span>                 <span class="c">conventions.md, securite.md, guide-github-desktop.md, photos/</span>
+    ├── <span class="d">journal/</span>              <span class="c">2026-10-08.md …</span>
+    ├── <span class="d">tests/</span>                <span class="c">fiches : 2026-11-banc-servo.md …</span>
+    ├── <span class="d">achats/</span>achats.csv
+    ├── <span class="d">cad/</span>
+    │   ├── onshape-liens.md
+    │   ├── <span class="d">freecad/</span>          <span class="c">*.FCStd (compression 0)</span>
+    │   └── <span class="d">step/</span>
+    ├── <span class="d">print/</span>
+    │   ├── <span class="d">stl/</span>              <span class="c">pièces modifiées / nouvelles uniquement</span>
+    │   ├── <span class="d">3mf/</span>              <span class="c">un projet PrusaSlicer par plateau</span>
+    │   ├── <span class="d">profiles/</span>         <span class="c">biscalab-bundle.ini (sans imprimantes physiques)</span>
+    │   └── pieces.csv        <span class="c">suivi des 51 pièces</span>
+    ├── <span class="d">laser/</span>
+    │   ├── <span class="d">svg-dxf/</span>
+    │   └── <span class="d">xcs/</span>
+    └── <span class="d">electronics/</span>          <span class="c">câblage, photos, BOM élec, offsets servos</span></div>
+      <p class="muted" style="font-size:0.85rem">À la racine, un <code>.gitattributes</code> et un <code>.gitignore</code> (ci-contre). Le second dépôt du club, copie de <code>Open_Duck_Mini_Runtime</code> (à créer), aura son propre dossier <code>biscalab/</code> pour <code>duck_config.json</code> et les notes d'installation.</p>
+    </div>
+    <div class="card">
+      <h2><svg><use href="#i-code"/></svg>Conventions</h2>
+      <dl class="def">
+        <dt>Noms de fichiers</dt><dd>minuscules, sans accents ni espaces, tirets. <strong>Jamais</strong> <code>_v2_final</code> : git garde l'historique, et les <i class="t" data-t="3mf">3MF</i> référencent les noms.</dd>
+        <dt>Révision</dt><dd>notée dans <code>pieces.csv</code> (colonne <code>rev</code>) et <code>CHANGELOG.md</code>.</dd>
+        <dt>Commits</dt><dd>verbe + objet : « Ajoute gabarit zéro <i class="t" data-t="servo">servo</i> », « Corrige <i class="t" data-t="kerf">kerf</i> plaque banc ».</dd>
+        <dt>Branches</dt><dd><code>prenom/sujet</code> ; un référent relit et fusionne la pull request.</dd>
+        <dt>Labels</dt><dd>phases <code>phase-0</code> … <code>phase-6</code> ; métiers <code>impression</code>, <code>laser</code>, <code>cao</code>, <code>elec</code>, <code>code</code> ; suivi <code>achat</code>, <code>securite</code>, <code>bloque</code>, <code>aide-bienvenue</code>.</dd>
+        <dt>Modèles d'<i class="t" data-t="issue">issues</i></dt><dd>Tâche, Problème, Achat, Test (formulaires YAML avec listes déroulantes, créés sans code dans <em>Settings → Features → Issues</em>).</dd>
+        <dt>Jalons</dt><dd>un <i class="t" data-t="milestone">milestone</i> par phase ; le tableau Projects a un champ « Phase ».</dd>
+      </dl>
+<pre><code># .gitattributes
+*.stl binary
+*.3mf binary
+*.FCStd binary
+*.step binary
+*.STEP binary
+*.pkl binary
+
+# .gitignore (ajouts)
+*.FCBak
+*.gcode
+Thumbs.db
+.DS_Store</code></pre>
+    </div>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h2><svg><use href="#i-check"/></svg>Les 5 gestes GitHub Desktop</h2>
+      <ol class="steps">
+        <li><div><b>Télécharger (cloner)</b> Page du dépôt du club → <em>Code → Open with GitHub Desktop</em>. Une seule fois par PC. Répondre « For my own purposes ».</div></li>
+        <li><div><b>Récupérer</b> <em>Fetch origin</em> puis <em>Pull origin</em>, <strong>avant chaque séance</strong>. Sans ce geste on travaille sur une version périmée.</div></li>
+        <li><div><b>Commiter</b> Cocher les fichiers modifiés, écrire un résumé (« Ajoute gabarit zéro servo »), puis <em>Commit to v2</em>.</div></li>
+        <li><div><b>Pousser</b> <em>Push origin</em>, <strong>en fin de séance</strong>. Tant que ce n'est pas poussé, personne d'autre ne le voit.</div></li>
+        <li><div><b>Brancher et proposer</b> <em>Current branch → New branch</em>, puis <em>Create Pull Request</em> (ouvre le navigateur). Vérifier que la cible est <code>JMTRIP/Open_Duck_Mini_Fablab</code> : <code>v2</code>, pas le dépôt d'Antoine. Un référent relit et fusionne.</div></li>
+      </ol>
+      <p class="muted" style="font-size:0.85rem">Une fois par mois, Jean-Marie ou le référent clique sur <em>Sync fork → Update branch</em> (page du dépôt du club) pour récupérer les nouveautés d'Antoine ; chacun fait ensuite un Pull.</p>
+    </div>
+    <div class="card">
+      <h2><svg><use href="#i-flag"/></svg>Ce que GitHub nous apporte, par priorité</h2>
+      <ol class="tight">
+        <li><strong>Issues</strong> : une issue = une tâche, avec un responsable et des labels. C'est la liste de choses à faire du projet.</li>
+        <li><strong>Projects</strong> : vue kanban (À faire / En cours / Fait) et vue roadmap par phase, champs personnalisés (Phase, Matériau…).</li>
+        <li><strong>Milestones</strong> : un par phase, pour voir ce qui reste avant le jalon.</li>
+        <li><strong>Releases</strong> : figer un « kit d'impression v1.0 » (jusqu'à 2 Gio par fichier).</li>
+        <li><strong><i class="t" data-t="markdown">Markdown</i> dans <code>docs/</code></strong> plutôt qu'un wiki séparé : versionné avec le reste. Les Discussions sont superflues pour cinq personnes.</li>
+      </ol>
+      <div class="note ok"><svg><use href="#i-check"/></svg><div><strong>Règle simple pour les fichiers binaires</strong> (<i class="t" data-t="fcstd">FCStd</i>, STL, 3MF) : on ne peut pas fusionner deux versions. Celui qui modifie une pièce s'assigne l'issue correspondante : c'est le verrou humain.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-shield"/></svg>Licence et attribution</h2>
+    <p>Le dépôt amont est sous <strong><i class="t" data-t="licence-apache">Apache-2.0</i></strong>. Le dépôt du club étant public, nous redistribuons l'œuvre. Obligations : fournir une copie de la licence, conserver les mentions de copyright et d'attribution, signaler de façon visible les fichiers modifiés, reprendre le fichier NOTICE s'il existe. Aucune garantie n'est donnée, et aucun droit sur les marques (Disney, BDX) n'est transmis.</p>
+<pre><code># biscalab/CREDITS.md
+Ce travail est basé sur Open Duck Mini (V2), © Antoine Pirrone et contributeurs,
+publié sous licence Apache-2.0 (dépôt GitHub apirrone/Open_Duck_Mini)
+Les ajouts et modifications du BiscaLab (dossier biscalab/) sont publiés sous la même licence.
+Les pièces modifiées sont listées dans CHANGELOG.md et dans la colonne « rev » de print/pieces.csv.</code></pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ CAO ═══════════════════════════ -->
+<section class="page" id="page-cao" data-title="CAO et fichiers" data-sub="Onshape, FreeCAD, formats" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Conception</div>
+    <h1>CAO : Onshape, FreeCAD et le modèle physique</h1>
+    <p class="lead">La <i class="t" data-t="cao">CAO</i> source est un document <i class="t" data-t="onshape">Onshape</i> public. Nous préférons <i class="t" data-t="freecad">FreeCAD</i>. Les deux peuvent cohabiter, à condition de savoir ce que chaque outil sait faire, et surtout ce que la <i class="t" data-t="simulation">simulation</i> attend de nous si une pièce change.</p>
+    <div class="read-first"><span>Pour comprendre cette page, lire d'abord :</span> <a href="#cours-cao"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>5 · CAO</a> <a href="#cours-rl"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-book"/></svg>14 · Simulation et RL</a></div>
+  </div>
+
+  <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Point clé.</strong> L'outil <code>onshape-to-robot</code>, qui produit le modèle physique (<i class="t" data-t="mjcf">MJCF</i>) de la simulation, <strong>fonctionne uniquement avec Onshape</strong> (clés API, connecteurs <code>dof_*</code> dans l'assemblage). Il ne lit ni FreeCAD ni un <i class="t" data-t="step">STEP</i>. Changer une pièce dans FreeCAD n'est donc pas un problème pour l'imprimer, mais c'en est un pour mettre à jour la simulation.</div></div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h2><svg><use href="#i-cube"/></svg>Onshape</h2>
+      <ul class="tight">
+        <li>Offre gratuite pour usage non commercial ; <strong>tous les documents sont publics</strong>.</li>
+        <li>« Make a copy » du document <i class="t" data-t="amont">amont</i> vers un compte BiscaLab, puis clic droit sur une pièce → <em>Export</em> en <i class="t" data-t="stl">STL</i> ou STEP.</li>
+        <li>Collaboration native : plusieurs personnes en même temps, versions immuables, <i class="t" data-t="branche">branches</i> et <i class="t" data-t="fusion">fusion</i>.</li>
+        <li>Garde l'historique <i class="t" data-t="parametrique">paramétrique</i> des pièces amont : une retouche (élargir un passage de câble, épaissir une paroi) reste propre.</li>
+      </ul>
+      <p class="muted" style="font-size:0.85rem">Le document Onshape du canard est public ; son identifiant est noté dans <code>biscalab/cad/onshape-liens.md</code> du dépôt. Comment l'ouvrir, le copier et en exporter une pièce : <a href="#cours-cao">cours 5</a>.</p>
+    </div>
+    <div class="card">
+      <h2><svg><use href="#i-cube"/></svg>FreeCAD 1.0 / 1.1</h2>
+      <ul class="tight">
+        <li>1.0 (nov. 2024) corrige le nommage topologique et intègre un atelier Assembly natif ; 1.1 (mars 2026) améliore PartDesign, Assembly et FEM.</li>
+        <li>Un import STEP ne donne qu'un solide sans historique : parfait pour une pièce nouvelle ou un gabarit, moins pour retoucher une pièce amont.</li>
+        <li>Le <code>.FCStd</code> est un zip : git ne sait pas le comparer, chaque version est une copie complète. Régler <em>Préférences → Général → Document → compression = 0</em> et renseigner le nom d'auteur.</li>
+        <li>Ignorer <code>*.FCBak</code>. Un seul éditeur par fichier. Toujours exporter un STEP à côté du <i class="t" data-t="fcstd">FCStd</i>.</li>
+        <li>Extension RobotCAD (OVERCROSS) : exporte de l'<i class="t" data-t="urdf">URDF</i>/SDF avec masses calculées, pas de MJCF.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-check"/></svg>Décision proposée</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Besoin</th><th>Outil</th><th>Pourquoi</th></tr></thead>
+        <tbody>
+          <tr><td>Imprimer les pièces amont telles quelles</td><td>STL du dépôt (<code>print/</code>)</td><td>Aucune CAO nécessaire. C'est la phase 1.</td></tr>
+          <tr><td>Retoucher une pièce amont</td><td>Copie Onshape BiscaLab</td><td>Historique paramétrique conservé ; export STL pour l'impression ; réexport MJCF possible.</td></tr>
+          <tr><td>Pièce nouvelle (support, gabarit, banc, <i class="t" data-t="potence">potence</i>, caisse)</td><td>FreeCAD → STEP + STL/SVG</td><td>Hors ligne, données chez nous, outils maison. Ces pièces n'entrent pas dans la simulation.</td></tr>
+          <tr><td>Mettre à jour la simulation après une modification</td><td>MJCF corrigé à la main (option B ci-dessous)</td><td>Le plus simple tant que la <i class="t" data-t="cinematique">cinématique</i> ne change pas.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><svg><use href="#i-walk"/></svg>Trois options pour le modèle physique</h2>
+    <p class="sub">Le modèle MJCF contient, pour chaque corps, masse, <i class="t" data-t="centre-de-masse">centre de masse</i> et <i class="t" data-t="inertie">inertie</i>. Le projet remplace la masse Onshape par l'estimation du <i class="t" data-t="slicer">slicer</i>, à cause du <i class="t" data-t="remplissage">remplissage</i> à 15 %. Si nous changeons matériau, remplissage ou pièce, ces valeurs changent.</p>
+    <div class="grid c3">
+      <div>
+        <h4>A · Rester sur Onshape</h4>
+        <p class="tight">Copier le document, modifier les surcharges de masse des pièces, réexporter avec onshape-to-robot, puis refaire les retouches manuelles (body <code>base</code>, site <code>imu</code> en (−0,08 ; 0 ; 0,05), joints <code>*_backlash</code>, keyframe <code>home</code>). Un STEP s'importe dans Onshape, mais il faut recréer l'assemblage et ses connecteurs.</p>
+      </div>
+      <div>
+        <h4>B · Corriger le MJCF à la main <span class="pill ok">recommandé</span></h4>
+        <p class="tight">Obtenir masse, centre de masse et inertie des pièces modifiées : dans FreeCAD (<code>Shape.Volume</code>, <code>CenterOfMass</code>, <code>MatrixOfInertia</code> × densité), par la masse annoncée par <i class="t" data-t="prusaslicer">PrusaSlicer</i>, ou en pesant. Recomposer l'<code>&lt;inertial&gt;</code> de chaque body (théorème de Huygens). Reporter les mêmes valeurs dans l'URDF de <i class="t" data-t="placo">Placo</i>.</p>
+      </div>
+      <div>
+        <h4>C · RobotCAD</h4>
+        <p class="tight">Exporter un URDF depuis FreeCAD, le convertir en MJCF (<code>compile</code> de <i class="t" data-t="mujoco">MuJoCo</i>), puis redonner tous les noms attendus par le code (<code>trunk_assembly</code>, sites <code>left_foot</code>/<code>right_foot</code>, geoms <code>*_foot_bottom_tpu</code>, classe <code>sts3215</code>). Faisable, mais long et fragile.</p>
+      </div>
+    </div>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Piège repéré dans le code.</strong> Le fichier <code>joints_properties.xml</code> actuel ne contient pas les valeurs de l'entraînement de référence (kp 17,8 contre 17,11 dans le modèle <code>backlash</code>). Un réexport ne redonne donc pas les paramètres d'origine : partir du modèle <code>open_duck_mini_v2_backlash.xml</code> et n'y toucher que les inertiels.</div></div>
+  </div>
+
+  <div class="grid c2">
+    <div class="card">
+      <h3><svg><use href="#i-printer"/></svg>Le suivi des pièces : <code>pieces.csv</code></h3>
+      <p>Un fichier <i class="t" data-t="csv">CSV</i> par robot, affiché en tableau par <i class="t" data-t="github">GitHub</i>. Une ligne par pièce :</p>
+<pre><code>piece,fichier,rev,qte,matiere,remplissage,couche,supports,3mf,imprimee_par,date,statut,remarque
+trunk_bottom,print/trunk_bottom.stl,amont,1,PLA,15%,0.2,oui,print/3mf/plateau-01.3mf,,,a_imprimer,inserts M3 x6 + roulements
+foot_bottom_tpu,print/foot_bottom_tpu.stl,amont,2,TPU,40%,0.2,non,print/3mf/plateau-pieds.3mf,,,a_imprimer,semelle = contact sol simulé</code></pre>
+      <p class="muted" style="font-size:0.85rem">Statuts : <code>a_imprimer</code>, <code>imprimee</code>, <code>controlee</code>, <code>montee</code>, <code>a_refaire</code>.</p>
+    </div>
+    <div class="card">
+      <h3><svg><use href="#i-link"/></svg>Formats et qui les lit</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Format</th><th>Contenu</th><th>Produit par</th><th>Lu par</th></tr></thead>
+          <tbody>
+            <tr><td><code>.FCStd</code></td><td>pièce paramétrique</td><td>FreeCAD</td><td>FreeCAD</td></tr>
+            <tr><td><code>.step</code></td><td>géométrie exacte (B-rep)</td><td>Onshape, FreeCAD</td><td>Onshape, FreeCAD, PrusaSlicer</td></tr>
+            <tr><td><code>.stl</code></td><td><i class="t" data-t="maillage">maillage</i> triangulé</td><td>Onshape, FreeCAD</td><td>PrusaSlicer, GitHub (aperçu 3D), MuJoCo (visuel)</td></tr>
+            <tr><td><code>.3mf</code></td><td>plateau + réglages + supports peints</td><td>PrusaSlicer</td><td>PrusaSlicer</td></tr>
+            <tr><td><code>.svg</code> / <code>.dxf</code></td><td>tracés 2D de découpe</td><td>FreeCAD (TechDraw / Draft), Inkscape</td><td>xTool Creative Space</td></tr>
+            <tr><td><code>.xml</code> (MJCF)</td><td>modèle physique du simulateur</td><td>onshape-to-robot + main</td><td>MuJoCo, Playground</td></tr>
+            <tr><td><code>.urdf</code></td><td>modèle cinématique de Placo</td><td>onshape-to-robot, RobotCAD</td><td>Placo (<i class="t" data-t="mouvement-reference">mouvements de référence</i>)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

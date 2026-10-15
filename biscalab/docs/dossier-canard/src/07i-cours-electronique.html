@@ -1,0 +1,250 @@
+<section class="page" id="page-cours-electronique" data-title="Cours · Électronique" data-sub="Partir de zéro" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 9 · Électronique</div>
+    <h1>L'électronique du robot, pour ceux qui n'en ont jamais fait</h1>
+    <p class="lead">Comprendre comment l'énergie va du pack aux servos et au Raspberry Pi, et savoir câbler, souder et mesurer sans rien griller.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 60 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : aucun</span>
+      <span class="pill p">Rôles : électronique, banc d'essai</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Expliquer tension, courant et puissance, et calculer une chute de tension dans un fil.</li>
+      <li>Lire le schéma d'alimentation du canard.</li>
+      <li>Choisir connecteurs et fils, et souder proprement au Pinecil.</li>
+      <li>Faire les cinq mesures de base au multimètre et régler l'alimentation de laboratoire.</li>
+      <li>Reconnaître les signaux du Pi et éviter les erreurs coûteuses.</li>
+    </ul>
+    <p><strong>Prérequis :</strong> aucun ; le cours <a href="#cours-raspberry">Raspberry Pi et Linux pour le robot</a> aide pour les broches.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Tension, courant, puissance : l'image de l'eau</h2>
+    <p>Imaginons un circuit d'eau. Le château d'eau pousse l'eau dans les tuyaux : c'est la <i class="t" data-t="tension">tension</i>, la « pression » électrique entre deux points, en volts (V). L'eau qui circule vraiment, c'est le <i class="t" data-t="courant">courant</i>, le débit d'électricité, en ampères (A). Une batterie posée sur la table a une tension, mais ne débite aucun courant.</p>
+    <p>La <i class="t" data-t="puissance">puissance</i>, en watts (W), combine les deux : P = U × I (U la tension, I le courant). C'est elle qui vide la batterie et chauffe.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le pack fournit 7,4 V en moyenne. Un servo STS3215 (le moteur d'une articulation) bloqué tire 2,5 A : 7,4 × 2,5 = 18,5 W, presque tout en chaleur. Au pire théorique, 14 servos bloqués ensemble tireraient 35 A. En marche, ils ne forcent jamais tous ensemble : le vrai courant crête sera mesuré.</p></div>
+    <h3>La loi d'Ohm et le fil trop fin</h3>
+    <p>Un fil freine un peu le courant, comme un tuyau étroit freine l'eau : c'est sa résistance (R), en ohms (Ω). La <i class="t" data-t="loi-ohm">loi d'Ohm</i> dit U = R × I : la tension perdue dans un fil vaut sa résistance multipliée par le courant qui le traverse.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Un câble trop fin de 0,05 Ω entre le pack et la carte des servos. À 10 A, il « mange » 0,05 × 10 = 0,5 V : les servos reçoivent 6,9 V au lieu de 7,4 V. Et il dissipe 0,5 × 10 = 5 W : il chauffe.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Mesurer 7,4 V robot immobile et conclure que le câblage est bon. La chute de tension n'existe que sous courant : on mesure aussi pendant que les servos bougent.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Masse commune, série et parallèle</h2>
+    <p>Une tension se mesure toujours entre deux points. On prend donc une référence à 0 V : la <i class="t" data-t="gnd">masse</i>, notée GND (de l'anglais <em>ground</em>, « sol »). Le moins du pack, la carte des servos, le régulateur 5 V et le <i class="t" data-t="raspberry-pi">Raspberry Pi</i> (le mini-ordinateur du robot, « le Pi ») partagent la même masse. Sinon, un signal « à 3,3 V » du Pi n'a aucun sens pour le récepteur : ils ne mesurent pas depuis le même zéro.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le câble USB entre le Pi et la carte des servos transporte aussi la masse. L'<i class="t" data-t="imu">IMU</i> (centrale inertielle, le capteur d'équilibre) a son propre fil de masse, sur la broche 9 du Pi. Masse oubliée = valeurs fantaisistes.</p></div>
+    <p>En <strong>série</strong>, les éléments sont bout à bout, le plus de l'un sur le moins du suivant : les tensions s'additionnent, le même courant traverse tout. En <strong>parallèle</strong>, tous les plus sont reliés ensemble et tous les moins ensemble : chacun reçoit la même tension, et les courants s'additionnent dans le fil commun.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Les deux cellules du pack sont en série : 3,7 + 3,7 = 7,4 V. Les 14 servos sont en parallèle : leurs courants s'ajoutent dans le câble principal, qui doit donc être gros.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. La batterie : cellules 18650, pack 2S et BMS</h2>
+    <p>La batterie utilise la chimie <i class="t" data-t="li-ion">lithium-ion</i> (Li-ion) : légère et puissante, mais qui ne supporte ni la surcharge ni le <i class="t" data-t="court-circuit">court-circuit</i>, un contact direct entre plus et moins qui fait passer un courant énorme. Le pack contient deux <i class="t" data-t="18650">cellules 18650</i>, des cylindres de 18 mm de diamètre et 65 mm de long.</p>
+    <ul>
+      <li><strong>Tension :</strong> 4,2 V pleine, 3,0 V vide, environ 3,7 V en moyenne.</li>
+      <li><strong>Capacité :</strong> 3000 mAh (milliampères-heures) : en théorie 3 A pendant une heure.</li>
+      <li><strong>Courant :</strong> une cellule « haute décharge » fournit 25 à 30 A sans que sa tension s'effondre.</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Nous utilisons la Molicel P30B : 3000 mAh, au moins 25 à 30 A, pour les gros courants brefs quand plusieurs servos forcent ensemble.</p></div>
+    <h3>Le pack 2S</h3>
+    <p><i class="t" data-t="2s">2S</i> veut dire « deux cellules en série » : 6,0 V vide, 7,4 V en moyenne (tension « nominale »), 8,4 V pleine charge. La capacité reste 3000 mAh, puisque le même courant traverse les deux cellules.</p>
+    <h3>Le BMS</h3>
+    <p>Le <i class="t" data-t="bms">BMS</i> (<em>Battery Management System</em>, système de gestion de batterie) protège le pack : il coupe si une cellule descend trop bas ou monte trop haut, coupe au-delà d'un courant maximal, et équilibre les deux cellules à la charge. Il est obligatoire.</p>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi le calibre du BMS n'est pas encore choisi.</strong> Trop bas, il éteindrait le robot en pleine marche ; trop haut, il ne protège plus. On le choisira après avoir mesuré le courant crête du robot complet.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Le régulateur 5 V et le schéma d'alimentation</h2>
+    <p>Le Pi veut 5 V stables, le pack fournit 6,0 à 8,4 V. L'<i class="t" data-t="ubec">UBEC</i> 5 V 8 A fait la conversion. Ce convertisseur à découpage hache très vite la tension du pack puis la lisse, en perdant peu d'énergie (bon rendement). « 8 A » est le courant maximal qu'il fournit.</p>
+    <p>Un régulateur linéaire, plus simple, « brûle » tout ce qui dépasse 5 V : à 8,4 V, il jetterait en chaleur 3,4 V sur 8,4, environ 40 % de l'énergie. Autonomie perdue, chaleur en plus.</p>
+    <h3>Le chemin de l'énergie</h3>
+    <ul>
+      <li>Les deux cellules sont dans un support 2S, protégées par le BMS, puis un interrupteur à verrouillage (il reste dans la position choisie) coupe tout le robot.</li>
+      <li>Ensuite, deux branches. <strong>Puissance :</strong> par un <i class="t" data-t="xt30">connecteur XT30</i> vers la <i class="t" data-t="waveshare">carte Waveshare</i>, qui relie l'USB du Pi au bus des servos et leur transmet la tension du pack telle quelle. <strong>Logique :</strong> vers l'UBEC, qui alimente le Pi en 5 V.</li>
+      <li>Deux jacks 2,1 mm reçoivent le chargeur sans démonter le pack ; leur câblage exact sera relevé au montage.</li>
+    </ul>
+    <div class="diag">
+      <svg viewBox="0 0 760 250" role="img" aria-label="Schéma d'alimentation du canard">
+        <rect class="box w" x="10" y="20" width="130" height="60" rx="10"/>
+        <text x="75" y="45" text-anchor="middle" font-weight="700">Pack 2S</text>
+        <text class="s" x="75" y="63" text-anchor="middle">2 × P30B · 6,0 à 8,4 V</text>
+        <rect class="box w" x="170" y="20" width="110" height="60" rx="10"/>
+        <text x="225" y="45" text-anchor="middle" font-weight="700">BMS 2S</text>
+        <text class="s" x="225" y="63" text-anchor="middle">protège le pack</text>
+        <rect class="box w" x="310" y="20" width="110" height="60" rx="10"/>
+        <text x="365" y="45" text-anchor="middle" font-weight="700">Interrupteur</text>
+        <text class="s" x="365" y="63" text-anchor="middle">à verrouillage</text>
+        <rect class="box b" x="460" y="20" width="140" height="60" rx="10"/>
+        <text x="530" y="45" text-anchor="middle" font-weight="700">Carte Waveshare</text>
+        <text class="s" x="530" y="63" text-anchor="middle">entrée = tension servos</text>
+        <rect class="box b" x="630" y="20" width="120" height="60" rx="10"/>
+        <text x="690" y="45" text-anchor="middle" font-weight="700">14 × STS3215</text>
+        <text class="s" x="690" y="63" text-anchor="middle">en parallèle</text>
+        <rect class="box w" x="170" y="140" width="110" height="60" rx="10"/>
+        <text x="225" y="165" text-anchor="middle" font-weight="700">2 jacks 2,1 mm</text>
+        <text class="s" x="225" y="183" text-anchor="middle">chargeur 2S</text>
+        <rect class="box w" x="460" y="140" width="140" height="60" rx="10"/>
+        <text x="530" y="165" text-anchor="middle" font-weight="700">UBEC 5 V 8 A</text>
+        <text class="s" x="530" y="183" text-anchor="middle">à découpage</text>
+        <rect class="box p" x="630" y="140" width="120" height="60" rx="10"/>
+        <text x="690" y="165" text-anchor="middle" font-weight="700">Pi Zero 2 W</text>
+        <text class="s" x="690" y="183" text-anchor="middle">5 V</text>
+        <path class="arr" d="M140 50 H165"/>
+        <path class="arr" d="M280 50 H305"/>
+        <path class="arr" d="M420 50 H455"/>
+        <path class="arr" d="M600 50 H625"/>
+        <path class="arr" d="M225 140 V85"/>
+        <path class="arr" d="M365 80 V170 H455"/>
+        <path class="arr" d="M600 170 H625"/>
+        <path class="arr" d="M660 140 V110 H550 V85" stroke-dasharray="4 3"/>
+        <text class="lbl" x="437" y="42" text-anchor="middle">XT30</text>
+        <text class="lbl" x="612" y="42" text-anchor="middle">bus</text>
+        <text class="lbl" x="410" y="162" text-anchor="middle">7,4 V</text>
+        <text class="lbl" x="612" y="162" text-anchor="middle">5 V</text>
+        <text class="lbl" x="614" y="104" text-anchor="middle">USB (données + masse)</text>
+        <text class="lbl" x="200" y="112" text-anchor="middle">charge</text>
+        <text class="s" x="380" y="232" text-anchor="middle">Toutes les masses sont reliées.</text>
+      </svg>
+    </div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Croire que la carte Waveshare régule la tension. Les servos reçoivent exactement sa tension d'entrée. Sa fiche annonce 9 à 12,6 V alors que le canard l'alimente en 2S : on vérifie au banc qu'elle fonctionne ainsi. Et jamais d'alimentation 12 V avec nos servos 7,4 V.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Connecteurs et sections de fil</h2>
+    <dl class="def">
+      <dt>XT30</dt><dd>Jaune, à deux broches, prévu pour 30 A et détrompé : il ne rentre que dans un sens. Rouge = plus, noir = moins.</dd>
+      <dt>Jack 2,1 mm</dt><dd>La prise ronde du chargeur. Sa polarité (plus au centre ou à l'extérieur) dépend du modèle : on la vérifie au <i class="t" data-t="multimetre">multimètre</i> (l'appareil de mesure, section 7).</dd>
+      <dt>JST des servos</dt><dd>Petites prises à trois fils, avec un sens et un détrompage (une forme qui empêche l'erreur). On ne force jamais.</dd>
+    </dl>
+    <h3>La section des fils</h3>
+    <p>La section, en mm², est la surface de cuivre du fil. Plus de courant demande plus de cuivre, sinon le fil chauffe.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Tronçon</th><th>Ce qui y passe</th><th>Fil</th></tr></thead>
+        <tbody>
+          <tr><td>Pack → BMS → interrupteur → carte Waveshare</td><td>Le courant de tous les servos : 10 A, plus en pointe (à mesurer)</td><td>1,5 mm² minimum, le plus court possible</td></tr>
+          <tr><td>Interrupteur → UBEC → Pi</td><td>Le courant du Pi, bien plus faible</td><td>Plus fin accepté, mais court</td></tr>
+          <tr><td>Signaux : IMU, contacts de pied, LED</td><td>Presque aucun courant</td><td>Fils fins, réservés aux signaux</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Souder avec le Pinecil</h2>
+    <p>La <i class="t" data-t="soudure">soudure à l'étain</i> assemble deux conducteurs avec un alliage fondu au fer. L'étain n'est pas une colle : il doit couler sur deux métaux assez chauds. Notre fer est un Pinecil V2.</p>
+    <ol class="steps">
+      <li><div><b>Régler la température</b> Celle recommandée par le fabricant de l'étain. Trop froid, il ne coule pas ; trop chaud, le flux brûle et l'isolant fond. On note le réglage retenu.</div></li>
+      <li><div><b>Étamer</b> Un peu d'étain sur la panne propre, puis sur chaque fil dénudé.</div></li>
+      <li><div><b>Chauffer les deux pièces</b> La panne contre les deux à la fois ; l'étain est apporté sur les pièces, pas sur la panne.</div></li>
+      <li><div><b>Laisser figer</b> Retirer l'étain, puis le fer, sans bouger. La gaine thermorétractable s'enfile avant de souder.</div></li>
+    </ol>
+    <p>Un bon joint est <strong>brillant et concave</strong> : il épouse les deux pièces en formant un petit creux. Un joint « sec » est mat, granuleux ou en boule : il conduit mal ou casse à la première vibration. On le refait. Le flux, une résine contenue dans l'étain ou vendue en flacon, nettoie le métal : quand l'étain refuse de couler, un peu de flux aide souvent.</p>
+    <p><strong>Sécurité :</strong> fer sur son support, fumées évitées, jamais de soudure directement sur une cellule.</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Souder un circuit encore sous tension : une goutte d'étain entre deux pistes fait un court-circuit immédiat. On débranche tout avant de prendre le fer.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Le multimètre : cinq mesures à savoir faire</h2>
+    <p>Le multimètre mesure tension, courant, résistance et continuité. Fil noir dans la douille COM, fil rouge dans la douille V/Ω pour presque tout.</p>
+    <ol class="steps">
+      <li><div><b>Tension continue aux bornes du pack</b> Sélecteur sur V continu (V avec un trait plein), rouge sur le plus, noir sur le moins. On attend 6,0 à 8,4 V. Valeur négative = pointes inversées : pratique pour repérer le plus d'un câble inconnu.</div></li>
+      <li><div><b>Continuité d'un câble</b> Hors tension, sélecteur sur le bip, une pointe à chaque bout. Bip = le fil conduit ; silence = fil coupé ou soudure ratée. Bip entre plus et moins = court-circuit, à corriger avant de brancher.</div></li>
+      <li><div><b>Résistance d'un contact de pied</b> Hors tension, contact débranché du Pi, sélecteur sur Ω. Relâché : « OL » (circuit ouvert). Appuyé : proche de 0 Ω. Valeur qui hésite = contact sale ou mal soudé.</div></li>
+      <li><div><b>Tension 5 V à la sortie de l'UBEC</b> UBEC alimenté, Pi pas encore branché, sélecteur sur V continu : on doit lire 5 V, et on repère le plus. Ensuite seulement, on raccorde le Pi.</div></li>
+      <li><div><b>Courant</b> Le multimètre se met en série : on ouvre le circuit pour faire passer le courant à travers lui, fil rouge dans la douille A (calibre fort), sélecteur sur A continu. Au banc, on lit plutôt le courant affiché par l'alimentation (section 8).</div></li>
+    </ol>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Laisser le fil rouge dans la douille A, puis mesurer la tension du pack. En mode courant, le multimètre est presque un simple fil : on vient de court-circuiter la batterie. Après une mesure de courant, le fil rouge revient en V/Ω.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. L'alimentation de laboratoire</h2>
+    <p>Une <i class="t" data-t="alim-labo">alimentation de laboratoire</i> se règle en tension et se limite en courant : 7,4 V, avec une limite de 3 A au banc (un ou deux servos) et 10 A pour le robot complet. Si le montage demande plus, elle baisse sa tension au lieu de fournir davantage : une erreur de câblage ne fait rien fondre. Une batterie, elle, fournit jusqu'à 25 ou 30 A.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Banc réglé à 7,4 V et 3 A. Un servo bloqué tire 2,5 A : l'alimentation le laisse faire, et la protection interne du servo coupe au bout de 2 s. En cas de court-circuit, la tension s'effondre et rien ne brûle. Tous les essais commencent donc sur l'alimentation.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>9. Les signaux : GPIO, I²C, UART et bus des servos</h2>
+    <p>Les <i class="t" data-t="gpio">GPIO</i> (<em>General Purpose Input/Output</em>, entrées-sorties à tout faire) sont les broches du Pi qui lisent ou écrivent un niveau : 0 V (bas) ou 3,3 V (haut). <strong>Jamais 5 V sur une GPIO</strong> : le Pi grille sans prévenir.</p>
+    <p>Une entrée libre « flotte ». Une <i class="t" data-t="pull-up">résistance de pull-up</i> (de rappel vers le haut) la maintient à 3,3 V par défaut. Le contact de pied, appuyé, relie la broche à la masse : l'entrée tombe à 0 V. Le contact est dit « actif bas ». Les pull-up internes du Pi s'activent par logiciel.</p>
+    <p>L'<i class="t" data-t="i2c">I²C</i> est un bus à deux fils : SDA pour les données, SCL pour l'horloge, le battement qui cadence l'échange. Chaque capteur y a une adresse, un numéro qui le désigne. L'<i class="t" data-t="uart">UART</i> est une liaison série à deux fils, TX (émission) et RX (réception), sans horloge : les deux côtés doivent être réglés à la même vitesse, en <i class="t" data-t="baud">baud</i> (symboles par seconde). Notre IMU parle en I²C, avec l'UART en repli.</p>
+    <p>Les servos sont reliés par un <i class="t" data-t="bus-serie">bus série</i> : un câble à trois fils (plus, masse, données) qui passe de servo en servo. Le fil de données est <i class="t" data-t="half-duplex">half-duplex</i> (à l'alternat) : chacun parle à son tour, comme au talkie-walkie, à 1 Mbit/s (un million de bits par seconde). Détails dans le cours <a href="#cours-servos">Les servomoteurs intelligents STS3215</a>.</p>
+    <h3>Le brochage du Pi Zero 2 W</h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Fonction</th><th>GPIO (broche physique)</th></tr></thead>
+        <tbody>
+          <tr><td>Contact pied gauche</td><td>GPIO22 (broche 15)</td></tr>
+          <tr><td>Contact pied droit</td><td>GPIO27 (broche 13)</td></tr>
+          <tr><td>IMU : SDA (données) / SCL (horloge)</td><td>GPIO2 (broche 3) / GPIO3 (broche 5)</td></tr>
+          <tr><td>IMU : alimentation / masse</td><td>3V3 (broche 1) / GND (broche 9)</td></tr>
+          <tr><td>Antennes (micro-servos)</td><td>GPIO12, GPIO13</td></tr>
+          <tr><td>LED des yeux, projecteur</td><td>GPIO23, GPIO24, GPIO25</td></tr>
+          <tr><td>Ampli audio MAX98357A : LRC, BCLK, DIN</td><td>GPIO19, GPIO18, GPIO21</td></tr>
+          <tr><td>Bus des servos</td><td>USB → carte Waveshare (<code>/dev/ttyACM0</code>)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card lesson">
+    <h2>10. Les erreurs qui coûtent cher</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Erreur</th><th>Conséquence</th><th>Parade</th></tr></thead>
+        <tbody>
+          <tr><td>Inverser + et −</td><td>Composants détruits</td><td>Rouge = plus, vérifier au multimètre</td></tr>
+          <tr><td>5 V sur une GPIO</td><td>Pi détruit</td><td>Capteurs alimentés en 3,3 V (broche 1)</td></tr>
+          <tr><td>Court-circuit d'une 18650</td><td>Fil qui fond, risque de feu</td><td>Pôles protégés, outils loin des bornes</td></tr>
+          <tr><td>Carte Waveshare sur 12 V avec des servos 7,4 V</td><td>Servos en surtension</td><td>Mesurer la tension avant de brancher le bus</td></tr>
+          <tr><td>Souder sous tension</td><td>Court-circuit, brûlure</td><td>Tout débrancher avant de souder</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Chute de tension sous charge et erreurs CRC</h3>
+    <p>Quand plusieurs servos forcent, le courant monte d'un coup. Avec des cellules faibles, des câbles longs ou fins, ou de mauvais connecteurs, la tension s'effondre un instant et les messages du bus arrivent abîmés : c'est l'<i class="t" data-t="crc">erreur CRC</i>, la somme de contrôle jointe au message ne correspond plus. D'autres constructeurs l'ont rencontrée (<i class="t" data-t="issue">issue</i> #49, une fiche de discussion du dépôt du projet). Parades : cellules d'au moins 25 A, câbles courts et de bonne section, XT30.</p>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : alimentation de laboratoire, carte Waveshare, 2 servos configurés (ID 10 et 11, cours suivant), Pi Zero 2 W et son alimentation 5 V, câble USB, fils 1,5 mm² avec XT30, multimètre. Durée : 30 min.</p>
+    <ol class="steps">
+      <li><div><b>Régler l'alimentation</b> Sortie coupée : 7,4 V, limite 3 A. Vérifier la tension au multimètre.</div></li>
+      <li><div><b>Câbler la puissance</b> Sortie coupée, alimentation vers carte Waveshare, rouge au plus. Vérifier au bip l'absence de court-circuit.</div></li>
+      <li><div><b>Brancher les servos</b> Les deux sur le bus, dans le bon sens, sans forcer.</div></li>
+      <li><div><b>Brancher le Pi à part</b> Sur sa propre alimentation 5 V, relié à la carte par l'USB seulement.</div></li>
+      <li><div><b>Mesurer à vide</b> Allumer la sortie. Noter le courant au repos et la tension à l'entrée de la carte Waveshare, celle des servos.</div></li>
+      <li><div><b>Mesurer en mouvement</b> Lancer le <i class="t" data-t="script">script</i> (petit programme Python) <code>check_motors.py</code> : il signale les 12 servos absents, on répond <kbd>y</kbd> pour continuer, puis chaque servo bouge de 0,1 rad. Mesurer la même tension pendant le mouvement, avec le courant affiché.</div></li>
+      <li><div><b>Consigner</b> Tensions et courants vont dans le <i class="t" data-t="journal-de-bord">journal de bord</i>, la mémoire écrite des séances.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> une tension proche de 7,4 V au repos, qui baisse peu en mouvement ; sinon, chercher le fil trop fin ou le mauvais contact.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Un fil de 0,05 Ω transporte 10 A : tension perdue, chaleur produite ?</summary><p>0,05 × 10 = 0,5 V perdus ; 0,5 × 10 = 5 W de chaleur.</p></details>
+    <details class="quiz"><summary>Deux cellules de 3000 mAh en série : quelle tension, quelle capacité ?</summary><p>6,0 à 8,4 V, 7,4 V nominal ; la capacité reste 3000 mAh.</p></details>
+    <details class="quiz"><summary>Pourquoi un UBEC plutôt qu'un régulateur linéaire ?</summary><p>Le linéaire transforme en chaleur tout ce qui dépasse 5 V (environ 40 % à 8,4 V) ; l'UBEC perd beaucoup moins.</p></details>
+    <details class="quiz"><summary>Fil rouge resté dans la douille A, pointes sur le pack : que se passe-t-il ?</summary><p>Un court-circuit : en mode courant, le multimètre est presque un simple fil.</p></details>
+    <details class="quiz"><summary>Pourquoi les erreurs CRC surviennent-elles quand le robot force ?</summary><p>Le fort courant fait chuter la tension ; les messages arrivent abîmés.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>Tension = pression (V), courant = débit (A), puissance = U × I (W).</li>
+      <li>U = R × I : un fil trop fin perd de la tension sous courant. 1,5 mm² minimum sur la puissance.</li>
+      <li>Toutes les masses du robot sont reliées.</li>
+      <li>Pack 2S de deux Molicel P30B : 6,0 à 8,4 V, 7,4 V nominal, 3000 mAh, BMS obligatoire.</li>
+      <li>La carte Waveshare transmet sa tension d'entrée aux servos ; l'UBEC donne 5 V au Pi.</li>
+      <li>GPIO en 3,3 V : jamais 5 V dessus.</li>
+      <li>Tout essai commence sur l'alimentation de laboratoire : 3 A au banc, 10 A robot complet.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-servos">Les servomoteurs intelligents STS3215</a>.</p>
+  </div>
+</section>

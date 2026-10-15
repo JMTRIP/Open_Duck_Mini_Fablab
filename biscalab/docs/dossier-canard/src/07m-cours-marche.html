@@ -1,0 +1,289 @@
+<section class="page" id="page-cours-marche" data-title="Cours · Marche bipède" data-sub="Équilibre, articulations, phases" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 13 · Marche</div>
+    <h1>Comment un robot à deux jambes tient debout et marche</h1>
+    <p class="lead">Avant de calibrer ou de dépanner le canard, il faut comprendre ce qu'il fait quand il marche : où est son poids, sur quoi il s'appuie, quelles articulations travaillent, et ce que sa mécanique a de figé.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 45 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : servos</span>
+      <span class="pill p">Rôles : tout le monde</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Expliquer pourquoi un robot à deux jambes doit se corriger sans cesse.</li>
+      <li>Nommer les 14 articulations du canard et dire ce que fait chacune pendant un pas.</li>
+      <li>Situer son point d'équilibre et sa surface d'appui.</li>
+      <li>Lire les chiffres de sa démarche : 0,18 s, 0,54 s, 4 cm, 20,5 cm, −4°.</li>
+      <li>Distinguer ce qui se règle sur le robot de ce qui impose de refaire l'apprentissage.</li>
+    </ul>
+    <p class="muted"><strong>Prérequis :</strong> le cours <a href="#cours-servos">Servomoteurs</a> (servo, ID, palonnier). Aucune formule.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Pourquoi tenir debout est difficile</h2>
+    <p>Posez un balai debout sur la paume, manche en haut. Il ne tient que si votre main bouge sans arrêt pour rester sous lui. Arrêtez de corriger : il tombe. Un robot à deux jambes, un bipède, est dans la même situation : une masse placée haut, posée sur une petite surface.</p>
+    <p>Une table à quatre pieds est <strong>stable</strong> : poussée, elle revient d'elle-même. Un bipède est <strong>instable par nature</strong> : la moindre inclinaison s'aggrave. Il ne tient que si un « cerveau » mesure l'inclinaison et corrige, sans cesse.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le canard mesure environ 42 cm jambes tendues et sa tête est lourde : c'est un balai plus qu'un tabouret. Son programme de marche corrige la posture 50 fois par seconde. Servos coupés, plus rien ne corrige : il s'affaisse.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Les articulations du canard</h2>
+    <h3>Degrés de liberté</h3>
+    <p>Un <i class="t" data-t="ddl">degré de liberté</i> est un mouvement indépendant possible. Une porte en a un : elle tourne autour de ses gonds. Sur un robot, chaque articulation motorisée apporte un degré de liberté et demande un servo.</p>
+    <h3>Trois façons de tourner</h3>
+    <dl class="def">
+      <dt>Lacet</dt><dd>tourner la tête pour dire « non » (axe vertical).</dd>
+      <dt>Tangage</dt><dd>hocher la tête pour dire « oui » (axe d'une oreille à l'autre).</dd>
+      <dt>Roulis</dt><dd>pencher l'oreille vers l'épaule (axe du nez à la nuque).</dd>
+    </dl>
+    <h3>Les 14 articulations</h3>
+    <p>5 par jambe et 4 pour le cou et la tête. Les noms anglais sont ceux du logiciel, les numéros sont les ID des servos.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Articulation</th><th>Logiciel</th><th>Axe</th><th>ID droite</th><th>ID gauche</th></tr></thead>
+      <tbody>
+        <tr><td>Hanche, rotation de la jambe</td><td><code>hip_yaw</code></td><td>lacet</td><td>10</td><td>20</td></tr>
+        <tr><td>Hanche, écart sur le côté</td><td><code>hip_roll</code></td><td>roulis</td><td>11</td><td>21</td></tr>
+        <tr><td>Hanche, avant-arrière</td><td><code>hip_pitch</code></td><td>tangage</td><td>12</td><td>22</td></tr>
+        <tr><td>Genou</td><td><code>knee</code></td><td>tangage</td><td>13</td><td>23</td></tr>
+        <tr><td>Cheville</td><td><code>ankle</code></td><td>tangage</td><td>14</td><td>24</td></tr>
+      </tbody>
+    </table></div>
+    <p>Cou et tête : <code>neck_pitch</code> (30), <code>head_pitch</code> (31), <code>head_yaw</code> (32), <code>head_roll</code> (33). Ils servent à l'expression, mais déplacent une masse importante.</p>
+    <h3>Une cheville qui ne penche pas sur le côté</h3>
+    <p>La cheville ne fait que du tangage. Deux conséquences. Tout l'équilibre de gauche à droite passe par les hanches en roulis : pour se poser sur un pied, le canard déplace son bassin au-dessus de ce pied. Et la semelle ne peut pas épouser un sol penché sur le côté : elle ne porterait que sur un bord. Le canard est fait pour un sol plat.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Vu de face en marche, le bassin oscille de gauche à droite : ce sont les servos 11 et 21 qui travaillent, pas les chevilles 14 et 24.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Monter une pièce de hanche gauche du côté droit : les hanches sont asymétriques. L'orientation de la pièce de hanche en tangage décide aussi du zéro de l'articulation. On compare avec la CAO avant de visser.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. La géométrie du mouvement</h2>
+    <p>La <i class="t" data-t="cinematique">cinématique</i> décrit la géométrie d'un mécanisme : longueur des segments, position et direction des axes. Elle répond à la question « si je tourne ce servo de tant, où arrive le pied ? ». Une jambe est une chaîne : tronc, trois axes de hanche, cuisse, genou, tibia, cheville, pied. Changer un maillon déplace tout ce qui est en dessous.</p>
+    <p>La marche a été apprise sur un modèle informatique qui contient exactement ces longueurs et ces axes ; posture de repos, démarches modèles et réflexes en dépendent. Allongez un tibia d'un centimètre : le pied n'arrive plus où le programme l'attend, et l'apprentissage est à refaire.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le tibia est fait de pièces « sheet » (<code>knee_to_ankle_left_sheet</code>, <code>knee_to_ankle_right_sheet</code>) de 7 à 8 mm d'épaisseur, pas de plaques de 3 mm à découper au laser. Leurs longueurs ne sont pas dans notre fiche de faits : nous les mesurerons.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Déplacer un trou d'axe ou raccourcir un bras pour faciliter l'impression. Épaissir une pièce change sa masse ; déplacer un axe change la cinématique et impose de réentraîner.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Le centre de masse</h2>
+    <p>Posez une règle en travers d'un doigt et cherchez le point où elle tient : c'est son <i class="t" data-t="centre-de-masse">centre de masse</i>, où toute la masse semble concentrée. Une masse loin d'un axe est aussi plus dure à mettre en rotation et à arrêter : c'est l'<i class="t" data-t="inertie">inertie</i>.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Sous-ensemble</th><th>Masse dans le modèle</th></tr></thead>
+      <tbody>
+        <tr><td>Tronc</td><td>0,699 kg</td></tr>
+        <tr><td>Cou et tête</td><td>0,582 kg, soit 28 % du total</td></tr>
+        <tr><td>Chaque jambe</td><td>≈ 0,41 kg</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>2,107 kg</strong></td></tr>
+      </tbody>
+    </table></div>
+    <p>Plus d'un quart de la masse est tout en haut : le centre de masse du canard est haut. Pendant la marche, les démarches modèles le maintiennent à 20,5 cm du sol.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Ces masses ont été estimées par le logiciel d'impression, remplissage 15 %. Avec vis, inserts, câbles et notre filament, le vrai canard pèsera autre chose : on pèse chaque sous-ensemble monté et on note l'écart.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. La surface d'appui et l'équilibre à l'arrêt</h2>
+    <p>Le <i class="t" data-t="polygone-sustentation">polygone de sustentation</i> est la surface au sol délimitée par les points d'appui : le triangle entre les pieds d'un tabouret, la surface qui englobe les deux semelles du canard. Sur un seul pied, elle se réduit à une semelle.</p>
+    <p>Règle de l'équilibre à l'arrêt, dit <strong>statique</strong> : accrochez en pensée un fil à plomb au centre de masse. Tant que le plomb tombe dans le polygone, le robot ne tombe pas.</p>
+    <div class="diag">
+      <svg viewBox="0 0 680 230" role="img" aria-label="Vue de dessus : en double appui le centre de masse est dans le polygone ; en simple appui il est hors du pied d'appui">
+        <text x="170" y="24" text-anchor="middle" font-weight="700">Double appui : grand polygone</text>
+        <rect class="box p" x="64" y="52" width="212" height="126" rx="10"/>
+        <rect class="box" x="70" y="58" width="70" height="114" rx="8"/>
+        <rect class="box" x="200" y="58" width="70" height="114" rx="8"/>
+        <text x="105" y="120" text-anchor="middle">pied G</text>
+        <text x="235" y="120" text-anchor="middle">pied D</text>
+        <circle class="box g" cx="170" cy="115" r="7"/>
+        <text x="170" y="204" text-anchor="middle">Le plomb tombe dedans : il tient.</text>
+        <text x="510" y="24" text-anchor="middle" font-weight="700">Simple appui : petit polygone</text>
+        <rect class="box p" x="420" y="58" width="70" height="114" rx="8"/>
+        <rect class="box" x="550" y="58" width="70" height="114" rx="8" stroke-dasharray="5 4"/>
+        <text x="455" y="120" text-anchor="middle">appui</text>
+        <text x="585" y="120" text-anchor="middle">levé</text>
+        <circle class="box w" cx="520" cy="115" r="7"/>
+        <text x="510" y="204" text-anchor="middle">Le plomb tombe dehors : il faut poser l'autre pied.</text>
+      </svg>
+    </div>
+    <h3>L'expérience à faire debout</h3>
+    <p>Debout, levez lentement un pied. Avant qu'il quitte le sol, votre bassin glisse au-dessus de l'autre pied : le centre de masse rejoint le nouveau polygone, bien plus petit. Restez sur un pied : la cheville corrige sans cesse, dans tous les sens.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le canard fait le même glissement de bassin avant chaque pas, avec ses hanches en roulis, seules capables de corriger de gauche à droite.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Marcher, c'est tomber et se rattraper</h2>
+    <p>La vraie marche est un équilibre <strong>dynamique</strong> : on se laisse tomber vers l'avant, et le pied qui avance se pose juste à temps pour rattraper la chute.</p>
+    <p>Un vélo à l'arrêt tombe ; en roulant, il tient. Avec la vitesse, ce qui compte est où va le centre de masse : il peut sortir du polygone un instant, si le pas suivant arrive à l'heure.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Sur la figure, à droite, le plomb tombe hors du pied d'appui : à l'arrêt, ce serait la chute ; en marche, c'est normal, car le pied levé se repose au plus 0,18 s plus tard. C'est aussi pourquoi, consigne nulle, le canard ne se fige pas : il piétine sur place.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Juger la stabilité d'un bipède sur une photo : c'est le mouvement qui rend stable une posture prise en plein pas.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Les phases de la marche</h2>
+    <p>Chaque pied alterne l'<strong>appui</strong> (au sol, il porte le robot) et le <strong>balancement</strong> (en l'air, il avance). Ce sont les <i class="t" data-t="phase-appui">phases d'appui</i> : <em>simple appui</em> quand un seul pied est au sol, <em>double appui</em> quand les deux y sont, le temps de passer le poids d'une jambe à l'autre. La <i class="t" data-t="periode-marche">période de marche</i> est la durée d'un cycle complet : un pas droit puis un pas gauche.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Grandeur</th><th>Valeur sur le canard</th></tr></thead>
+      <tbody>
+        <tr><td>Simple appui</td><td>0,18 s</td></tr>
+        <tr><td>Double appui</td><td>rapport 0,5 : 0,5 × 0,18 = 0,09 s</td></tr>
+        <tr><td>Un pas</td><td>0,18 + 0,09 = 0,27 s</td></tr>
+        <tr><td>Période (deux pas)</td><td>0,54 s, soit 27 pas de calcul à 50 Hz</td></tr>
+        <tr><td>Levée de pied</td><td>4 cm</td></tr>
+        <tr><td>Hauteur du centre de masse</td><td>20,5 cm</td></tr>
+        <tr><td>Tangage du tronc</td><td>−4°, le tronc reste légèrement incliné</td></tr>
+      </tbody>
+    </table></div>
+    <div class="diag">
+      <svg viewBox="0 0 680 160" role="img" aria-label="Chronogramme d'une période de 0,54 s : appui et balancement de chaque pied">
+        <text x="145" y="26" text-anchor="middle">double appui</text>
+        <text x="280" y="26" text-anchor="middle">simple appui droit</text>
+        <text x="415" y="26" text-anchor="middle">double appui</text>
+        <text x="550" y="26" text-anchor="middle">simple appui gauche</text>
+        <text x="8" y="60">Pied droit</text>
+        <rect class="box g" x="100" y="40" width="360" height="30" rx="6"/>
+        <text x="280" y="60" text-anchor="middle">appui</text>
+        <rect class="box w" x="460" y="40" width="180" height="30" rx="6"/>
+        <text x="550" y="60" text-anchor="middle">balancement</text>
+        <text x="8" y="105">Pied gauche</text>
+        <rect class="box g" x="100" y="85" width="90" height="30" rx="6"/>
+        <text x="145" y="105" text-anchor="middle">appui</text>
+        <rect class="box w" x="190" y="85" width="180" height="30" rx="6"/>
+        <text x="280" y="105" text-anchor="middle">balancement</text>
+        <rect class="box g" x="370" y="85" width="270" height="30" rx="6"/>
+        <text x="505" y="105" text-anchor="middle">appui</text>
+        <text x="100" y="142" text-anchor="middle">0</text>
+        <text x="190" y="142" text-anchor="middle">0,09</text>
+        <text x="370" y="142" text-anchor="middle">0,27</text>
+        <text x="460" y="142" text-anchor="middle">0,36</text>
+        <text x="640" y="142" text-anchor="middle">0,54 s</text>
+      </svg>
+    </div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le programme calcule toutes les 0,02 s (50 Hz), soit 27 fois par période ; une horloge interne lui dit où il en est du cycle. La période est dans un fichier lu au démarrage : on n'y touche pas.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Ce que fait chaque articulation pendant un pas</h2>
+    <p>Ce qu'on observe sur les démarches modèles ; le robot peut s'en écarter pour se rattraper.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Articulation</th><th>Jambe d'appui</th><th>Jambe en balancement</th></tr></thead>
+      <tbody>
+        <tr><td>Hanche roulis</td><td>porte le bassin au-dessus du pied</td><td>garde la jambe à distance de l'autre</td></tr>
+        <tr><td>Hanche tangage</td><td>fait passer le tronc au-dessus du pied</td><td>porte la cuisse vers l'avant</td></tr>
+        <tr><td>Genou</td><td>porte le poids, amortit la pose</td><td>se plie pour lever le pied de 4 cm, se déplie pour le poser</td></tr>
+        <tr><td>Cheville</td><td>garde la semelle à plat</td><td>oriente la semelle pour qu'elle arrive à plat</td></tr>
+        <tr><td>Hanche lacet</td><td colspan="2">presque immobile en ligne droite, oriente les pieds pour tourner</td></tr>
+        <tr><td>Cou et tête</td><td colspan="2">tenus selon les consignes de tête ; tout mouvement déplace une part des 28 % du haut</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>9. Les sens du canard : IMU et contacts de pied</h2>
+    <p>L'<i class="t" data-t="imu">IMU</i> (centrale inertielle) est l'oreille interne du robot. Fixée au tronc, elle mesure comment il tourne, avec un <i class="t" data-t="gyroscope">gyroscope</i>, et où est le bas, avec un <i class="t" data-t="accelerometre">accéléromètre</i> qui sent la gravité. Le programme lit ces mesures brutes 50 fois par seconde, sans filtre.</p>
+    <p>Les <i class="t" data-t="contact-pied">contacts de pied</i> sont quatre micro-interrupteurs pressés dans les semelles, deux par pied. Ils disent « ce pied touche le sol » ou non : une valeur par pied.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Une IMU montée à l'envers se corrige par un réglage. Mais le modèle place l'IMU à un endroit précis du tronc : la déplacer impose de réentraîner.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>10. Les semelles et le frottement</h2>
+    <p>Le frottement, c'est l'adhérence entre deux surfaces : faible pour un patin sur la glace, forte pour une chaussure de randonnée sur un rocher. On le chiffre par un coefficient : plus il est grand, plus ça accroche.</p>
+    <p>Dans la simulation où la marche a été apprise, les semelles en <i class="t" data-t="tpu">TPU</i> (filament souple, imprimé à 40 % de remplissage) sont les <strong>seules</strong> parties du robot qui touchent quelque chose, sur un sol de frottement 0,6. Toute la marche suppose cette adhérence-là.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Une semelle en PLA « en attendant le TPU » donnerait un autre frottement que celui appris. Pour nos essais : un sol plat, propre, toujours le même, noté dans le journal.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>11. Le jeu mécanique et la rigidité</h2>
+    <p>Le <i class="t" data-t="jeu">jeu mécanique</i> est le petit mouvement libre d'une articulation avant que l'effort ne passe, comme le volant d'une vieille voiture qui tourne un peu à vide. Dans un servo, il vient des engrenages ; on l'appelle aussi <i class="t" data-t="backlash">backlash</i> (jeu d'engrènement).</p>
+    <p>La simulation suppose un jeu de ±0,5° aux articulations des jambes et des pièces parfaitement rigides. Une pièce qui fléchit, une vis desserrée, un palonnier mal serré ajoutent du jeu jamais vu à l'apprentissage : les corrections arrivent en retard ou à côté.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>La v1 du projet (servos Dynamixel) a été abandonnée pour cause de jeu excessif. Au montage : vis serrées, palonniers bien en place, pièces sans fissure, frein-filet (Loctite 243) seulement métal sur métal.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>12. La masse et son placement</h2>
+    <p>Pendant l'apprentissage, chaque masse du modèle a varié au hasard de ±10 %. Le programme tolère donc un robot un peu plus lourd ou plus léger, pièce par pièce. Au-delà, aucune tolérance chiffrée n'est publiée.</p>
+    <p>La <strong>position</strong> de la masse compte encore plus que son total. Une tête plus lourde remonte le centre de masse : le balai s'allonge. Une batterie déplacée sur un côté décale le centre de masse : le programme doit compenser un déséquilibre qu'il n'a pas appris.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>La plaque <code>head_bot_sheet</code> (3 mm, 65,9 cm³) pèserait environ 78 g découpée en PMMA plein, alors que la version imprimée n'est remplie qu'à 15 %. Même forme, autre masse. Des coques modifiées par un autre constructeur (« Jaime's Mods ») ont été essayées : la marche fournie fonctionne encore, avec une stabilité légèrement réduite.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Ajouter « juste » un haut-parleur plus gros dans la tête sans peser. Un gramme en haut pèse plus lourd, pour l'équilibre, qu'un gramme dans les jambes.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>13. Les commandes possibles</h2>
+    <p>Consignes de la manette, lues 20 fois par seconde :</p>
+    <div class="tw"><table>
+      <thead><tr><th>Consigne</th><th>Plage</th><th>Manette</th></tr></thead>
+      <tbody>
+        <tr><td>Vitesse avant ou arrière</td><td>±0,15 m/s</td><td>stick</td></tr>
+        <tr><td>Vitesse de côté</td><td>±0,2 m/s</td><td>stick</td></tr>
+        <tr><td>Rotation</td><td>±1 rad/s (environ 57° par seconde)</td><td>stick</td></tr>
+        <tr><td>Sprint</td><td>vitesses × 1,3</td><td>gâchette haute gauche (LB)</td></tr>
+        <tr><td>Fréquence des pas</td><td>±0,05 par appui</td><td>croix haut et bas</td></tr>
+        <tr><td>Pause et reprise</td><td>sans objet</td><td>bouton A</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Ces plages sont celles de l'apprentissage. Aux premiers essais, on effleure le stick, sans sprint. Le bouton Y (tête) est signalé dangereux par le projet d'origine : on n'y touche pas.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>14. Comment la marche est réellement produite</h2>
+    <p>Il n'y a pas de formules de marche dans le programme. Le canard exécute une <i class="t" data-t="politique">politique</i> : un programme appris qui, 50 fois par seconde, reçoit ce que sent le robot et la consigne, et répond 14 positions à viser, une par servo. Elle a appris en simulation, par millions d'essais, à imiter des démarches modèles sans tomber. Tout ce que ce cours décrit y est « gravé ». Suite dans le cours <a href="#cours-rl">Simulation et apprentissage par renforcement</a>.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>15. Ce qu'on règle, ce qui impose de réentraîner</h2>
+    <p>À consulter avant toute modification du robot.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Changement</th><th>Sans réentraîner ?</th><th>Ce qu'on fait</th></tr></thead>
+      <tbody>
+        <tr><td>ID des servos, alignement des palonniers</td><td>oui</td><td>calibration</td></tr>
+        <tr><td>IMU retournée</td><td>oui</td><td>réglage de configuration, calibration de l'IMU</td></tr>
+        <tr><td>Fréquence des pas</td><td>oui, par crans de 0,05</td><td>croix de la manette, valeur notée en configuration</td></tr>
+        <tr><td>Masses à ±10 % près</td><td>oui</td><td>peser, vérifier en simulation</td></tr>
+        <tr><td>Masse déplacée (tête, batterie)</td><td>non</td><td>corriger le modèle, tester, réentraîner</td></tr>
+        <tr><td>Longueur, axe, écartement, forme du pied</td><td>non</td><td>refaire modèle, démarches modèles, apprentissage</td></tr>
+        <tr><td>Semelle autre que TPU</td><td>non</td><td>nouveau frottement, réentraîner</td></tr>
+        <tr><td>Servo 12 V ou autre rapport, autre gain, batterie 3S</td><td>non</td><td>nouveau modèle de servo, réentraîner</td></tr>
+        <tr><td>IMU déplacée sur le tronc</td><td>non</td><td>modifier le modèle, réentraîner</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Croire qu'un « petit » changement mécanique se rattrapera par un réglage. Il se décide avant d'imprimer.</div></div>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : un pied imprimé (<code>foot_top</code>, <code>foot_bottom_pla</code>), une pièce de tibia, pied à coulisse, balance de cuisine, smartphone (ralenti), CAO ouverte, journal. Durée : 45 min.</p>
+    <ol class="steps">
+      <li><div><b>Mesurer le tibia</b> Distance entre les centres des deux trous d'axe (entraxe), au pied à coulisse, puis la même cote dans la CAO. Notez les deux et l'écart.</div></li>
+      <li><div><b>Mesurer le pied</b> Longueur et largeur de semelle, épaisseur du pied assemblé, comparées à la CAO.</div></li>
+      <li><div><b>Peser</b> Chaque pièce et chaque sous-ensemble disponible, comparés au modèle (tronc 0,699 kg, cou et tête 0,582 kg, jambe ≈ 0,41 kg) dès qu'ils existent.</div></li>
+      <li><div><b>Filmer</b> Au ralenti, un membre de l'équipe qui marche lentement, de profil puis de face ; plus tard, le canard.</div></li>
+      <li><div><b>Repérer les phases</b> Image par image : double appui, simple appui, balancement de chaque pied, glissement du bassin vu de face.</div></li>
+      <li><div><b>Consigner</b> Tout dans le journal, avec date et présents.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> un tableau des longueurs et masses face au modèle, avec écarts, et un chronogramme des phases comparable à celui de la section 7.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi le canard ne tient-il pas debout servos coupés ?</summary><p>Un bipède est instable par nature (centre de masse haut, petite surface d'appui) : sans servos actifs, rien ne corrige.</p></details>
+    <details class="quiz"><summary>Combien d'articulations motorisées, et comment se répartissent-elles ?</summary><p>14 : 5 par jambe (hanche lacet, roulis, tangage, genou, cheville) et 4 pour le cou et la tête.</p></details>
+    <details class="quiz"><summary>Qui assure l'équilibre de gauche à droite, et pourquoi ?</summary><p>Les hanches en roulis (servos 11 et 21), parce que la cheville ne fait que du tangage.</p></details>
+    <details class="quiz"><summary>Que représentent 0,54 s et 27 ?</summary><p>La période de marche (deux pas) et le nombre de pas de calcul qu'elle contient à 50 Hz.</p></details>
+    <details class="quiz"><summary>Des semelles en PLA : réglage ou réentraînement ?</summary><p>Réentraînement : les semelles sont les seules surfaces de contact du modèle, apprises avec l'adhérence du TPU. On garde le TPU.</p></details>
+    <details class="quiz"><summary>La tête finale pèse 20 % de plus que prévu. Que faire ?</summary><p>C'est au-delà des ±10 % appris, et tout en haut. On corrige la masse dans le modèle et on teste en simulation (cours suivant) avant tout essai réel.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>Un bipède est instable par nature : il tient parce qu'il se corrige 50 fois par seconde.</li>
+      <li>14 articulations : 5 par jambe, 4 pour cou et tête ; sans cheville en roulis, l'équilibre latéral passe par les hanches.</li>
+      <li>Centre de masse haut : 28 % des 2,107 kg du modèle sont dans le cou et la tête.</li>
+      <li>À l'arrêt, le centre de masse reste au-dessus des pieds ; en marche, le robot tombe et se rattrape.</li>
+      <li>Démarche : simple appui 0,18 s, période 0,54 s (27 pas à 50 Hz), pied levé de 4 cm.</li>
+      <li>Semelles TPU, jeu de ±0,5° et masses à ±10 % sont des hypothèses de l'apprentissage.</li>
+      <li>Géométrie, semelle, servo, placement des masses : les changer impose de réentraîner.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-rl">Simulation et apprentissage par renforcement</a>.</p>
+  </div>
+</section>

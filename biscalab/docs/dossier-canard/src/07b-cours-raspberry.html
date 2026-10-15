@@ -1,0 +1,225 @@
+<section class="page" id="page-cours-raspberry" data-title="Cours · Raspberry Pi et Linux" data-sub="Le cerveau du robot" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 2 · Bases numériques</div>
+    <h1>Raspberry Pi et Linux pour le robot</h1>
+    <p class="lead">Le cerveau du canard est un ordinateur miniature sans écran ni clavier. Ce cours vous apprend à le préparer, à lui parler depuis un PC et à le conduire sans rien casser.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 60 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : aucun</span>
+      <span class="pill p">Rôles : référent électronique et code, membres du banc</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Dire ce qu'est la carte qui pilote le canard et ce qu'elle fait.</li>
+      <li>Préparer une carte mémoire avec le bon système.</li>
+      <li>Vous connecter au robot depuis un PC Windows, sans écran.</li>
+      <li>Utiliser 15 commandes texte et modifier un fichier.</li>
+      <li>Vérifier que les servos et le capteur d'équilibre sont vus, et lire un journal.</li>
+      <li>Appairer la manette, sécuriser l'image prête et éteindre proprement.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Un ordinateur complet sur une petite carte</h2>
+    <p>Un <i class="t" data-t="raspberry-pi">Raspberry Pi</i> est un mini-ordinateur sous Linux : processeur, mémoire, Wi-Fi, ports, tout est sur une seule carte. Le canard utilise le plus petit modèle, le <i class="t" data-t="pi-zero-2w">Raspberry Pi Zero 2 W</i> :</p>
+    <ul>
+      <li><strong>4 cœurs</strong> : le processeur peut mener quatre calculs en parallèle ;</li>
+      <li><strong>512 Mo</strong> de mémoire vive, le plan de travail où tournent les programmes (c'est peu) ;</li>
+      <li><strong>Wi-Fi</strong> pour nous y connecter, <strong>Bluetooth</strong> pour la manette ;</li>
+      <li>alimentation <strong>5 V</strong> par un connecteur micro-USB ;</li>
+      <li>des broches <i class="t" data-t="gpio">GPIO</i> (entrées/sorties) qui lisent ou écrivent un niveau électrique de 0 ou 3,3 V.</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le Pi lit les contacts de pied sur GPIO22 (gauche, broche 15) et GPIO27 (droit, broche 13), et le capteur d'équilibre sur GPIO2 et GPIO3 (broches 3 et 5). Il parle aux 14 servos par un câble USB relié à la carte Waveshare, écoute la manette en Bluetooth et calcule la marche 50 fois par seconde.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Mettre du 5 V sur une broche GPIO : le Pi grille. Et jamais le pack 2S (7,4 V) directement sur le Pi : c'est le régulateur 5 V (UBEC) qui l'alimente.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Le système : Raspberry Pi OS Lite, version Bookworm</h2>
+    <p>Un <i class="t" data-t="os">système d'exploitation</i> est le logiciel de base qui fait tourner les autres, comme Windows sur votre PC. Image mentale : le chef d'atelier qui répartit les machines (processeur, mémoire, carte, USB) entre les programmes. Sur le Pi, c'est <i class="t" data-t="raspberry-pi-os">Raspberry Pi OS</i>, un Linux.</p>
+    <p>Nous prenons la version <strong>Lite</strong>, sans bureau graphique : tout se fait en tapant des commandes, ce qui laisse la mémoire au programme de marche. Et la version <strong>64 bits</strong> nommée <strong>Bookworm</strong>, parce qu'elle fournit <i class="t" data-t="python">Python</i> 3.11. Python est le langage de programmation de tout le logiciel du canard.</p>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi pas la version la plus récente.</strong> Les images récentes passent à Python 3.13. La bibliothèque qui exécute le réseau de marche, onnxruntime 1.18.1, n'y existe pas (issue #38 du dépôt Runtime) : la marche ne s'installe pas.</div></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Prendre la première version proposée par l'outil d'installation. Il faut aller chercher la version Lite 64 bits dont la description mentionne Bookworm, parfois rangée parmi les « autres » versions ou sous l'étiquette Legacy (ancienne version).</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. Préparer la carte microSD</h2>
+    <p>Le Pi n'a pas de disque : tout est sur une <i class="t" data-t="carte-sd">carte microSD</i>. <i class="t" data-t="flasher">Flasher</i> une carte, c'est y copier un système complet ; elle est effacée au passage. On utilise le logiciel gratuit Raspberry Pi Imager, sur le PC.</p>
+    <ol class="steps">
+      <li><div><b>Insérer la carte</b> dans le lecteur du PC. Débrancher les autres clés USB.</div></li>
+      <li><div><b>Choisir le modèle</b> : Raspberry Pi Zero 2 W.</div></li>
+      <li><div><b>Choisir le système</b> : Raspberry Pi OS Lite 64 bits Bookworm. Pour l'image prête du canard, prendre « Use custom » (utiliser une image personnalisée) et désigner directement le fichier ZIP téléchargé, <strong>sans le décompresser</strong>.</div></li>
+      <li><div><b>Choisir le stockage</b> : la carte microSD. Vérifier deux fois son nom et sa taille.</div></li>
+      <li><div><b>Personnaliser</b> : nom d'hôte (le nom du Pi sur le réseau, par exemple <code>canard</code>) ; nom d'utilisateur et mot de passe ; Wi-Fi (nom du réseau, mot de passe, pays FR) ; fuseau horaire et clavier français ; dans les services, <strong>activer <i class="t" data-t="ssh">SSH</i></strong> avec mot de passe (la connexion à distance, section 4).</div></li>
+      <li><div><b>Écrire</b>, laisser la vérification aller au bout, éjecter la carte.</div></li>
+    </ol>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Pour l'image prête v0.2.3, on prend une carte de 32 Go. On peut y renseigner le Wi-Fi du FabLab, mais on garde l'utilisateur prévu, <code>bdxv2</code> : avec un autre nom, les scripts lancés à la main demandent un réglage supplémentaire.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Sélectionner le mauvais stockage, par exemple la clé de sauvegarde branchée à côté. Imager l'efface sans discuter.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Premier démarrage et connexion SSH</h2>
+    <p>Glisser la carte dans le Pi, brancher l'alimentation sur le micro-USB marqué <strong>PWR IN</strong>. Le premier démarrage est plus long : le système s'installe et applique les réglages. La LED verte clignote quand il lit la carte.</p>
+    <h3>Trouver l'adresse du Pi</h3>
+    <p>Sur un réseau, chaque appareil a une adresse IP : quatre nombres séparés par des points. Trois façons de la trouver : taper <code>ping canard.local</code> dans PowerShell (le nom d'hôte suivi de <code>.local</code> marche souvent directement) ; regarder la liste des appareils sur la page de la box du FabLab ; ou, avec un écran et un clavier branchés, taper <code>hostname -I</code>.</p>
+    <h3>Se connecter depuis Windows</h3>
+    <p>SSH permet d'utiliser le <i class="t" data-t="terminal">terminal</i> du Pi (la fenêtre où l'on tape des commandes) depuis le PC, par le réseau, de façon chiffrée. Ouvrir PowerShell (menu Démarrer, taper « PowerShell »), puis :</p>
+    <pre><code>ssh utilisateur@adresse
+ssh biscalab@canard.local     # une installation à nous
+ssh bdxv2@bdxv2.local         # l'image prête du canard</code></pre>
+    <p>À la première connexion, une question demande si l'on fait confiance à cette machine : taper <code>yes</code>. Puis le mot de passe : <strong>rien ne s'affiche pendant la frappe</strong>, c'est normal. L'invite <code>biscalab@canard:~ $</code> se lit « utilisateur @ machine : dossier courant ».</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Après avoir reflashé une carte, SSH refuse avec « REMOTE HOST IDENTIFICATION HAS CHANGED » : le PC se souvient de l'ancien système. Taper <code>ssh-keygen -R canard.local</code>, puis se reconnecter.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Le terminal : chemins et 15 commandes</h2>
+    <p>Le terminal (ou ligne de commande) remplace les clics par des ordres écrits. Sur la version Lite, c'est la seule interface. On écrit une commande, on valide par Entrée, le Pi répond.</p>
+    <h3>Lire un chemin</h3>
+    <p>Un chemin désigne un fichier comme une adresse postale, du plus général au plus précis. <code>/home/biscalab/essais/note.txt</code> : en partant de la racine <code>/</code>, dossier <code>home</code>, puis <code>biscalab</code>, puis <code>essais</code>, fichier <code>note.txt</code>. Raccourcis : <code>~</code> = votre dossier personnel ; <code>.</code> = le dossier où vous êtes ; <code>..</code> = le dossier parent. Majuscules et minuscules comptent.</p>
+    <p>Trois touches font gagner du temps : <kbd>Tab</kbd> complète un nom commencé, <kbd>↑</kbd> rappelle la commande précédente, <kbd>Ctrl</kbd>+<kbd>C</kbd> interrompt un programme.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Commande</th><th>Ce qu'elle fait</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td><code>pwd</code></td><td>affiche le dossier où l'on est</td><td><code>pwd</code></td></tr>
+        <tr><td><code>ls</code></td><td>liste le contenu d'un dossier (<code>-l</code> pour les détails)</td><td><code>ls -l ~</code></td></tr>
+        <tr><td><code>cd</code></td><td>change de dossier</td><td><code>cd essais</code>, <code>cd ..</code></td></tr>
+        <tr><td><code>mkdir</code></td><td>crée un dossier</td><td><code>mkdir essais</code></td></tr>
+        <tr><td><code>cp</code></td><td>copie un fichier</td><td><code>cp duck_config.json duck_config.json.bak</code></td></tr>
+        <tr><td><code>mv</code></td><td>déplace ou renomme</td><td><code>mv note.txt essais/</code></td></tr>
+        <tr><td><code>rm</code></td><td>supprime, sans corbeille (<code>-r</code> pour un dossier)</td><td><code>rm essais/note.txt</code></td></tr>
+        <tr><td><code>cat</code></td><td>affiche un fichier court</td><td><code>cat ~/duck_config.json</code></td></tr>
+        <tr><td><code>nano</code></td><td>ouvre un fichier pour le modifier</td><td><code>nano essais/note.txt</code></td></tr>
+        <tr><td><code>less</code></td><td>lit un long fichier page par page (<kbd>q</kbd> pour quitter)</td><td><code>less /boot/firmware/config.txt</code></td></tr>
+        <tr><td><code>grep</code></td><td>cherche un mot dans un fichier ou dans la sortie d'une commande</td><td><code>grep i2c /boot/firmware/config.txt</code></td></tr>
+        <tr><td><code>sudo</code></td><td>exécute la commande suivante en administrateur</td><td><code>sudo raspi-config</code></td></tr>
+        <tr><td><code>apt</code></td><td>installe ou met à jour des logiciels</td><td><code>sudo apt update</code></td></tr>
+        <tr><td><code>reboot</code></td><td>redémarre le Pi</td><td><code>sudo reboot</code></td></tr>
+        <tr><td><code>exit</code></td><td>ferme la session SSH</td><td><code>exit</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Le symbole <code>|</code> (barre verticale) envoie la sortie d'une commande dans la suivante : <code>ls /dev | grep tty</code> ne garde que les lignes contenant « tty ».</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Mettre <code>sudo</code> devant tout par réflexe. Les fichiers créés ainsi appartiennent à l'administrateur, et les scripts du robot ne peuvent plus les modifier ensuite. <code>sudo</code> seulement quand le système le demande.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Modifier un fichier avec nano</h2>
+    <p><code>nano nom-du-fichier</code> ouvre un éditeur de texte dans le terminal ; le fichier est créé s'il n'existe pas. On se déplace avec les flèches et on tape normalement. En bas, l'aide affiche les raccourcis : <code>^O</code> signifie <kbd>Ctrl</kbd>+<kbd>O</kbd>.</p>
+    <ul>
+      <li><kbd>Ctrl</kbd>+<kbd>O</kbd> puis <kbd>Entrée</kbd> : enregistrer (O pour <em>Write Out</em>, écrire).</li>
+      <li><kbd>Ctrl</kbd>+<kbd>X</kbd> : quitter. Si le fichier a changé, nano demande s'il faut enregistrer : <kbd>Y</kbd> (oui) ou <kbd>N</kbd> (non).</li>
+      <li><kbd>Ctrl</kbd>+<kbd>W</kbd> : chercher un mot. <kbd>Ctrl</kbd>+<kbd>K</kbd> : couper la ligne.</li>
+    </ul>
+    <p>Pour un fichier système, ajouter <code>sudo</code> : <code>sudo nano /boot/firmware/config.txt</code>.</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Copier une commande depuis un traitement de texte ou un téléphone : les guillemets droits <code>"</code> deviennent des guillemets typographiques, et la commande ou le fichier de réglages ne fonctionne plus.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Voir les périphériques et lire les journaux</h2>
+    <h3>Activer l'I²C pour le capteur d'équilibre</h3>
+    <p>L'<i class="t" data-t="i2c">I²C</i> est un bus à deux fils (SDA pour les données, SCL pour l'horloge) qui relie le Pi à des capteurs. Notre centrale inertielle, la <i class="t" data-t="bno055">BNO055</i>, est dessus. Il est désactivé par défaut :</p>
+    <pre><code>sudo raspi-config
+  → Interface Options → I2C → Yes → Finish
+sudo reboot
+ls /dev/i2c*</code></pre>
+    <p>La dernière commande doit afficher <code>/dev/i2c-1</code>. La BNO055 gère mal le dialogue avec le Pi sur ce bus. Remède documenté : ralentir le bus en ajoutant <code>dtparam=i2c_arm_baudrate=10000</code> dans <code>/boot/firmware/config.txt</code>, ou passer la BNO055 en liaison série. Le projet d'origine n'a pas tranché ; nous déciderons sur le banc.</p>
+    <h3>Voir la carte des servos</h3>
+    <p>Linux montre chaque périphérique comme un fichier dans <code>/dev</code>. La carte Waveshare branchée en USB doit apparaître sous le nom <code>/dev/ttyACM0</code> :</p>
+    <pre><code>ls /dev/ttyACM*</code></pre>
+    <h3>Lire un journal</h3>
+    <p>Un <i class="t" data-t="log">log</i> (journal) est la suite de lignes qu'un programme écrit pendant qu'il tourne. Deux outils :</p>
+    <ul>
+      <li><code>sudo dmesg | tail</code> : les derniers messages du noyau, le cœur du système. Juste après avoir branché un câble USB, on y lit ce qui a été détecté.</li>
+      <li><code>journalctl -b</code> : le journal de tous les services depuis le démarrage ; <code>journalctl -p err -b</code> ne garde que les erreurs. <kbd>q</kbd> pour quitter.</li>
+    </ul>
+    <p>Un journal se lit par la fin : on cherche les dernières lignes contenant « error » ou « fail ».</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Sur le banc, <code>ls /dev/ttyACM*</code> ne renvoie rien. On débranche et rebranche le câble USB de la Waveshare, puis <code>sudo dmesg | tail</code> : si aucune ligne nouvelle n'apparaît, le Pi ne voit rien, il faut regarder le câble et l'adaptateur avant de soupçonner les servos.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Services et manette</h2>
+    <h3>Les services systemd</h3>
+    <p><i class="t" data-t="systemd">systemd</i> est le gestionnaire de services de Linux. Image mentale : le gardien qui allume les machines le matin et les relance si elles s'arrêtent. Un service est un programme qu'il lance au démarrage.</p>
+    <pre><code>systemctl list-units --type=service    # lister les services
+systemctl status nom-du-service        # état et dernières lignes du journal
+sudo systemctl stop nom-du-service     # arrêter maintenant
+sudo systemctl disable nom-du-service  # ne plus lancer au démarrage
+journalctl -u nom-du-service -f        # suivre son journal en direct</code></pre>
+    <p>Sur l'image prête, la marche est lancée par le service <code>open-duck-walk.service</code>.</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Lancer un script de test pendant que le service de marche tourne. Deux programmes qui parlent en même temps aux servos par <code>/dev/ttyACM0</code> se gênent. On arrête le service d'abord : <code>sudo systemctl stop open-duck-walk.service</code>.</div></div>
+    <h3>Appairer la manette Xbox</h3>
+    <p>La <i class="t" data-t="bluetooth-manette">manette Bluetooth</i> pilote le canard : les sticks donnent la direction, le bouton A met en pause. On l'appaire une fois avec <code>bluetoothctl</code>, qui ouvre sa propre invite :</p>
+    <pre><code>sudo bluetoothctl
+power on
+agent on
+default-agent
+scan on                    # chercher les appareils
+pair XX:XX:XX:XX:XX:XX     # adresse affichée pour la manette
+trust XX:XX:XX:XX:XX:XX    # reconnexion automatique
+connect XX:XX:XX:XX:XX:XX
+scan off
+quit</code></pre>
+    <p>Pendant <code>scan on</code>, maintenir le petit bouton d'appairage de la manette jusqu'à ce que le logo clignote vite ; son adresse s'affiche avec son nom.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Sans <code>trust</code>, il faudrait réappairer la manette à chaque démarrage. Le bouton Y (contrôle de la tête) est réputé dangereux pour la tête du canard : on ne l'utilise pas en démonstration.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>9. L'image prête v0.2.3 et l'arrêt propre</h2>
+    <h3>Ce qu'elle apporte</h3>
+    <p>Une image toute prête, basée sur Bookworm, s'écrit sur une carte de 32 Go et évite l'installation manuelle. Au démarrage, le pied appuyé choisit le mode : <strong>pied gauche = Head-Puppet</strong> (marionnette de tête), <strong>pied droit = Walk</strong> (marche), aucun pied = rien ne démarre. Le guide de l'image précise « en regardant le robot de face » : nous vérifierons sur notre canard quel pied lance quoi. La manette doit être allumée et appairée avant le démarrage.</p>
+    <p>Si le Pi ne trouve aucun réseau Wi-Fi connu, il crée son propre point d'accès nommé <strong>« Openduck »</strong>, auquel on connecte le PC. Restent à faire, propres à chaque robot : le fichier <code>~/duck_config.json</code>, les décalages de zéro des servos et la calibration du capteur d'équilibre. Sans eux, le canard ne démarre pas. Si la carte paraît presque pleine, agrandir le système : <code>sudo raspi-config nonint do_expand_rootfs</code>, puis <code>sudo reboot</code>.</p>
+    <h3>Changer les identifiants tout de suite</h3>
+    <p>Les identifiants par défaut, <code>bdxv2</code> / <code>ilovemyduck</code>, sont publiés : n'importe qui à portée de Wi-Fi pourrait entrer. Dès la première connexion, <code>passwd</code> : taper l'ancien mot de passe, puis deux fois le nouveau (rien ne s'affiche). Même chose pour le point d'accès :</p>
+    <pre><code>passwd
+sudo nmcli connection modify Openduck wifi-sec.psk "nouveau-mot-de-passe"
+sudo nmcli connection down Openduck
+sudo nmcli connection up Openduck</code></pre>
+    <p>L'image connaît aussi un réseau de secours préréglé, « Duckspot », dont les identifiants sont publics : à traiter de la même façon. Les nouveaux mots de passe se gardent chez le référent électronique et code, <strong>jamais dans le dépôt GitHub</strong> : le dépôt du club est public. Ce qu'on a fait est noté dans <code>biscalab/INSTALL-biscalab.md</code>.</p>
+    <h3>Éteindre proprement</h3>
+    <pre><code>sudo poweroff</code></pre>
+    <p>Attendre que la LED verte ait fini de clignoter et reste éteinte, puis seulement couper l'alimentation. Sur le robot : d'abord <code>sudo poweroff</code>, ensuite l'interrupteur de la batterie.</p>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi c'est comme ça.</strong> Le système écrit en permanence sur la carte (journaux, réglages). Couper au milieu d'une écriture peut abîmer la carte : le Pi ne démarre plus, il faut reflasher, et tout réglage non sauvegardé ailleurs est perdu. C'est pour cela qu'on commite <code>duck_config.json</code> après chaque calibration.</div></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Débrancher le pack pour « redémarrer » le robot quand il ne répond plus. On se reconnecte en SSH et on tape <code>sudo reboot</code>.</div></div>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : un Pi Zero 2 W, une carte microSD et un lecteur, une alimentation 5 V micro-USB, le PC Windows du FabLab avec Raspberry Pi Imager, le Wi-Fi du FabLab. Durée : environ 30 min, dont l'écriture de la carte.</p>
+    <ol class="steps">
+      <li><div><b>Flasher</b> Raspberry Pi OS Lite 64 bits Bookworm, avec nom d'hôte <code>canard-essai</code>, votre utilisateur, un mot de passe, le Wi-Fi et SSH activé.</div></li>
+      <li><div><b>Démarrer</b> le Pi et patienter jusqu'à ce que <code>ping canard-essai.local</code> réponde dans PowerShell.</div></li>
+      <li><div><b>Se connecter</b> : <code>ssh utilisateur@canard-essai.local</code>, répondre <code>yes</code>, taper le mot de passe.</div></li>
+      <li><div><b>Créer un dossier</b> : <code>pwd</code>, <code>mkdir essais</code>, <code>cd essais</code>.</div></li>
+      <li><div><b>Écrire un fichier</b> : <code>nano bonjour.txt</code>, taper votre prénom et la date, <kbd>Ctrl</kbd>+<kbd>O</kbd>, <kbd>Entrée</kbd>, <kbd>Ctrl</kbd>+<kbd>X</kbd>.</div></li>
+      <li><div><b>Le relire</b> : <code>cat bonjour.txt</code>, puis <code>ls -l</code> pour voir sa taille et sa date.</div></li>
+      <li><div><b>Éteindre</b> : <code>sudo poweroff</code>, attendre que la LED reste éteinte, débrancher.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> votre texte s'affiche à l'écran avec <code>cat</code>, et le Pi s'est éteint proprement. Notez dans le journal de séance ce qui vous a bloqué.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi Bookworm et pas la version la plus récente de Raspberry Pi OS ?</summary><p>Bookworm fournit Python 3.11. Les versions récentes passent à Python 3.13, où onnxruntime 1.18.1 n'existe pas : la marche ne s'installe pas (issue #38).</p></details>
+    <details class="quiz"><summary>Rien ne s'affiche quand je tape mon mot de passe SSH. Panne ?</summary><p>Non, c'est voulu : le terminal n'affiche rien pendant la saisie d'un mot de passe. Tapez-le et validez.</p></details>
+    <details class="quiz"><summary>Que désignent <code>~</code> et <code>..</code> dans un chemin ?</summary><p><code>~</code> est votre dossier personnel, <code>..</code> le dossier parent de celui où vous êtes.</p></details>
+    <details class="quiz"><summary><code>ls /dev/ttyACM*</code> ne renvoie rien sur le banc. Que vérifier ?</summary><p>Que la carte Waveshare est bien branchée en USB (câble, adaptateur), puis regarder <code>sudo dmesg | tail</code> juste après l'avoir rebranchée pour voir si le Pi la détecte.</p></details>
+    <details class="quiz"><summary>Pourquoi ne jamais couper l'alimentation à chaud ?</summary><p>Le système écrit sans cesse sur la carte microSD ; une coupure en pleine écriture peut la rendre illisible. Toujours <code>sudo poweroff</code>, puis attendre la LED.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>Le Pi Zero 2 W : 4 cœurs, 512 Mo, Wi-Fi, Bluetooth, 5 V en micro-USB, GPIO en 3,3 V seulement.</li>
+      <li>Raspberry Pi OS Lite 64 bits Bookworm, pour Python 3.11.</li>
+      <li>Imager : modèle, système, carte (vérifier deux fois), puis nom d'hôte, utilisateur, Wi-Fi, SSH.</li>
+      <li><code>ssh utilisateur@adresse</code> depuis PowerShell ; le mot de passe ne s'affiche pas.</li>
+      <li>Un chemin se lit depuis <code>/</code> ; <code>~</code> = chez soi ; <kbd>Tab</kbd> complète.</li>
+      <li>Servos : <code>/dev/ttyACM0</code>. Capteur : I²C activé. Problème : <code>dmesg</code> et <code>journalctl</code>, lus par la fin.</li>
+      <li>Image prête : changer <code>bdxv2</code> / <code>ilovemyduck</code> avec <code>passwd</code> dès la première connexion.</li>
+      <li><code>sudo poweroff</code>, attendre la LED, puis couper. Jamais l'inverse.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-python">Lire et modifier le logiciel du robot</a>.</p>
+  </div>
+</section>

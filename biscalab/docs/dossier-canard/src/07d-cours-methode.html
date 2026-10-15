@@ -1,0 +1,316 @@
+<section class="page" id="page-cours-methode" data-title="Cours · Méthode de projet" data-sub="Travailler ensemble" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 4 · Travailler ensemble</div>
+    <h1>Mener un projet technique à plusieurs dans un FabLab</h1>
+    <p class="lead">Construire le canard prendra six mois, quatorze servos, cinquante et une pièces et l'argent de l'association. Ce cours donne la méthode légère qui évite de perdre des pièces, d'acheter deux fois la même chose et de refaire ce qui était déjà fait.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 40 min</span>
+      <span class="pill mute">Niveau : tous</span>
+      <span class="pill mute">Prérequis : aucun (cours 1 conseillé)</span>
+      <span class="pill p">Rôles : tout le monde</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Dire qui fait quoi chaque semaine dans l'équipe.</li>
+      <li>Situer une tâche dans une phase et savoir comment on décide de passer à la suivante.</li>
+      <li>Rédiger une fiche de test avec un critère chiffré.</li>
+      <li>Tenir le journal d'une séance et animer le point hebdomadaire.</li>
+      <li>Suivre un achat de la demande à la facture.</li>
+      <li>Accueillir un nouveau membre et respecter la licence du projet.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Pourquoi une méthode</h2>
+    <p>Sans méthode, on connaît la suite : la semelle gauche imprimée deux fois parce que personne ne savait qu'elle existait ; des inserts commandés par deux membres la même semaine ; une décision prise un soir sur la messagerie, que la moitié de l'équipe n'a pas lue ; et le classique « je croyais que tu l'avais fait ». Aucun de ces problèmes n'est technique.</p>
+    <p>L'image à garder est celle d'un chantier : un maître d'œuvre, des corps de métier, un carnet de chantier, une réunion de chantier courte et régulière, une réception des travaux avant de payer l'étape suivante. Un <i class="t" data-t="fablab">FabLab</i>, atelier partagé où l'on apprend en faisant, fonctionne mieux avec ces repères : chacun vient quand il peut, et le travail doit pouvoir être repris par un autre.</p>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi c'est comme ça.</strong> Nous n'avons jamais mené ensemble un projet structuré de cette taille. La méthode est volontairement légère : quelques rôles nommés, deux rendez-vous, et une trace écrite de tout ce qui est décidé.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Les rôles, semaine après semaine</h2>
+    <p>Une même personne peut cumuler plusieurs rôles. L'important est que chacun ait un nom.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Rôle</th><th>Mission</th><th>Concrètement, chaque semaine</th></tr></thead>
+      <tbody>
+        <tr><td>Maître d'œuvre (Jean-Marie)</td><td>Porte le projet, arbitre, valide les passages de phase.</td><td>Prépare et anime le point hebdomadaire ; tranche les issues marquées <code>bloque</code> ; valide les demandes d'achat.</td></tr>
+        <tr><td>Référents (impression 3D, laser, électronique et code, sécurité, outillage numérique)</td><td>Chacun répond de son métier.</td><td>Met à jour les issues de son domaine ; relit les propositions de modification ; forme au moins un autre membre.</td></tr>
+        <tr><td>Trésorier-acheteur</td><td>Seul à commander.</td><td>Passe les commandes validées, contrôle les réceptions, range les factures sur le Nextcloud.</td></tr>
+        <tr><td>Administrateur du dépôt (Jean-Marie)</td><td>Propriétaire du dépôt du club <code>JMTRIP/Open_Duck_Mini_Fablab</code>.</td><td>Invite les nouveaux comme collaborateurs, gère étiquettes et jalons, vérifie que chacun a la double authentification.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le référent électronique et code s'occupe du <i class="t" data-t="banc-servo">banc servo</i> : un ou deux servos sur une plaque avec la carte de commande, le Pi et une alimentation de laboratoire. Il ne commande pas lui-même les servos : il ouvre une <i class="t" data-t="issue">issue</i> Achat (une fiche de demande sur GitHub), que le maître d'œuvre valide et que le trésorier passe.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. Phases, jalons et GO/NO-GO</h2>
+    <p>Le projet est découpé en sept phases. Chacune se termine par un résultat qu'on peut tester ; la phase 2 se termine en plus par un <i class="t" data-t="go-no-go">GO/NO-GO</i>, une décision formelle de continuer ou non. Sur GitHub, chaque phase a son <i class="t" data-t="milestone">jalon</i> (milestone) : un groupe d'issues à boucler, avec une barre de progression.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Phase</th><th>Mois</th><th>Achats</th><th>Ce qu'on doit pouvoir montrer</th></tr></thead>
+      <tbody>
+        <tr><td>0 · Organisation</td><td>oct. 2026</td><td>aucun</td><td>Rôles, GitHub, outils, sécurité</td></tr>
+        <tr><td>1 · Structure imprimée</td><td>oct. 2026</td><td>55,70 €</td><td>Pièces imprimées, assemblage à blanc</td></tr>
+        <tr><td>2 · Cerveau + banc servo</td><td>nov. 2026</td><td>99,55 €</td><td>Capteur et bus des servos validés · <strong>GO/NO-GO</strong></td></tr>
+        <tr><td>3 · Jambe 1</td><td>déc. 2026</td><td>63,10 €</td><td>Jambe pilotée, contacts de pied lus</td></tr>
+        <tr><td>4 · Jambe 2</td><td>janv. 2027</td><td>99,50 €</td><td>Bas du corps debout sur le banc</td></tr>
+        <tr><td>5 · Tête, calibration, 1re marche</td><td>févr. 2027</td><td>95,25 €</td><td>14 servos, décalages mesurés, marche sur alimentation filaire</td></tr>
+        <tr><td>6 · Énergie embarquée</td><td>mars 2027</td><td>63,15 €</td><td>Marche autonome sur batterie</td></tr>
+      </tbody>
+    </table></div>
+    <p>Total du socle : 476,25 €, hors frais de port. Les mois sont indicatifs ; ce qui compte, c'est le résultat montré.</p>
+    <h3>Le GO/NO-GO</h3>
+    <p>Cette décision se prend sur la base d'une <i class="t" data-t="fiche-de-test">fiche de test</i> : un document court qui dit ce qu'on a vérifié, avec quel critère chiffré, et ce qu'on a obtenu. On lit la fiche en réunion, critère par critère. Tous verts : <strong>GO</strong>, on passe à la suite. Un seul rouge : <strong>NO-GO</strong>, on liste ce qui manque, on crée les issues, on refait le test. Le maître d'œuvre prononce la décision après avis des référents concernés, et elle est écrite dans le journal.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>La phase 2 achète deux servos <i class="t" data-t="sts3215">STS3215</i> seulement. Les douze autres, à 24 à 31 € pièce, ne sont commandés qu'après le GO : référence vérifiée (7,4 V, rapport 1/345, C001), carte de commande qui fonctionne en 2S, servos qui répondent. Une mauvaise variante rendrait la marche apprise inutilisable.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Commander la suite « parce qu'il y a une promotion », avant la fiche de test. C'est précisément ce que le GO/NO-GO doit empêcher.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. La fiche de test</h2>
+    <p>La fiche de test vit dans <code>biscalab/tests/</code>, en <i class="t" data-t="markdown">Markdown</i>. Le critère s'écrit <strong>avant</strong> le test, et le résultat recopie ce qu'on a lu, pas ce qu'on espérait.</p>
+    <h3>Le modèle, à recopier</h3>
+    <pre><code># Fiche de test : titre du test
+- Phase :
+- Date : AAAA-MM-JJ
+- Testeurs :
+- Issue liée : #
+
+## Objectif
+Ce qu'on veut savoir, en une phrase.
+
+## Montage
+Matériel, versions (image, firmware, révision des pièces), photo.
+
+## Procédure
+1. …
+2. …
+
+## Critères de réussite (chiffrés)
+- [ ] …
+
+## Résultat
+Les valeurs lues, telles quelles.
+
+## Preuves
+Photos, vidéo (dossier Nextcloud), sortie des scripts.
+
+## Décision
+GO / NO-GO / à refaire, par qui, quand.</code></pre>
+    <h3>Exemple rempli : le banc servo</h3>
+    <pre><code># Fiche de test : banc servo
+- Phase : 2, Cerveau + banc servo
+- Date : 2026-11-…
+- Testeurs : …
+- Issue liée : #…
+
+## Objectif
+Vérifier que le Pi commande deux STS3215 par la carte Waveshare
+alimentée en 2S, avant d'acheter les 12 servos restants.
+
+## Montage
+- Socle de banc découpé au laser
+- Pi Zero 2 W, image v0.2.3, mot de passe changé
+- Carte Waveshare vue en /dev/ttyACM0
+- 2 × STS3215 7,4 V 1/345 (C001), ID 10 et 11
+- Alimentation de laboratoire réglée à 7,4 V, limitée en courant
+
+## Procédure
+1. python configure_motor.py --id 10 (servo seul), puis --id 11
+2. python check_motors.py
+3. Lecture de la tension des servos 10 et 11
+
+## Critères de réussite (chiffrés)
+- [x] Les 2 servos répondent à check_motors et bougent de 0,1 rad
+- [x] Tension lue entre 7,2 et 8,4 V
+
+## Résultat
+- check_motors : 10 et 11 répondent, aller-retour de 0,1 rad
+- Tension lue : … V (valeur mesurée, recopiée de l'écran)
+
+## Preuves
+Vidéo : Nextcloud Canard/2026-11-…/ ; sortie des scripts en annexe
+
+## Décision
+GO pour la commande de la phase 3, prononcé au point du …,
+noté au journal.</code></pre>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> « Les servos marchent bien » n'est pas un critère : personne ne peut le contredire, donc il ne prouve rien. Un critère se vérifie par oui ou non, avec un chiffre ou un comportement observable.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. La définition de « fini »</h2>
+    <p>La <i class="t" data-t="dod">définition de « fini »</i> est la liste des conditions pour qu'une chose soit vraiment terminée. Elle évite les « c'est presque fait » qui traînent des semaines.</p>
+    <ul>
+      <li><strong>Une pièce</strong> est finie quand elle est imprimée, contrôlée, ses inserts posés, sa ligne de <code>pieces.csv</code> à jour et sa photo prise.</li>
+      <li><strong>Une tâche</strong> est finie quand son issue est fermée avec une preuve : photo, mesure ou commit.</li>
+      <li><strong>Un achat</strong> est fini quand il est reçu, contrôlé, et que la facture est rangée.</li>
+      <li><strong>Un test</strong> est fini quand sa fiche est poussée sur GitHub et la décision écrite au journal.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Journal de bord et rendez-vous</h2>
+    <h3>Le journal de bord</h3>
+    <p>Le <i class="t" data-t="journal-de-bord">journal de bord</i> est un fichier par séance, <code>biscalab/journal/AAAA-MM-JJ.md</code>, avec cinq rubriques, jamais plus. C'est la mémoire du projet : ce qui n'y est pas n'a pas existé. Le premier arrivé ouvre le fichier, le dernier parti le pousse.</p>
+    <pre><code># Séance du 2026-10-14
+## Présents
+Jean-Marie, …
+## Fait
+- foot_top gauche et droit imprimés (PLA, remplissage 15 %), issue #…
+- 4 inserts M3 posés dans foot_top gauche
+## Mesures
+- masse de foot_top gauche : à peser à la prochaine séance
+## Problèmes
+- un insert enfoncé de travers : issue #… ouverte
+## Décisions
+- chaque pièce est marquée G ou D au marqueur dès la sortie du plateau</code></pre>
+    <h3>Le point hebdomadaire, 20 minutes</h3>
+    <p>Debout ou presque, devant le tableau GitHub projeté, toujours dans le même ordre :</p>
+    <ol>
+      <li>Tour de table : fait, à faire, bloqué. Chacun brièvement.</li>
+      <li>Les issues <code>bloque</code> : qui débloque, et quand.</li>
+      <li>Les achats en attente de validation ou de réception.</li>
+      <li>Le jalon en cours : ce qui reste, la date tient-elle ?</li>
+      <li>Mise à jour du tableau à l'écran ; décisions écrites au journal.</li>
+    </ol>
+    <p>On ne règle pas un problème technique en séance : on crée une issue, on nomme un responsable, on passe au point suivant.</p>
+    <h3>La démo mensuelle</h3>
+    <p>Une fois par mois, on montre ce qui bouge, même mal, aux autres membres du FabLab. C'est le jalon social du projet : il motive, et il oblige à finir quelque chose. On filme, la vidéo va sur le Nextcloud.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Le circuit d'achat</h2>
+    <ol class="steps">
+      <li><div><b>Issue Achat.</b> Le demandeur remplit le modèle : article, référence exacte, quantité, fournisseur, prix, phase, ligne de la <i class="t" data-t="bom">BOM</i> (la nomenclature : liste complète des composants à acheter).</div></li>
+      <li><div><b>Validation.</b> Le maître d'œuvre valide par un commentaire dans l'issue.</div></li>
+      <li><div><b>Commande.</b> Le trésorier-acheteur, et lui seul, commande. Il note la date et le numéro de commande dans l'issue.</div></li>
+      <li><div><b>Réception contrôlée.</b> On ouvre le colis à deux, on compare à la commande, on vérifie la référence et on photographie l'étiquette.</div></li>
+      <li><div><b>Facture.</b> Elle est déposée sur le Nextcloud ; note de frais si un membre a avancé l'argent ; ligne ajoutée dans <code>achats/achats.csv</code> ; issue fermée.</div></li>
+    </ol>
+    <p>On privilégie les fournisseurs de l'Union européenne : pas de douane, délais connus.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Commande de la phase 2 (99,55 €) : Pi Zero 2 W, carte microSD, carte Waveshare, capteur BNO055, deux STS3215. À la réception, on lit sur l'étiquette des servos « 7,4 V », le rapport 1/345 et la référence C001. Une version 12 V serait renvoyée.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Un membre commande « en passant » avec sa carte, sans issue. Le même article arrive deux fois, et personne ne sait qui rembourser.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Les canaux, et comment écrire une bonne issue</h2>
+    <div class="tw"><table>
+      <thead><tr><th>Canal</th><th>Sert à</th><th>Ne sert pas à</th></tr></thead>
+      <tbody>
+        <tr><td>Signal</td><td>Parler : le quotidien, les questions rapides, les photos de séance</td><td>Décider</td></tr>
+        <tr><td>GitHub</td><td>Décider : issues, journal, tableau, fichiers</td><td>Bavarder</td></tr>
+        <tr><td>Nextcloud</td><td>Photos, vidéos, factures</td><td>Les fichiers de conception (ils vont dans Git)</td></tr>
+      </tbody>
+    </table></div>
+    <p>Quand une décision se prend sur Signal, celui qui l'a proposée la recopie dans l'issue ou le journal, et le dit : « je le mets dans l'issue ».</p>
+    <h3>Une bonne issue</h3>
+    <p>Une issue est la fiche GitHub d'une tâche, d'un problème ou d'une question. Quatre éléments la rendent utilisable par n'importe qui :</p>
+    <pre><code>Titre : Découper le socle du banc servo au laser
+
+Contexte
+Phase 2. Le socle reçoit 2 STS3215, la carte Waveshare et le Pi.
+Dessin à faire dans FreeCAD, export dans biscalab/laser/svg-dxf/.
+
+Résultat attendu
+- Socle en contreplaqué peuplier 3 mm, kerf mesuré et noté
+- Servos et cartes vissés, photo au journal
+
+Responsable : un seul nom
+Étiquettes : phase-2, laser · Jalon : Phase 2</code></pre>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Une issue intitulée « Banc », sans contexte, assignée à trois personnes. Quand tout le monde est responsable, personne ne l'est.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>9. Accueillir un nouveau membre</h2>
+    <ol class="steps">
+      <li><div><b>Lire.</b> Lui faire lire ce dossier : l'accueil, puis le <a href="#parcours">parcours de formation</a>, en commençant par le <a href="#cours-git">cours 1</a>.</div></li>
+      <li><div><b>Équiper.</b> Compte GitHub avec double authentification, invitation comme collaborateur du dépôt du club (Jean-Marie), groupe Signal, accès au Nextcloud.</div></li>
+      <li><div><b>Accompagner.</b> Un binôme pour sa première séance : on fait ensemble le pull, le commit et le push.</div></li>
+      <li><div><b>Confier.</b> Une première issue étiquetée <code>aide-bienvenue</code> : petite, claire, faisable en une séance, avec une preuve à la clé.</div></li>
+    </ol>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Issues <code>aide-bienvenue</code> typiques : peser une pièce et noter sa masse dans <code>pieces.csv</code> ; imprimer une pièce de carrosserie ; relire une fiche de test et poser une question. On en garde toujours quelques-unes en réserve sur le tableau.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>10. Les 5 règles d'or</h2>
+    <ol>
+      <li><strong>Si ce n'est pas sur GitHub (issue ou journal), ça n'existe pas.</strong> Signal sert à discuter, GitHub à décider.</li>
+      <li><strong>Pull en arrivant, Push en partant.</strong> Un fichier de CAO n'a qu'un éditeur à la fois : celui qui s'est assigné l'issue.</li>
+      <li><strong>On ne modifie jamais un fichier de l'amont</strong> (le projet d'origine) : on le copie dans <code>biscalab/</code>, puis on le modifie.</li>
+      <li><strong>Pas de phase suivante, ni d'achat suivant, sans fiche de test validée.</strong></li>
+      <li><strong>Sécurité non négociable</strong> : batterie jamais en charge sans surveillance, laser jamais seul, matériaux interdits affichés.</li>
+    </ol>
+  </div>
+
+  <div class="card lesson">
+    <h2>11. Licence, crédits et documentation au fil de l'eau</h2>
+    <h3>Apache-2.0 et CREDITS.md</h3>
+    <p>Le canard est publié sous <i class="t" data-t="licence-apache">licence Apache-2.0</i> par Antoine Pirrone et Grégoire Passault. Notre dépôt du club est public : le publier, c'est redistribuer leur œuvre : licence fournie, mentions d'auteur conservées, fichiers modifiés signalés, fichier NOTICE repris s'il existe (détail au <a href="#cours-git">cours 1</a>). Aucun droit sur les marques Disney ou BDX. Notre fichier <code>biscalab/CREDITS.md</code> le dit en clair :</p>
+    <pre><code>Ce travail est basé sur Open Duck Mini (V2), © Antoine Pirrone et
+contributeurs, publié sous licence Apache-2.0 (dépôt apirrone/Open_Duck_Mini).
+Les ajouts et modifications du BiscaLab (dossier biscalab/) sont publiés
+sous la même licence. Les pièces modifiées sont listées dans CHANGELOG.md
+et dans la colonne « rev » de print/pieces.csv.</code></pre>
+    <h3>Documenter au fil de l'eau</h3>
+    <ul>
+      <li><strong>Photos à chaque étape</strong> : avant de démonter, après chaque sous-ensemble, à chaque surprise. Dossier Nextcloud <code>Canard/AAAA-MM-JJ/</code>.</li>
+      <li><strong>Versions au marqueur</strong> sur les pièces : nom court, G ou D, révision.</li>
+      <li><strong>Versions notées</strong> dans le journal : image du Pi, firmware des servos, révision des pièces.</li>
+      <li><strong>Pendant la séance</strong>, pas le soir chez soi : le soir, on a oublié la moitié.</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Les hanches gauche et droite ne sont pas symétriques, et les plaques de tibia existent en version gauche et droite, quatre de chaque. Marquer G ou D dès la sortie du plateau évite de les inverser au montage.</p></div>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : un PC relié au vidéoprojecteur, le dépôt du club ouvert sur GitHub, toute l'équipe. Durée : une réunion de travail, à la suite du cours.</p>
+    <ol class="steps">
+      <li><div><b>Désigner un scribe</b> qui écrit pendant que les autres parlent.</div></li>
+      <li><div><b>Rédiger la fiche de test de la phase 1</b> avec le modèle. Critères proposés : les 51 pièces imprimées et cochées dans <code>pieces.csv</code> ; PLA à 15 % de remplissage, les 2 <code>foot_bottom_tpu</code> en TPU à 40 % ; inserts M3 et 3 roulements 608 en place ; pièces gauche/droite marquées ; assemblage à blanc sans forcer, photo de chaque sous-ensemble ; masse de chaque sous-ensemble notée.</div></li>
+      <li><div><b>La pousser</b> dans <code>biscalab/tests/</code>.</div></li>
+      <li><div><b>Créer les 10 premières issues</b>, avec titre, contexte, résultat attendu, responsable, étiquettes et jalon :</div></li>
+    </ol>
+    <div class="tw"><table>
+      <thead><tr><th>Titre</th><th>Étiquettes</th></tr></thead>
+      <tbody>
+        <tr><td>Attribuer les rôles et les noter dans biscalab/README.md</td><td>phase-0</td></tr>
+        <tr><td>Activer la double authentification pour tous les membres</td><td>phase-0, securite</td></tr>
+        <tr><td>Rédiger et afficher securite.md</td><td>phase-0, securite</td></tr>
+        <tr><td>Valider l'achat de la phase 1 (55,70 €)</td><td>phase-1, achat</td></tr>
+        <tr><td>Exporter et commiter les profils PrusaSlicer</td><td>phase-1, impression</td></tr>
+        <tr><td>Imprimer une pièce test pour les inserts M3</td><td>phase-1, impression</td></tr>
+        <tr><td>Créer pieces.csv avec les 51 pièces</td><td>phase-1, impression</td></tr>
+        <tr><td>Imprimer les 8 pièces des pieds, dont 2 en TPU</td><td>phase-1, impression</td></tr>
+        <tr><td>Imprimer les 18 pièces des jambes et marquer G/D</td><td>phase-1, impression</td></tr>
+        <tr><td>Imprimer tronc, cou et tête, poser roulements et inserts</td><td>phase-1, impression</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>Résultat attendu :</strong> la fiche de la phase 1 est sur GitHub, dix issues sont dans la colonne À faire du tableau, chacune a un responsable, et chaque membre repart avec au moins une issue.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Qui a le droit de passer une commande ?</summary><p>Le trésorier-acheteur seul, après validation de l'issue Achat par le maître d'œuvre.</p></details>
+    <details class="quiz"><summary>Pourquoi la phase 2 est-elle un GO/NO-GO ?</summary><p>Elle précède l'achat des douze servos restants. On vérifie d'abord la bonne variante de servo, la carte de commande en 2S et la réponse des servos sur le banc.</p></details>
+    <details class="quiz"><summary>« Les servos marchent bien » : est-ce un bon critère de réussite ?</summary><p>Non : il n'est pas vérifiable. Mieux : « les 2 servos répondent à check_motors et bougent de 0,1 rad, tension lue entre 7,2 et 8,4 V ».</p></details>
+    <details class="quiz"><summary>Une décision est prise sur Signal un soir. Que faut-il faire ?</summary><p>La recopier dans l'issue concernée ou dans le journal. Sinon, pour le projet, elle n'existe pas.</p></details>
+    <details class="quiz"><summary>Quelles sont les cinq rubriques du journal de bord ?</summary><p>Présents, Fait, Mesures, Problèmes, Décisions.</p></details>
+    <details class="quiz"><summary>À quoi sert CREDITS.md ?</summary><p>À citer les auteurs et la licence Apache-2.0 du projet d'origine, et à indiquer où sont listées nos modifications.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>Chaque rôle a un nom ; le trésorier-acheteur est le seul à commander.</li>
+      <li>Sept phases, un jalon chacune ; la phase 2 est le GO/NO-GO avant les douze servos.</li>
+      <li>Une fiche de test a un critère chiffré, écrit avant le test.</li>
+      <li>« Fini » veut dire contrôlé, noté, photographié, prouvé.</li>
+      <li>Un journal par séance, cinq rubriques ; un point de 20 minutes par semaine ; une démo par mois.</li>
+      <li>Achat : issue, validation, commande, réception contrôlée, facture.</li>
+      <li>Signal pour parler, GitHub pour décider, Nextcloud pour les photos.</li>
+      <li>CREDITS.md, versions au marqueur, photos à chaque étape.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-cao">La CAO : lire, exporter, modifier les pièces du canard</a>.</p>
+  </div>
+</section>

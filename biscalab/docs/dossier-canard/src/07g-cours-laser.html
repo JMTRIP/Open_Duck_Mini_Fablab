@@ -1,0 +1,196 @@
+<!-- ═══════════════════════════ COURS 7 · DÉCOUPE LASER ═══════════════════════════ -->
+<section class="page" id="page-cours-laser" data-title="Cours · Découpe laser" data-sub="L'outillage du projet avec la xTool P2S" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 7 · Fabrication</div>
+    <h1>Découpe laser : l'outillage du projet avec la xTool P2S</h1>
+    <p class="lead">La découpeuse laser du BiscaLab ne fabrique aucune pièce du robot. Elle fabrique ce qui l'entoure : banc d'essai des moteurs, gabarits, support de sécurité, caisse, étiquettes. Ce cours explique comment elle coupe, ce qu'on a le droit d'y mettre, et comment préparer un travail propre et sûr.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 45 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : Cours 5 (CAO)</span>
+      <span class="pill p">Rôles : laser, outillage</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Expliquer comment la machine découpe et grave, et le rôle de la puissance, de la vitesse et des passes.</li>
+      <li>Mesurer la largeur du trait de coupe et la compenser.</li>
+      <li>Reconnaître les matériaux autorisés et interdits, et dire pourquoi.</li>
+      <li>Préparer un dessin 2D propre et lancer un travail en sécurité.</li>
+      <li>Savoir ce que le projet confie à la laser, et ce qu'il ne lui confie pas.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Comment coupe un laser CO₂</h2>
+    <p>Image mentale : une loupe au soleil qui brûle une feuille, en beaucoup plus concentré et piloté par un robot. La <i class="t" data-t="laser-co2">découpeuse laser CO₂</i> produit un faisceau infrarouge invisible, concentré par une lentille en un point minuscule. À cet endroit, la matière brûle ou se vaporise. La tête suit le tracé du dessin : le point chaud découpe.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Notre xTool P2S a un tube de 55 W et une zone de travail de 600 × 305 mm. En pratique, elle traverse le contreplaqué et l'acrylique jusqu'à une dizaine de millimètres : nos plaques de 3 à 5 mm lui laissent de la marge. Elle est pilotée par <i class="t" data-t="xcs">XCS</i> (xTool Creative Space), un logiciel gratuit qui gère ses caméras, ses réglages et la compensation du trait de coupe.</p></div>
+    <h3>Découper ou graver</h3>
+    <ul>
+      <li><strong>Découper</strong> : le faisceau traverse toute l'épaisseur, la pièce se détache.</li>
+      <li><strong>Graver</strong> : avec moins de puissance ou plus de vitesse, le laser marque la surface sans la traverser. La <i class="t" data-t="gravure">gravure</i> sert aux textes, repères et numéros.</li>
+    </ul>
+    <h3>Puissance, vitesse, passes</h3>
+    <ul>
+      <li><strong>Puissance</strong>, en pourcentage des 55 W : plus de puissance, plus de chaleur.</li>
+      <li><strong>Vitesse</strong> : plus lent, le faisceau reste plus longtemps au même endroit et coupe plus profond, mais brûle davantage les bords.</li>
+      <li><strong>Passes</strong> : deux passages plus rapides coupent souvent plus proprement qu'un seul très lent.</li>
+    </ul>
+    <p>Il n'existe pas de réglage universel : deux plaques de contreplaqué « identiques » se comportent différemment. On découpe sur une chute une grille de test (petits carrés à puissances et vitesses différentes, que XCS sait générer) et on garde le réglage le plus rapide qui traverse proprement. Il se note dans le <i class="t" data-t="journal-de-bord">journal de bord</i> de la séance et dans le projet XCS.</p>
+    <h3>La mise au point</h3>
+    <p>Comme une loupe, le faisceau n'est fin qu'à une distance précise de la lentille. Régler cette distance selon l'épaisseur de la plaque s'appelle la mise au point. On la fait avant chaque travail, avec la mesure de XCS ou la procédure affichée près de la machine. Ratée, elle donne un trait large, une coupe incomplète et des bords brûlés.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Le kerf : la matière qui disparaît</h2>
+    <p>Le <i class="t" data-t="kerf">kerf</i> (trait de coupe) est la largeur de matière que le laser fait disparaître en passant, comme une scie transforme en sciure l'épaisseur de sa lame. Il fait de 0,1 à 0,25 mm. Conséquence : une pièce sort plus petite que le dessin et un trou plus grand, d'un demi-kerf de chaque côté.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Sur du contreplaqué de 3 mm, on attend un kerf de 0,15 à 0,25 mm ; sur de l'acrylique de 3 mm, de 0,10 à 0,20 mm. La valeur exacte se mesure sur notre machine, avec nos plaques.</p></div>
+    <h3>Le mesurer : le test du trou et du carré</h3>
+    <p>On découpe un carré dans une chute. On obtient deux objets : le carré qui tombe et le trou qu'il laisse. Le trou est plus grand que le dessin d'un kerf entier (un demi de chaque côté), le carré plus petit d'un kerf. Donc :</p>
+<pre><code>kerf = (cote du trou − cote du carré) / 2</code></pre>
+    <p>Exemple de calcul, avec des valeurs fictives : trou de 20,2 mm, carré de 19,8 mm, kerf = (20,2 − 19,8) / 2 = 0,2 mm. On mesure au pied à coulisse dans les deux directions et on fait la moyenne.</p>
+    <h3>Le compenser dans XCS</h3>
+    <p>XCS décale lui-même les tracés : son réglage de compensation du kerf, de −1 à +1 mm, élargit les contours extérieurs et resserre les trous. Ne devinez ni la valeur ni le signe : recoupez le carré test avec la compensation, remesurez, et vérifiez que trou et carré tombent sur la cote du dessin.</p>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi c'est important.</strong> Sur un socle percé, 0,2 mm ne se voit pas. Sur un assemblage à encoches, c'est la différence entre une boîte qui tient serrée et une boîte qui tombe en morceaux.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. Les matériaux : autorisés et interdits</h2>
+    <p>Règle absolue : on ne met dans la laser qu'un matériau identifié et autorisé. En brûlant, certains plastiques dégagent des gaz toxiques ou corrosifs ; d'autres s'enflamment.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Matériau</th><th>Statut</th><th>Pourquoi</th></tr></thead>
+        <tbody>
+          <tr><td>Contreplaqué peuplier, 3 à 5 mm</td><td><span class="pill ok">autorisé</span></td><td>coupe propre, léger, bon marché ; la colle varie d'un lot à l'autre : essai sur chute</td></tr>
+          <tr><td>PMMA coulé (acrylique, souvent appelé plexiglas)</td><td><span class="pill ok">autorisé</span></td><td>bords nets et brillants ; s'enflamme facilement : surveillance de près</td></tr>
+          <tr><td>PVC, vinyle (simili-cuir, adhésifs, gaines de câbles)</td><td><span class="pill bad">interdit</span></td><td>dégage du chlore : gaz toxique qui forme un acide et ronge la machine</td></tr>
+          <tr><td>ABS</td><td><span class="pill bad">interdit</span></td><td>fumées toxiques, dont du cyanure ; fond plus qu'il ne coupe</td></tr>
+          <tr><td>Polycarbonate</td><td><span class="pill bad">interdit</span></td><td>coupe mal, noircit et prend feu</td></tr>
+          <tr><td>Polystyrène expansé</td><td><span class="pill bad">interdit</span></td><td>fond et s'enflamme</td></tr>
+          <tr><td>Fibre de carbone enduite</td><td><span class="pill bad">interdit</span></td><td>la résine dégage des fumées nocives et brûle</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note bad"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> « C'est du plexi, je crois. » Une plaque transparente sans étiquette peut être du polycarbonate ou du PVC. Pas d'étiquette, pas de découpe. On garde la facture ou le film de protection imprimé qui prouve qu'il s'agit de PMMA coulé.</div></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Les étiquettes d'identification des <i class="t" data-t="servo">servos</i>, les moteurs des articulations, se gravent sur une chute de contreplaqué ou de PMMA coulé, jamais sur un ruban adhésif en vinyle, même « pour aller vite ».</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Préparer un dessin</h2>
+    <p>La laser lit des dessins 2D en <i class="t" data-t="dxf-svg">SVG ou DXF</i> : des traits et des cercles, sans volume. On les produit avec <i class="t" data-t="freecad">FreeCAD</i>, notre logiciel de <i class="t" data-t="cao">CAO</i>, c'est-à-dire de dessin 3D (ateliers Draft ou TechDraw, voir <a href="#cours-cao">cours 5</a>), ou avec Inkscape, un logiciel libre de dessin 2D.</p>
+    <ul>
+      <li><strong>Échelle 1:1, en millimètres.</strong> À l'import, une plaque de 60 mm doit mesurer 60 mm.</li>
+      <li><strong>Traits fins, sans remplissage.</strong> Un contour à découper est une ligne ; une forme pleine serait gravée en entier, ce qui prend longtemps.</li>
+      <li><strong>Une couleur par opération</strong>, toujours la même, par exemple rouge pour découper et bleu pour graver. La convention s'écrit une fois pour toutes dans <code>biscalab/docs/conventions.md</code>.</li>
+      <li><strong>Pas de traits doubles.</strong> Deux traits superposés font deux passages : bord brûlé, voire flamme. Les exports de CAO en créent parfois : faire glisser un trait pour voir s'il en cache un autre.</li>
+      <li><strong>Contours fermés</strong> pour les pièces, et textes convertis en tracés (dans Inkscape : « Chemin → Objet en chemin ») pour que la police ne change pas d'un PC à l'autre.</li>
+      <li><strong>Les trous avant le contour extérieur</strong> : sinon la pièce, déjà libérée, peut bouger avant que ses trous soient coupés. Vérifier l'ordre de traitement dans XCS.</li>
+      <li><strong>Rangement</strong> : <code>biscalab/laser/svg-dxf/</code>, même nom de base que la source FreeCAD.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. XCS pas à pas</h2>
+    <ol class="steps">
+      <li><div><b>Extraction d'abord</b> Mettre l'extraction des fumées en marche avant tout.</div></li>
+      <li><div><b>Poser la plaque</b> À plat, calée, plateau débarrassé des chutes ; refermer le couvercle.</div></li>
+      <li><div><b>Importer</b> Le SVG ou le DXF ; vérifier les dimensions affichées.</div></li>
+      <li><div><b>Placer avec la caméra</b> XCS affiche une photo du plateau : glisser le dessin sur une zone libre de la plaque, loin des bords et des découpes précédentes.</div></li>
+      <li><div><b>Régler par calque</b> Pour chaque couleur : type d'opération (découpe ou gravure), puissance, vitesse, nombre de passes ; compensation du kerf pour la découpe.</div></li>
+      <li><div><b>Faire la mise au point</b> Selon l'épaisseur réelle de la plaque.</div></li>
+      <li><div><b>Cadrer</b> Le cadrage (framing) fait parcourir à la tête le contour du travail sans couper : on vérifie qu'il tombe bien sur la plaque.</div></li>
+      <li><div><b>Lancer et rester</b> Envoyer le travail, confirmer le départ sur la machine, rester devant jusqu'à la fin. Attendre que l'extraction ait évacué les fumées avant d'ouvrir. Enregistrer le projet XCS dans <code>biscalab/laser/xcs/</code>.</div></li>
+    </ol>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. La sécurité</h2>
+    <ul>
+      <li><strong>Présence permanente.</strong> Quelqu'un regarde la machine pendant toute la découpe. Un départ de feu se maîtrise dans les premières secondes, pas au retour d'une pause.</li>
+      <li><strong>Jamais seul</strong> au FabLab quand la laser tourne.</li>
+      <li><strong>Extraction</strong> en marche pendant le travail, et après, le temps d'évacuer les fumées.</li>
+      <li><strong>Extincteur CO₂</strong> à portée de main, et savoir où il est avant de lancer. Une petite flamme qui suit la tête et s'éteint aussitôt est normale. Une flamme qui persiste : arrêter le travail, puis extincteur si elle ne s'éteint pas.</li>
+      <li><strong>Acrylique sous surveillance</strong> : il s'enflamme plus facilement que le bois.</li>
+      <li><strong>Couvercle fermé</strong> pendant le travail : il arrête le rayonnement. Ne jamais neutraliser sa sécurité.</li>
+      <li><strong>Matériau identifié</strong>, toujours (section 3).</li>
+    </ul>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Lancer la longue découpe des parois de la caisse et aller préparer l'imprimante à côté. Les travaux longs sont ceux qu'on a envie de quitter des yeux ; ce sont aussi ceux où une flamme a le plus d'occasions de naître.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Les assemblages en plaques</h2>
+    <p>Avec des plaques, on fabrique des volumes : boîtes, socles, <i class="t" data-t="potence">potences</i> (supports qui retiennent le robot pendant ses essais). Deux techniques suffisent.</p>
+    <dl class="def">
+      <dt>Tenon et mortaise</dt><dd>Une languette (le tenon) d'une plaque entre dans une fente (la mortaise) de l'autre.</dd>
+      <dt>Encoches</dt><dd>Les bords de deux plaques sont crénelés et s'imbriquent, comme les doigts de deux mains croisées.</dd>
+    </dl>
+    <h3>Deux pièges</h3>
+    <ul>
+      <li><strong>L'épaisseur réelle.</strong> Un contreplaqué « 3 mm » ne fait pas exactement 3 mm, et varie d'une plaque à l'autre. On le mesure au pied à coulisse en plusieurs points, et on dessine fentes et encoches avec la valeur mesurée, déclarée comme paramètre dans FreeCAD : un seul chiffre à changer pour la plaque suivante.</li>
+      <li><strong>Le kerf.</strong> Sans compensation, la mortaise s'élargit et le tenon s'amincit : le jeu compte double. Avec compensation, l'ajustement est serré. Toujours un essai sur deux petits morceaux avant de découper la plaque entière.</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p>La caisse de transport : parois en contreplaqué peuplier assemblées par encoches, un fond, des cales intérieures qui tiennent le canard par le tronc plutôt que par les jambes. L'épaisseur mesurée est un paramètre : changer de lot de contreplaqué ne demande qu'une modification.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Ce que la laser fait pour le canard, et ce qu'elle ne fait pas</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Outillage</th><th>À quoi il sert</th><th>Point d'attention</th></tr></thead>
+        <tbody>
+          <tr><td>Socle de <i class="t" data-t="banc-servo">banc servo</i></td><td>plaque qui porte les servos, leur carte de commande et le <i class="t" data-t="raspberry-pi">Raspberry Pi</i> (l'ordinateur du robot) pendant les essais de la phase 2, avant tout montage</td><td>les entraxes de fixation du <i class="t" data-t="sts3215">STS3215</i>, notre servo, ne sont pas dans nos sources : on les mesure sur un servo réel avant de dessiner</td></tr>
+          <tr><td>Gabarits de mise à zéro</td><td>aligner le <i class="t" data-t="palonnier">palonnier</i>, la pièce vissée sur l'axe du servo, quand le servo est à sa position 0</td><td>cotes relevées sur un vrai servo ; le gabarit du cours 5 n'est qu'un exercice</td></tr>
+          <tr><td>Potence ou harnais</td><td>retenir le robot par une sangle s'il tombe pendant les premiers essais (phase 5), sans le porter</td><td>point d'attache au-dessus du <i class="t" data-t="centre-de-masse">centre de masse</i>, le point où la masse du robot semble concentrée</td></tr>
+          <tr><td>Caisse de transport</td><td>protéger le robot entre deux séances</td><td>encoches dessinées avec l'épaisseur mesurée</td></tr>
+          <tr><td>Étiquettes gravées</td><td>l'<i class="t" data-t="id-servo">ID</i> de chaque servo, son numéro sur le <i class="t" data-t="bus-serie">bus série</i>, le câble commun des servos (10 à 14 jambe droite, 20 à 24 jambe gauche, 30 à 33 cou et tête), et le sens des câbles</td><td>gravure seule, sans découpe à travers</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le cou et la tête portent 28 % de la masse du canard : son centre de masse est haut. Accroché au-dessus, le robot qui tombe pend droit dans la sangle ; accroché ailleurs, il bascule et peut heurter la potence.</p></div>
+    <h3>Ce qu'on ne lui confie pas : les pièces du robot</h3>
+    <p>Les pièces « sheet » (plaque, en anglais) des jambes et du cou font 7 à 8 mm d'épaisseur : malgré leur nom, ce ne sont pas des plaques de 3 mm. Seule <code>head_bot_sheet</code> est une vraie plaque : 3 mm d'épaisseur, 194 × 192 mm, 65,9 cm³. Découpée en PMMA plein, elle pèserait environ 78 g ; imprimée à 15 %, elle a la masse qu'annonce le <i class="t" data-t="slicer">slicer</i>, le logiciel d'impression. Changer de procédé change donc la masse de la tête, déjà lourde.</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Pourquoi la masse compte.</strong> La marche a été apprise en <i class="t" data-t="simulation">simulation</i>, sur un robot virtuel décrit dans un fichier <i class="t" data-t="mjcf">MJCF</i> avec la masse de chaque pièce. Une tête plus lourde, et ce robot virtuel ne ressemble plus au nôtre. Découper <code>head_bot_sheet</code> serait une décision d'équipe, avec correction du modèle (<a href="#cours-rl">cours sur l'apprentissage</a>).</div></div>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : chute de contreplaqué peuplier de 3 mm, pied à coulisse, PC avec XCS, fichier <code>gabarit-zero-servo.svg</code> du cours 5, extincteur CO₂ repéré. Durée : 25 min.</p>
+    <ol class="steps">
+      <li><div><b>Mesurer la plaque</b> Épaisseur réelle de la chute en trois points ; noter.</div></li>
+      <li><div><b>Préparer le test</b> Un carré de 20 mm de côté en rouge (découpe). L'importer dans XCS, compensation à 0, réglage de découpe issu de la grille de test.</div></li>
+      <li><div><b>Découper</b> Extraction, mise au point, cadrage, découpe, en restant devant la machine.</div></li>
+      <li><div><b>Calculer le kerf</b> Mesurer trou et carré dans les deux directions ; kerf = (trou − carré) / 2. Comparer à la plage attendue de 0,15 à 0,25 mm.</div></li>
+      <li><div><b>Compenser</b> Régler la compensation, recouper un carré : trou et carré doivent mesurer 20 mm.</div></li>
+      <li><div><b>Découper le gabarit</b> Importer <code>gabarit-zero-servo.svg</code>, vérifier 60 × 40 mm, ajouter le texte « ZERO » en bleu (gravure), découper avec la compensation.</div></li>
+      <li><div><b>Contrôler</b> Au pied à coulisse : plaque de 60 × 40 mm, trou de 8 mm, fente aux cotes du dessin.</div></li>
+      <li><div><b>Noter</b> Dans le journal : épaisseur, puissance, vitesse, passes, kerf, compensation. Enregistrer <code>biscalab/laser/xcs/gabarit-zero-servo.xcs</code>.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> le kerf de notre contreplaqué de 3 mm mesuré et noté, un réglage de découpe réutilisable par toute l'équipe, un gabarit aux cotes du dessin.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi un trou découpé au laser sort-il plus grand que le dessin ?</summary><p>Le laser fait disparaître un trait de matière, le kerf. Le trou s'agrandit d'un demi-kerf de chaque côté ; la pièce, elle, rétrécit d'autant.</p></details>
+    <details class="quiz"><summary>Trou de 20,2 mm, carré de 19,8 mm : quel kerf ?</summary><p>(20,2 − 19,8) / 2 = 0,2 mm.</p></details>
+    <details class="quiz"><summary>Une plaque transparente sans étiquette traîne au FabLab. On la découpe ?</summary><p>Non. Ce peut être du polycarbonate (feu) ou du PVC (chlore). Seul un PMMA coulé identifié est autorisé.</p></details>
+    <details class="quiz"><summary>Peut-on découper les pièces « sheet » des jambes dans du contreplaqué de 3 mm ?</summary><p>Non. Elles font 7 à 8 mm d'épaisseur, ce sont des pièces de structure, et leur masse est celle du modèle de simulation.</p></details>
+    <details class="quiz"><summary>Où attacher la sangle de la potence, et pourquoi ?</summary><p>Au-dessus du centre de masse, qui est haut à cause de la tête lourde : le robot qui tombe pend droit au lieu de basculer.</p></details>
+    <details class="quiz"><summary>Une flamme persiste pendant une découpe. Que faire ?</summary><p>Arrêter le travail ; si la flamme ne s'éteint pas, extincteur CO₂. Ce n'est possible que parce que quelqu'un est resté devant la machine.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>Le laser CO₂ coupe en brûlant ; puissance, vitesse, passes et mise au point décident de la coupe.</li>
+      <li>Le kerf agrandit les trous et réduit les pièces : on le mesure, (trou − carré) / 2, et on le compense dans XCS.</li>
+      <li>Autorisés : contreplaqué peuplier, PMMA coulé. Interdits : PVC et vinyle, ABS, polycarbonate, polystyrène expansé, fibre de carbone enduite.</li>
+      <li>Dessin à l'échelle 1:1 en millimètres, traits fins, une couleur par opération, pas de traits doubles.</li>
+      <li>Présence permanente, jamais seul, extraction en marche, extincteur CO₂ à portée.</li>
+      <li>Épaisseur réelle mesurée et kerf compensé pour tout assemblage à encoches.</li>
+      <li>La laser fait l'outillage (banc, gabarits, potence, caisse, étiquettes), jamais les pièces du robot.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-assemblage">Assembler le canard : visserie, inserts, roulements, jeu</a>.</p>
+  </div>
+</section>

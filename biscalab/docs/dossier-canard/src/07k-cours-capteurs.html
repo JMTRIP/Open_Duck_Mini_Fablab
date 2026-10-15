@@ -1,0 +1,201 @@
+<section class="page" id="page-cours-capteurs" data-title="Cours · Capteurs" data-sub="Centrale inertielle et contacts de pied" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 11 · Électronique</div>
+    <h1>Les capteurs : centrale inertielle et contacts de pied</h1>
+    <p class="lead">Pour tenir debout, le canard doit sentir comment il penche, comment il tourne et quel pied touche le sol. Ce cours explique ses capteurs, ce que le logiciel en lit vraiment, et comment les brancher, les calibrer et les vérifier.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 50 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : électronique, servos</span>
+      <span class="pill p">Rôles : électronique, logiciel, calibration</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Expliquer ce que mesurent un accéléromètre, un gyroscope et un magnétomètre, et leurs défauts.</li>
+      <li>Dire ce que le logiciel de marche lit vraiment, et pourquoi il n'y a pas de filtre.</li>
+      <li>Brancher la BNO055 sur le Pi et réagir au problème connu du bus I²C.</li>
+      <li>Calibrer la centrale et vérifier son orientation.</li>
+      <li>Tester les quatre contacts de pied et reconnaître une valeur anormale.</li>
+    </ul>
+    <p><strong>Prérequis :</strong> <a href="#cours-electronique">L'électronique du robot</a> (GPIO, pull-up, I²C) et <a href="#cours-servos">Les servomoteurs STS3215</a>.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Pourquoi un bipède doit sentir</h2>
+    <p>Fermez les yeux et tenez-vous sur un pied : vous tenez quand même, grâce à l'oreille interne, qui sent l'inclinaison de la tête et ses rotations. Un robot bipède a le même besoin. Sans information sur sa propre posture, il ne peut pas corriger une chute qui commence.</p>
+    <p>Le canard a trois sources d'information sur lui-même :</p>
+    <ul>
+      <li>une <i class="t" data-t="imu">IMU</i> (centrale inertielle), fixée dans le tronc, qui mesure accélérations et rotations du corps : c'est son oreille interne ;</li>
+      <li>quatre <i class="t" data-t="contact-pied">contacts de pied</i>, des micro-interrupteurs sous les semelles qui disent si chaque pied touche le sol ;</li>
+      <li>les <i class="t" data-t="codeur">codeurs</i> des 14 servos, les capteurs d'angle intégrés, qui donnent la position et la vitesse de chaque articulation.</li>
+    </ul>
+    <p>Ces mesures forment une partie de l'<i class="t" data-t="observation">observation</i> : les 101 nombres que le « cerveau » de la marche reçoit 50 fois par seconde.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Les trois capteurs de la BNO055</h2>
+    <p>Notre IMU est une <i class="t" data-t="bno055">BNO055</i> : une petite carte qui réunit trois capteurs et un processeur qui les combine. Chaque capteur mesure selon trois axes, notés x, y et z, imprimés sur la carte.</p>
+    <h3>L'accéléromètre : le verre d'eau</h3>
+    <p>L'<i class="t" data-t="accelerometre">accéléromètre</i> mesure l'accélération, gravité comprise. Imaginez un verre d'eau posé sur le tableau de bord d'une voiture. À l'arrêt, la surface de l'eau reste horizontale : elle indique où est le bas, même si la route est en pente. Quand la voiture freine, l'eau monte vers l'avant : on ne sait plus distinguer la pente du freinage. L'accéléromètre fait pareil : immobile, il donne la direction de la gravité, donc l'inclinaison ; en mouvement, il mélange gravité et secousses.</p>
+    <h3>Le gyroscope : réactif mais il dérive</h3>
+    <p>Le <i class="t" data-t="gyroscope">gyroscope</i> mesure la vitesse de rotation autour de chaque axe. Il réagit instantanément et ne se laisse pas tromper par les secousses. Mais pour connaître un angle, il faut additionner ces vitesses au fil du temps, et chaque petite erreur s'additionne aussi : c'est la <i class="t" data-t="derive">dérive</i>. Comme un marcheur qui avance les yeux fermés en comptant ses pas : au bout d'un moment, il n'est plus là où il croit.</p>
+    <h3>Le magnétomètre : une boussole perturbée</h3>
+    <p>Le <i class="t" data-t="magnetometre">magnétomètre</i> est une boussole électronique : il mesure le champ magnétique terrestre pour donner le cap. Dans un robot, il est perturbé par les aimants des moteurs et les vis en acier. Sur le canard, il ne sert pas à la marche.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. La fusion, et ce que le logiciel lit vraiment</h2>
+    <p>Chaque capteur a son défaut, mais leurs défauts sont différents. La <i class="t" data-t="fusion">fusion de capteurs</i> les combine : le gyroscope pour la réactivité, l'accéléromètre pour corriger la dérive à long terme grâce à la gravité, le magnétomètre pour le cap. La BNO055 le fait elle-même dans son <i class="t" data-t="ndof">mode NDOF</i> (pour « neuf degrés de liberté » : trois capteurs sur trois axes). Elle fournit alors une orientation sous forme de <i class="t" data-t="quaternion">quaternion</i>, quatre nombres qui décrivent une orientation en 3D.</p>
+    <h3>Ce que le canard utilise</h3>
+    <p>Le <i class="t" data-t="runtime">runtime</i>, le programme qui fait marcher le robot sur le <i class="t" data-t="raspberry-pi">Raspberry Pi</i> (son mini-ordinateur, « le Pi »), met bien la BNO055 en mode NDOF. Mais il n'utilise <strong>pas</strong> le quaternion. Il lit, 50 fois par seconde :</p>
+    <ul>
+      <li>les trois vitesses de rotation brutes du gyroscope ;</li>
+      <li>les trois accélérations brutes de l'accéléromètre ;</li>
+      <li>sans aucun filtre (le code porte même la mention « à faire : filtrer les pics »).</li>
+    </ul>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi pas de filtre.</strong> La marche a été apprise en simulation, sur un robot virtuel, avec ces grandeurs brutes, bruitées exprès. Elle sait faire avec. Lui donner des valeurs filtrées ou une orientation calculée, c'est lui montrer un capteur qu'elle n'a jamais vu. On ne « nettoie » donc pas les mesures, même si elles paraissent sautillantes.</div></div>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Sur les 101 nombres de l'observation, 6 viennent de l'IMU : 3 du gyroscope, 3 de l'accéléromètre.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Axes et repère : où est le haut ?</h2>
+    <p>Immobile et à plat, l'accéléromètre lit environ 9,8 m/s² (la gravité) sur l'axe vertical, et presque rien sur les deux autres. Si la carte est retournée, le signe de cette valeur s'inverse. Le logiciel doit donc savoir dans quel sens la carte est montée.</p>
+    <ul>
+      <li>Sur les photos du projet d'origine, l'IMU est montée « à l'envers » : c'est normal et prévu.</li>
+      <li>Le réglage <code>imu_upside_down</code> du fichier <i class="t" data-t="duck-config">duck_config.json</i> (les réglages propres à notre robot) dit au logiciel comment interpréter les axes.</li>
+      <li>Pour vérifier : <code>imu_server.py</code> sur le Pi, et <code>imu_client.py --ip</code> suivi de l'adresse du Pi sur le PC. Un repère en 3D s'affiche : on penche le robot vers l'avant, le repère doit pencher dans le même sens.</li>
+    </ul>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Déplacer l'IMU « pour faire plus propre ». Dans la simulation, elle est placée en (−0,08 ; 0 ; 0,05) mètre dans le tronc. Un capteur placé ailleurs ressent d'autres accélérations quand le corps tourne : la marche apprise ne reconnaîtrait plus ses mesures. On garde l'emplacement d'origine.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Brancher la BNO055 en I²C</h2>
+    <p>La BNO055 parle au Pi par le bus <i class="t" data-t="i2c">I²C</i> : deux fils, SDA pour les données et SCL pour l'horloge, plus l'alimentation.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Carte BNO055</th><th>Pi Zero 2 W</th></tr></thead>
+        <tbody>
+          <tr><td>VIN (alimentation)</td><td>3V3, broche 1</td></tr>
+          <tr><td>GND (masse)</td><td>GND, broche 9</td></tr>
+          <tr><td>SDA (données)</td><td>GPIO2, broche 3</td></tr>
+          <tr><td>SCL (horloge)</td><td>GPIO3, broche 5</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>On câble toujours hors tension et on suit ce tableau à la lettre : alimentation en 3,3 V par la broche 1, car les fils de données arrivent directement sur des <i class="t" data-t="gpio">GPIO</i> du Pi, qui ne supportent pas 5 V.</p>
+    <h3>Le problème connu : le clock stretching</h3>
+    <p>Sur un bus I²C, c'est le Pi qui bat la mesure sur le fil d'horloge. Un capteur lent peut retenir ce fil pour demander un délai : c'est le <i class="t" data-t="clock-stretching">clock stretching</i> (étirement d'horloge). La BNO055 le fait, et le Raspberry Pi le gère mal : lectures ratées et erreurs. Deux remèdes sont documentés :</p>
+    <ol class="steps">
+      <li><div><b>Ralentir le bus</b> Ajouter <code>dtparam=i2c_arm_baudrate=10000</code> dans <code>config.txt</code>, le fichier de réglages lu par le Pi au démarrage, puis redémarrer. Le Pi va alors assez lentement pour que la BNO055 suive.</div></li>
+      <li><div><b>Passer en UART</b> Relier la broche PS1 de la BNO055 au 3,3 V la fait parler en <i class="t" data-t="uart">UART</i> (liaison série à deux fils, TX et RX) au lieu de l'I²C. Sans horloge, plus d'étirement d'horloge ; mais le code UART du projet est en commentaire : il faudrait l'adapter.</div></li>
+    </ol>
+    <p>Le projet n'a pas tranché. Au banc, on commence sans rien changer ; si des erreurs apparaissent, on essaie d'abord de ralentir le bus, qui ne demande aucune soudure. Pour juger, on surveille dans la console les lignes qui commencent par <code>[IMU]:</code> : chacune est une lecture ratée.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Calibrer la centrale</h2>
+    <p>En mode NDOF, la BNO055 se calibre elle-même en observant ses mouvements, et note pour chaque capteur un niveau de 0 (pas calibré) à 3 (calibré). Le <i class="t" data-t="script">script</i> (petit programme Python) <code>calibrate_imu.py</code> affiche ces quatre niveaux (système, gyroscope, accéléromètre, magnétomètre) en boucle.</p>
+    <ol class="steps">
+      <li><div><b>Lancer le script</b> Depuis le dossier où l'on lancera ensuite la marche.</div></li>
+      <li><div><b>Bouger la carte</b> La laisser immobile un moment (gyroscope), la poser dans plusieurs positions (accéléromètre), puis dessiner des huit dans l'air (magnétomètre).</div></li>
+      <li><div><b>Attendre 3/3/3/3</b> Le script affiche alors <code>CALIBRATION DONE</code> et écrit le fichier <code>imu_calib_data.pkl</code> dans le dossier courant.</div></li>
+    </ol>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Lancer la marche depuis un autre dossier que celui de la calibration. Le fichier n'est pas trouvé, et la console affiche <code>imu_calib_data.pkl not found</code> puis <code>Imu is running uncalibrated</code>. Le robot démarre quand même, avec une IMU non calibrée. On lit toujours les premières lignes de la console.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Les contacts de pied</h2>
+    <p>Sous chaque semelle, deux micro-interrupteurs Omron SS-10, pressés à force dans la semelle, soit quatre en tout. Quand le pied appuie, le contact se ferme. Les deux contacts d'un même pied partagent une broche du Pi :</p>
+    <ul>
+      <li>pied gauche : GPIO22 (broche 15) ;</li>
+      <li>pied droit : GPIO27 (broche 13).</li>
+    </ul>
+    <p>Chaque broche utilise la <i class="t" data-t="pull-up">résistance de pull-up</i> interne du Pi, qui la maintient à 3,3 V. Contact fermé, la broche est reliée à la masse et tombe à 0 V : le contact est « actif bas ». Le logiciel inverse la lecture pour obtenir « pied au sol : oui ou non ».</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Les contacts entrent dans l'observation sous forme de 2 valeurs, une par pied. Ils servent aussi au démarrage avec l'image système prête à l'emploi : pied gauche appuyé au démarrage = mode marionnette de la tête, pied droit = marche.</p></div>
+    <h3>Tester et dépanner</h3>
+    <p>Le script <code>feet_contacts.py</code> affiche en continu deux valeurs, gauche puis droite : <code>True</code> (vrai) si le pied est vu au sol, <code>False</code> (faux) sinon. On appuie contact par contact et on note ce qui change : cela révèle aussi comment les deux contacts d'un pied sont câblés.</p>
+    <ul>
+      <li><strong>Reste à <code>True</code> pied levé :</strong> contact coincé enfoncé, semelle qui appuie en permanence, débris.</li>
+      <li><strong>Reste à <code>False</code> pied posé :</strong> fil coupé, soudure sèche, mauvaise broche. On vérifie au <i class="t" data-t="multimetre">multimètre</i> (l'appareil de mesure électrique), hors tension.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Les servos aussi sont des capteurs</h2>
+    <p>Le codeur magnétique de chaque servo mesure l'angle de son articulation. À chaque pas de calcul, le runtime lit les 14 positions et les 14 vitesses. Dans l'observation, les positions entrent sous forme d'écart à la <i class="t" data-t="home-pose">posture « home »</i> (la position de repos debout de référence), et les vitesses multipliées par 0,05.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Additionnons ce qui vient des capteurs : gyroscope 3, accéléromètre 3, écarts de position 14, vitesses 14, contacts 2, soit 36 nombres sur 101. Le reste vient de la manette, des actions précédentes, des cibles envoyées aux moteurs et de la phase de marche.</p></div>
+    <h3>Le bruit, et pourquoi la marche le tolère</h3>
+    <p>Aucune mesure n'est parfaite : elle tremble un peu autour de la vraie valeur. Pendant l'apprentissage en simulation, on a ajouté exprès du bruit à chaque capteur :</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Mesure</th><th>Bruit ajouté à l'entraînement (amplitude, dans l'unité de la mesure)</th></tr></thead>
+        <tbody>
+          <tr><td>Gyroscope</td><td>0,1</td></tr>
+          <tr><td>Accéléromètre</td><td>0,05</td></tr>
+          <tr><td>Positions des articulations</td><td>0,03 rad (hanches), 0,05 rad (genoux), 0,08 rad (chevilles)</td></tr>
+          <tr><td>Vitesses des articulations</td><td>2,5 rad/s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>La marche a donc appris à ignorer un tremblement de cet ordre. En revanche, elle ne sait pas corriger une erreur <strong>systématique</strong> : un axe inversé, une IMU déplacée, un palonnier décalé. Ce n'est pas du bruit, c'est un autre robot.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>9. Valeur lue : normal ou pas ?</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Ce qu'on lit</th><th>Normal</th><th>Pas normal, piste</th></tr></thead>
+        <tbody>
+          <tr><td>Accéléromètre, robot immobile</td><td>Environ 9,8 m/s² sur l'axe vertical, presque rien ailleurs</td><td>Tout à zéro : IMU non lue (câblage, I²C). Signe inversé : <code>imu_upside_down</code></td></tr>
+          <tr><td>Gyroscope, robot immobile</td><td>Proche de zéro, qui tremble un peu</td><td>Valeur qui reste loin de zéro : calibration à refaire</td></tr>
+          <tr><td>Gyroscope, robot tourné à la main autour d'un axe</td><td>Seul cet axe réagit ; le signe change avec le sens</td><td>Un autre axe réagit : repère mal réglé</td></tr>
+          <tr><td>Lignes <code>[IMU]:</code> dans la console</td><td>Aucune</td><td>Répétées : clock stretching, appliquer un remède</td></tr>
+          <tr><td>Message <code>running uncalibrated</code></td><td>Absent</td><td>Fichier de calibration absent du dossier courant</td></tr>
+          <tr><td>Contacts, robot tenu en l'air</td><td><code>[False, False]</code></td><td><code>True</code> : contact coincé</td></tr>
+          <tr><td>Contacts, robot posé debout</td><td><code>[True, True]</code></td><td><code>False</code> : fil coupé, mauvaise broche</td></tr>
+          <tr><td>Positions des servos en posture home</td><td>Proches de la cible</td><td>Gros écart : palonnier (pièce fixée sur l'axe) mal monté ou zéro à recalibrer</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : Pi Zero 2 W avec le runtime installé, carte BNO055, 4 fils fins, contacts SS-10 (montés dans les pieds ou sur le banc), PC avec le dépôt du runtime, multimètre. Durée : 35 min.</p>
+    <ol class="steps">
+      <li><div><b>Brancher la BNO055</b> Pi éteint : VIN sur la broche 1, GND sur la 9, SDA sur la 3, SCL sur la 5. Relire chaque fil avant d'allumer.</div></li>
+      <li><div><b>Lire les valeurs brutes</b> Dans le dossier <code>mini_bdx_runtime/mini_bdx_runtime</code>, lancer <code>python raw_imu.py</code>. Laisser tourner 10 minutes, carte immobile puis manipulée. Compter les lignes <code>[IMU]:</code>.</div></li>
+      <li><div><b>Calibrer</b> Lancer <code>calibrate_imu.py</code>, bouger la carte jusqu'à 3/3/3/3, vérifier que <code>imu_calib_data.pkl</code> est créé dans le dossier courant.</div></li>
+      <li><div><b>Vérifier le repère</b> <code>imu_server.py</code> sur le Pi, <code>imu_client.py --ip</code> et l'adresse du Pi sur le PC. Pencher la carte dans chaque direction et comparer avec l'affichage.</div></li>
+      <li><div><b>Tester les contacts</b> Lancer <code>feet_contacts.py</code>, appuyer sur chacun des 4 contacts, noter la réaction gauche et droite.</div></li>
+      <li><div><b>Consigner</b> Nombre de lectures ratées, réglage I²C utilisé, sens de l'IMU, état des 4 contacts : tout va dans le <i class="t" data-t="journal-de-bord">journal de bord</i>, la mémoire écrite des séances.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> 10 minutes de lecture sans ligne <code>[IMU]:</code> (sinon, appliquer <code>i2c_arm_baudrate=10000</code> et recommencer), une calibration 3/3/3/3 sauvegardée, un repère qui suit la carte, et 4 contacts qui réagissent chacun.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi l'accéléromètre seul ne suffit-il pas à connaître l'inclinaison pendant la marche ?</summary><p>En mouvement, il mélange la gravité et les secousses, comme le verre d'eau dans une voiture qui freine.</p></details>
+    <details class="quiz"><summary>Le runtime utilise-t-il l'orientation calculée par la BNO055 ?</summary><p>Non. Il lit le gyroscope et l'accéléromètre bruts 50 fois par seconde, sans filtre, car la marche a été apprise avec ces grandeurs-là.</p></details>
+    <details class="quiz"><summary>La console affiche régulièrement des lignes <code>[IMU]:</code>. Que faire ?</summary><p>C'est le clock stretching. Ralentir le bus avec <code>dtparam=i2c_arm_baudrate=10000</code>, ou passer en UART (PS1 au 3,3 V).</p></details>
+    <details class="quiz"><summary>Au lancement de la marche apparaît <code>Imu is running uncalibrated</code>. Pourquoi ?</summary><p>Le fichier <code>imu_calib_data.pkl</code> n'est pas dans le dossier d'où l'on a lancé la marche.</p></details>
+    <details class="quiz"><summary>Le pied gauche reste à <code>True</code> robot soulevé. Pistes ?</summary><p>Un contact coincé enfoncé, une semelle qui appuie en permanence, un débris. On vérifie chaque contact au multimètre.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>L'IMU est l'oreille interne du robot : accéléromètre (gravité et secousses), gyroscope (rotations, dérive), magnétomètre (inutilisé pour la marche).</li>
+      <li>Le runtime lit gyroscope et accéléromètre bruts 50 fois par seconde (50 Hz), sans filtre et sans quaternion. On n'ajoute pas de filtre.</li>
+      <li>IMU à l'envers = normal, réglé par <code>imu_upside_down</code>. On ne déplace pas l'IMU.</li>
+      <li>I²C : 3V3 broche 1, GND 9, SDA 3, SCL 5. Lignes <code>[IMU]:</code> répétées = clock stretching.</li>
+      <li>Calibration : 3/3/3/3, puis marche lancée depuis le même dossier que <code>imu_calib_data.pkl</code>.</li>
+      <li>Contacts : GPIO22 gauche, GPIO27 droit, pull-up, actifs bas ; testés avec <code>feet_contacts.py</code>.</li>
+      <li>La marche tolère le bruit, pas les erreurs systématiques.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-securite">Sécurité : batteries, laser, banc d'essai et robot</a>.</p>
+  </div>
+</section>

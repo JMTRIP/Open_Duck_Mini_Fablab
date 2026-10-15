@@ -1,0 +1,243 @@
+<section class="page" id="page-cours-python" data-title="Cours · Python sans être programmeur" data-sub="Lire, lancer, régler" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 3 · Bases numériques</div>
+    <h1>Lire et modifier le logiciel du robot sans être programmeur</h1>
+    <p class="lead">Faire marcher le canard ne demande pas d'écrire du code, mais de lancer les bons programmes, de régler un fichier sans le casser et de lire un message d'erreur. Ce cours vous en donne les moyens.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 50 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : cours 2</span>
+      <span class="pill p">Rôles : référent électronique et code, membres du banc</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Lancer un programme avec ses options, depuis le bon dossier.</li>
+      <li>Préparer l'environnement de travail avant de lancer quoi que ce soit.</li>
+      <li>Vous repérer dans le dossier du logiciel embarqué.</li>
+      <li>Modifier le fichier de réglages du robot sans le casser.</li>
+      <li>Dire ce que fait chaque programme de calibration et de marche, et quels réglages ne jamais toucher.</li>
+      <li>Lire un message d'erreur en partant de la dernière ligne.</li>
+    </ul>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Python, un script, une commande</h2>
+    <p><i class="t" data-t="python">Python</i> est un langage de programmation réputé lisible : tout le logiciel du canard est écrit avec. Un <i class="t" data-t="script">script</i> est un fichier Python (nom terminé par <code>.py</code>) qu'on lance en une commande pour faire une tâche précise. Image mentale : une recette, que l'ordinateur suit ligne par ligne.</p>
+    <pre><code>python nom.py --option valeur
+python configure_motor.py --id 10</code></pre>
+    <p>Une option commence par deux tirets et peut attendre une valeur : ici, <code>--id 10</code> donne le numéro à attribuer au servo. Une option obligatoire oubliée provoque un message qui la nomme. <code>python nom.py --help</code> affiche la liste des options, pour les scripts qui en ont.</p>
+    <h3>Le dossier courant compte</h3>
+    <p>Certains scripts lisent ou écrivent des fichiers « ici », c'est-à-dire dans le dossier où vous êtes au moment de lancer. Sur notre robot, on lance toujours depuis <code>~/Open_Duck_Mini_Runtime/scripts</code>.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le script de marche lit <code>./polynomial_coefficients.pkl</code>, rangé dans <code>scripts/</code>, et la calibration de l'<i class="t" data-t="imu">IMU</i> (la centrale inertielle, l'oreille interne du robot) est écrite dans le dossier courant. Lancés depuis un autre dossier, ils ne retrouvent pas leurs fichiers.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. L'environnement virtuel et pip</h2>
+    <p>Le <i class="t" data-t="runtime">runtime</i>, le programme qui tourne sur le Pi pendant la marche, a besoin de bibliothèques à des versions exactes : onnxruntime 1.18.1, numpy 1.26.4, rustypot 0.1.0. Un <i class="t" data-t="venv">environnement virtuel</i> (en anglais <em>virtual environment</em>, abrégé venv) est un dossier isolé qui contient une version de Python et ces bibliothèques, sans mélange avec le reste du système. Image mentale : la caisse à outils du projet, rangée à part de l'atelier commun.</p>
+    <h3>L'activer</h3>
+    <pre><code>source chemin/du/venv/bin/activate
+source ~/.virtualenvs/open-duck-mini-runtime/bin/activate
+workon open-duck-mini-runtime       # raccourci équivalent</code></pre>
+    <p>L'invite affiche alors le nom de l'environnement entre parenthèses. Il faut l'activer à chaque nouvelle connexion ; l'image prête du canard essaie de le faire automatiquement à la connexion SSH. <code>deactivate</code> en sort.</p>
+    <h3>pip install -e .</h3>
+    <p><i class="t" data-t="pip">pip</i> est l'installateur de bibliothèques Python. Dans le dossier du dépôt, <code>pip install -e .</code> se lit ainsi : <code>.</code> = « ce dossier-ci » ; <code>-e</code> = « éditable » : le runtime est installé en lien direct avec le dossier, donc une modification d'un de ses fichiers est prise en compte sans réinstaller. pip lit dans <code>setup.cfg</code> la liste des bibliothèques à installer, avec leurs versions.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Sur l'image prête, l'environnement s'appelle <code>open-duck-mini-runtime</code>. Si l'invite ne l'affiche pas après la connexion, on tape <code>workon open-duck-mini-runtime</code> avant tout script.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Lancer <code>pip install</code> ou un script sans avoir activé l'environnement. Sous Bookworm, pip refuse avec <code>externally-managed-environment</code> ; un script, lui, ne trouve pas ses bibliothèques. Premier réflexe devant une erreur : l'environnement est-il activé ?</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. Se repérer dans le dépôt du runtime</h2>
+    <p>Le runtime vient du dépôt <code>Open_Duck_Mini_Runtime</code>, branche <code>v2</code>.</p>
+    <pre><code>~/Open_Duck_Mini_Runtime/
+├── scripts/                     les programmes qu'on lance
+│   └── polynomial_coefficients.pkl
+├── mini_bdx_runtime/            la bibliothèque : servos, IMU, contacts
+├── setup.cfg                    les dépendances et leurs versions
+└── example_config.json          modèle de fichier de réglages
+~/duck_config.json               NOS réglages
+BEST_WALK_ONNX_2.onnx            la marche, copiée depuis Open_Duck_Mini</code></pre>
+    <dl class="def">
+      <dt><code>scripts/</code></dt><dd>Ce que nous lançons : configuration, vérification, calibration, marche.</dd>
+      <dt><code>mini_bdx_runtime/</code></dt><dd>Le moteur commun à tous les scripts. On le lit, on n'y touche pas.</dd>
+      <dt><code>duck_config.json</code></dt><dd>Le <i class="t" data-t="duck-config">fichier de réglages</i> propre à notre robot, dans le dossier personnel. On le crée en copiant le modèle : <code>cp example_config.json ~/duck_config.json</code>.</dd>
+      <dt><code>polynomial_coefficients.pkl</code></dt><dd>Les <i class="t" data-t="mouvement-reference">mouvements de référence</i> résumés en formules, avec la période de pas de 0,54 s. Un <code>.pkl</code> est une sauvegarde Python binaire.</dd>
+      <dt><code>BEST_WALK_ONNX_2.onnx</code></dt><dd>La marche apprise, au format <i class="t" data-t="onnx">ONNX</i> : un réseau de neurones de 101 entrées et 14 sorties.</dd>
+    </dl>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Ouvrir un <code>.pkl</code> ou un <code>.onnx</code> dans nano « pour voir », puis enregistrer. Ce sont des fichiers binaires : ils sont détruits.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Lire et modifier un fichier JSON</h2>
+    <p>Le <i class="t" data-t="json">JSON</i> est un format texte de réglages : des paires <code>"clé": valeur</code> séparées par des virgules, entre accolades. Une valeur peut être un nombre, <code>true</code> ou <code>false</code>, un texte entre guillemets, ou un groupe entre accolades. Voici le modèle fourni, avec <code>start_paused</code> passé à <code>true</code> :</p>
+    <pre><code>{
+    "start_paused": true,
+    "imu_upside_down": false,
+    "phase_frequency_factor_offset": 0.0,
+    "expression_features": {
+        "eyes": false,
+        "projector": false,
+        "antennas": false,
+        "speaker": false,
+        "microphone": false,
+        "camera": false
+    },
+    "joints_offsets": {
+        "left_hip_yaw": 0.0,
+        "left_hip_roll": 0.0,
+        "left_hip_pitch": 0.0,
+        "left_knee": 0.0,
+        "left_ankle": 0.0,
+        "neck_pitch": 0.0,
+        "head_pitch": 0.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.00,
+        "right_hip_yaw": 0.0,
+        "right_hip_roll": 0.0,
+        "right_hip_pitch": 0.0,
+        "right_knee": 0.0,
+        "right_ankle": 0.0
+    }
+}</code></pre>
+    <p><code>start_paused</code> : à <code>true</code>, la marche attend l'appui sur A. <code>imu_upside_down</code> : capteur monté à l'envers ou non. <code>phase_frequency_factor_offset</code> : ajuste la cadence des pas. <code>joints_offsets</code> : les 14 décalages de zéro, mesurés sur notre robot.</p>
+    <h3>Cinq pièges, et ce que Python répond</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Piège</th><th>Écrit ainsi</th><th>Message (sur le fichier ci-dessus)</th></tr></thead>
+      <tbody>
+        <tr><td>Virgule après le dernier élément</td><td><code>"right_ankle": 0.0,</code></td><td><code>Expecting property name enclosed in double quotes: line 28 column 5</code></td></tr>
+        <tr><td>Virgule oubliée</td><td><code>"start_paused": true</code></td><td><code>Expecting ',' delimiter: line 3 column 5</code></td></tr>
+        <tr><td>Majuscule</td><td><code>True</code>, <code>False</code></td><td><code>Expecting value: line 2 column 21</code></td></tr>
+        <tr><td>Virgule décimale</td><td><code>0,05</code> au lieu de <code>0.05</code></td><td><code>Expecting property name enclosed in double quotes: line 4 column 40</code></td></tr>
+        <tr><td>Guillemets typographiques</td><td><code>“start_paused”</code></td><td><code>Expecting property name enclosed in double quotes: line 2 column 5</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Pour vérifier un fichier après chaque modification : <code>python -m json.tool ~/duck_config.json</code>. S'il est valide, il s'affiche ; sinon, un de ces messages. La ligne indiquée est l'endroit où Python s'est arrêté : la faute est là ou juste avant.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le message « line 28 column 5 » désigne l'accolade qui ferme <code>joints_offsets</code>. La vraie faute est à la ligne 27 : la virgule après <code>"right_ankle": 0.0</code>.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Tour guidé des scripts</h2>
+    <p>Tous se lancent depuis <code>scripts/</code>, environnement activé, robot sur support ou banc, mains hors des articulations.</p>
+    <h3>configure_motor.py --id N</h3>
+    <p>Un servo neuf à la fois sur le bus. Le script cherche l'ID d'usine 1, écrit le <i class="t" data-t="gain-p">gain P</i> (la raideur du servo) = 32, I = 0, D = 0, accélération 0, mode 0, donne le nouvel <i class="t" data-t="id-servo">ID</i>, puis envoie le servo en position 0 : on monte alors le palonnier aligné. Seul réglage à choisir : le numéro (10 à 14, 20 à 24, 30 à 33). Option <code>--port</code> si la carte n'est pas sur <code>/dev/ttyACM0</code>.</p>
+    <h3>check_motors.py</h3>
+    <p>Sans option. Il interroge les 14 servos, liste ceux qui ne répondent pas et demande s'il faut continuer (<code>y/n</code>). Puis, servo par servo, il demande « Test this motor? » et le fait bouger de 0,1 rad avant de le ramener.</p>
+    <h3>check_voltage.py</h3>
+    <p>Affiche la tension vue par chaque servo de la liste écrite dans le script. Utile pour traquer une chute de tension sous charge, cause d'<i class="t" data-t="crc">erreurs CRC</i> (issue #49).</p>
+    <h3>find_soft_offsets.py</h3>
+    <p>Pour chaque articulation, il coupe le couple, vous la placez à zéro à la main, il mesure l'<i class="t" data-t="offset">offset</i> (décalage de zéro). À la fin, il affiche les valeurs : on les recopie dans <code>joints_offsets</code> de <code>~/duck_config.json</code>. L'issue #32 rapporte une tête et une jambe qui ont bougé ensemble et cassé des pièces : robot sur support, une articulation à la fois.</p>
+    <h3>calibrate_imu.py</h3>
+    <p>Attend que l'IMU soit entièrement calibrée, puis écrit <code>imu_calib_data.pkl</code> dans le dossier courant. D'où la règle : on le lance depuis le dossier où l'on lancera la marche.</p>
+    <h3>turn_on.py</h3>
+    <p>Met les servos sous tension en douceur : gain P = 2, amène le robot en posture initiale, puis remonte le gain.</p>
+    <h3>v2_rl_walk_mujoco.py --onnx_model_path BEST_WALK_ONNX_2.onnx</h3>
+    <p>La marche. Elle exécute la <i class="t" data-t="politique">politique</i> (le réseau qui décide des mouvements) avec <code>start_paused</code> lu dans la configuration. Ses options par défaut ne se touchent pas :</p>
+    <ul>
+      <li><code>-p 30</code> : gain P des jambes (8 pour la tête) ;</li>
+      <li><code>-c 50</code> : <i class="t" data-t="frequence-controle">fréquence de contrôle</i> de 50 Hz, un calcul toutes les 20 ms ;</li>
+      <li><code>-a 0.25</code> : <i class="t" data-t="action-scale">action_scale</i>, qui réduit les sorties du réseau ;</li>
+      <li><code>--cutoff_frequency</code> : filtre désactivé par défaut. On ne l'active pas.</li>
+    </ul>
+    <p>Ce qu'on peut ajuster sans danger : <code>phase_frequency_factor_offset</code> dans la configuration, ou la croix de la manette (cadence ±0,05).</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Phase 2, sur le banc : <code>python configure_motor.py --id 10</code> avec un seul servo branché, on le débranche, <code>--id 11</code> avec le second, puis on les rebranche ensemble et <code>python check_motors.py</code>.</p></div>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi c'est comme ça.</strong> La politique a appris en simulation avec exactement P = 30, 50 Hz, action_scale 0,25 et sans filtre. Changer une de ces valeurs, c'est lui présenter un robot qu'elle n'a jamais vu : elle le fera tomber.</div></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Monter P « pour que le robot soit plus ferme ». La marche apprise ne correspond plus au robot.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Lire une erreur Python</h2>
+    <p>Quand un script plante, Python affiche un <strong>Traceback</strong> (trace de pile) : le chemin suivi dans le code jusqu'à l'erreur, du plus général en haut au plus précis en bas. <strong>On lit la dernière ligne d'abord</strong> : le type d'erreur, deux-points, l'explication. On remonte ensuite seulement si besoin.</p>
+    <pre><code>Traceback (most recent call last):
+  File "/home/bdxv2/Open_Duck_Mini_Runtime/scripts/check_motors.py", line 6, in &lt;module&gt;
+    from mini_bdx_runtime.rustypot_position_hwi import HWI
+ModuleNotFoundError: No module named 'mini_bdx_runtime'</code></pre>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Ce Traceback est celui de <code>check_motors.py</code> lancé sans environnement activé. Dernière ligne : la bibliothèque du runtime est introuvable. Ligne du dessus : c'est la ligne 6 du script, celle qui l'importe. Remède : <code>workon open-duck-mini-runtime</code>.</p></div>
+    <div class="tw"><table>
+      <thead><tr><th>Dernière ligne</th><th>Ce que ça veut dire</th><th>Que faire</th></tr></thead>
+      <tbody>
+        <tr><td><code>ModuleNotFoundError: No module named '…'</code></td><td>Une bibliothèque est introuvable.</td><td>Activer l'environnement ; sinon <code>pip install -e .</code> dans le dépôt.</td></tr>
+        <tr><td><code>FileNotFoundError: [Errno 2] No such file or directory: '…'</code></td><td>Un fichier n'est pas là où le script le cherche.</td><td><code>pwd</code> : êtes-vous dans <code>scripts/</code> ? Le nom est-il exact ?</td></tr>
+        <tr><td><code>PermissionError: [Errno 13] Permission denied: '/dev/ttyACM0'</code></td><td>L'utilisateur n'a pas le droit d'ouvrir le port des servos.</td><td>L'ajouter au groupe <code>dialout</code> (<code>sudo usermod -aG dialout $USER</code>), se reconnecter.</td></tr>
+        <tr><td><code>SerialException: [Errno 2] could not open port /dev/ttyACM0</code></td><td>Le port n'existe pas ou est occupé.</td><td>Câble USB, <code>ls /dev/ttyACM*</code>, service de marche arrêté ?</td></tr>
+      </tbody>
+    </table></div>
+    <p>Selon la bibliothèque utilisée par le script, le même problème de port peut apparaître sous un autre nom d'erreur, ou à l'intérieur d'une <code>SerialException</code>. Le mot qui compte est le port, <code>/dev/ttyACM0</code>.</p>
+    <p>Deux messages ne sont pas des plantages Python mais des lignes de <i class="t" data-t="log">log</i> à reconnaître : « Parsing error in set_kps() » (servos aux <i class="t" data-t="firmware">firmwares</i> différents, issue #26) et les erreurs CRC (message abîmé sur le bus).</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Lire « Traceback » en haut, prendre peur, et envoyer une photo floue de l'écran sur Signal. On ouvre une issue avec la commande lancée, les dernières lignes copiées en texte, et ce qu'on avait fait juste avant.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Les 5 lignes de Python à comprendre</h2>
+    <pre><code>vitesse_max = 0.15                    # une variable : un nom, une valeur
+jambe_droite = [10, 11, 12, 13, 14]   # une liste : des valeurs dans l'ordre
+reglages = {"start_paused": True}     # un dictionnaire : des paires clé: valeur
+for id_servo in jambe_droite:         # une boucle : pour chaque élément…
+    if id_servo == 13:                # une condition : seulement si c'est vrai
+        print("genou droit")</code></pre>
+    <ul>
+      <li><strong>Variable</strong> : <code>=</code> range une valeur sous un nom. Ici la vitesse avant maximale de la manette, 0,15 m/s, écrite avec un point.</li>
+      <li><strong>Liste</strong> : entre crochets, dans l'ordre. Ici les ID de la jambe droite.</li>
+      <li><strong>Dictionnaire</strong> : entre accolades, comme le JSON. Attention : Python écrit <code>True</code> avec une majuscule, le JSON <code>true</code> sans.</li>
+      <li><strong>Boucle for</strong> : répète le bloc décalé en dessous pour chaque élément. Le décalage (4 espaces) délimite le bloc : il n'est pas décoratif.</li>
+      <li><strong>if</strong> : n'exécute le bloc que si la condition est vraie. <code>==</code> compare, <code>=</code> range.</li>
+    </ul>
+    <p>Tout ce qui suit <code>#</code> est un commentaire, ignoré par Python.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Dans <code>check_voltage.py</code>, vous reconnaîtrez un dictionnaire <code>joints</code> qui associe chaque articulation à son ID, puis une boucle <code>for</code> qui affiche la tension de chacune. Sur le banc, avec deux servos seulement, on en fera une copie dans notre dossier <code>biscalab/</code> qui ne garde que 10 et 11.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. « Policy control budget exceeded »</h2>
+    <p>La marche doit faire un tour complet (lire les capteurs, calculer, envoyer les consignes) toutes les 20 ms. Quand un tour dure plus, le script affiche « Policy control budget exceeded by » suivi du dépassement en secondes. Le robot réagit alors en retard sur ce que la politique attend.</p>
+    <p>On note quand le message apparaît (au lancement, en marche, en continu), on vérifie qu'aucun autre programme lourd ne tourne (<code>top</code>, <kbd>q</kbd> pour quitter), et on ouvre une issue avec le log.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>9. Noter ce qu'on a changé</h2>
+    <p>Un réglage qui n'est écrit nulle part sera perdu au prochain reflashage. Deux traces, toujours :</p>
+    <ul>
+      <li>le <i class="t" data-t="journal-de-bord">journal de bord</i> de la séance : ce qu'on a changé, pourquoi, ce qu'on a observé ;</li>
+      <li>un commit dans notre dépôt du runtime : <code>biscalab/duck_config.json</code>, avec la date dans le message.</li>
+    </ul>
+    <p>Pour rapatrier le fichier sur le PC, dans PowerShell : <code>scp bdxv2@bdxv2.local:~/duck_config.json .</code> (le point final = « ici »). On le copie dans <code>biscalab/</code> du clone, puis GitHub Desktop : résumé « Offsets après calibration du … », Commit, Push. Ce qui a marché à l'installation va dans <code>biscalab/INSTALL-biscalab.md</code>. On ne modifie jamais un fichier de l'amont ; une correction utile à tous est proposée à Antoine Pirrone par pull request (voir <a href="#cours-git">cours 1</a>).</p>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : le banc servo (Pi avec l'image prête, carte Waveshare, servos 10 et 11 configurés, alimentation de laboratoire réglée à 7,4 V et limitée en courant), un PC avec PowerShell. Durée : environ 25 min.</p>
+    <ol class="steps">
+      <li><div><b>Se placer</b> : <code>ssh bdxv2@bdxv2.local</code>, vérifier que l'environnement est actif, <code>cd ~/Open_Duck_Mini_Runtime/scripts</code>.</div></li>
+      <li><div><b>Sauvegarder</b> : <code>cp ~/duck_config.json ~/duck_config.json.bak</code>.</div></li>
+      <li><div><b>Modifier</b> : <code>nano ~/duck_config.json</code>, passer <code>start_paused</code> à la valeur inverse, enregistrer. Vérifier avec <code>python -m json.tool ~/duck_config.json</code>.</div></li>
+      <li><div><b>Se tromper exprès</b> : écrire <code>True</code> avec une majuscule, revérifier, lire le message, corriger. Remettre enfin <code>start_paused</code> à <code>true</code>.</div></li>
+      <li><div><b>Tester</b> : <code>python check_motors.py</code>. Les 12 servos absents sont signalés, avec beaucoup de messages d'erreur : c'est normal sur le banc. Répondre <code>y</code>, puis Entrée. Tester 10 et 11 : chacun bouge de 0,1 rad et revient.</div></li>
+      <li><div><b>Provoquer une erreur</b> : débrancher le câble USB de la Waveshare, relancer. Le script affiche « Error connecting to hardware », un Traceback, puis « Check that the robot is powered on and USB connection is correct ». Lire la dernière ligne du Traceback.</div></li>
+      <li><div><b>Réparer</b> : rebrancher, <code>ls /dev/ttyACM*</code>, relancer : tout répond.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> un fichier de réglages valide avec <code>start_paused</code> à <code>true</code>, deux servos testés, et dans le journal de séance le message d'erreur copié et sa cause.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary><code>ModuleNotFoundError: No module named 'onnxruntime'</code> : que vérifier en premier ?</summary><p>Que l'environnement virtuel est activé. S'il l'est, réinstaller avec <code>pip install -e .</code> dans le dépôt.</p></details>
+    <details class="quiz"><summary>Qu'est-ce qui ne va pas dans <code>"start_paused": True,</code> placé juste avant l'accolade finale ?</summary><p>Deux fautes : <code>True</code> doit s'écrire <code>true</code> en JSON, et la virgule avant l'accolade est interdite.</p></details>
+    <details class="quiz"><summary>Pourquoi ne pas lancer la marche avec <code>-p 40</code> pour un robot plus ferme ?</summary><p>La politique a été entraînée avec P = 30. Un autre gain lui présente un robot inconnu : elle le fait tomber.</p></details>
+    <details class="quiz"><summary>Depuis quel dossier lance-t-on la marche, et pourquoi ?</summary><p>Depuis <code>scripts/</code> : le script y lit <code>polynomial_coefficients.pkl</code>, et la calibration de l'IMU y a été écrite.</p></details>
+    <details class="quiz"><summary>Que signifie « Policy control budget exceeded » ?</summary><p>Un tour de boucle a dépassé 20 ms : le robot réagit en retard. On note les circonstances et on ouvre une issue avec le log.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li><code>python nom.py --option valeur</code>, depuis <code>scripts/</code>, environnement activé.</li>
+      <li>Première cause d'erreur : l'environnement virtuel n'est pas activé.</li>
+      <li><code>pip install -e .</code> installe le runtime en lien direct avec son dossier.</li>
+      <li>JSON : guillemets droits, <code>true</code>/<code>false</code> en minuscules, point décimal, pas de virgule finale. Vérifier avec <code>python -m json.tool</code>.</li>
+      <li>On ne touche pas à P = 30, 50 Hz, action_scale 0,25, ni au filtre.</li>
+      <li>Un Traceback se lit par la dernière ligne.</li>
+      <li>Chaque changement : une ligne au journal, un commit de <code>duck_config.json</code>.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-methode">Mener un projet technique à plusieurs</a>.</p>
+  </div>
+</section>

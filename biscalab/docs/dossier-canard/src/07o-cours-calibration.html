@@ -1,0 +1,267 @@
+<section class="page" id="page-cours-calibration" data-title="Cours · Calibration" data-sub="Mise en route pas à pas" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 15 · Marche</div>
+    <h1>Calibrer et mettre en route le robot, pas à pas</h1>
+    <p class="lead">Le canard est monté. Il faut maintenant que le logiciel sache exactement où sont ses articulations, dans quel sens est son IMU et si ses pieds touchent le sol. Ce cours déroule la procédure dans l'ordre, avec ce qu'on note à chaque étape.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 90 min</span>
+      <span class="pill mute">Niveau : intermédiaire</span>
+      <span class="pill mute">Prérequis : servos, capteurs, Pi, marche</span>
+      <span class="pill p">Rôles : électronique, logiciel, sécurité</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Expliquer pourquoi chaque robot a ses propres réglages de zéro.</li>
+      <li>Configurer les 14 servos et vérifier qu'ils répondent tous.</li>
+      <li>Mesurer les décalages de zéro sans casser de pièce.</li>
+      <li>Calibrer et orienter l'IMU, tester les contacts de pied.</li>
+      <li>Réussir le test debout, puis une première marche sous potence.</li>
+      <li>Remplir la fiche de test de la phase 5.</li>
+    </ul>
+    <p class="muted"><strong>Prérequis :</strong> cours <a href="#cours-servos">Servomoteurs</a>, <a href="#cours-capteurs">Capteurs</a>, <a href="#cours-raspberry">Raspberry Pi</a>, <a href="#cours-securite">Sécurité</a>, <a href="#cours-marche">Marche</a> et <a href="#cours-rl">Simulation</a>.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Ce qu'est la calibration</h2>
+    <p>Une balance de cuisine se remet à zéro avant chaque pesée : c'est la tare. Un robot aussi. Un <i class="t" data-t="palonnier">palonnier</i>, la pièce vissée sur l'axe du servo, s'emboîte sur cet axe par des crans : on ne peut jamais l'aligner parfaitement. Il reste un petit écart entre le « zéro » du servo et la position où l'articulation est vraiment droite. Cet écart s'appelle l'<i class="t" data-t="offset">offset</i> (décalage de zéro).</p>
+    <p>Calibrer, c'est mesurer ces écarts et les écrire dans <i class="t" data-t="duck-config">duck_config.json</i>, le fichier de réglages propre à notre robot. Le logiciel les retranche ensuite à chaque ordre.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Nos 14 offsets ne ressembleront à ceux d'aucun autre canard : chaque palonnier a été posé à la main, sur un cran différent. La documentation d'origine le dit clairement : ne jamais reprendre les valeurs d'un autre robot.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Le poste de travail</h2>
+    <h3>Le matériel</h3>
+    <ul>
+      <li><strong>Support et potence.</strong> Un support qui tient le robot pieds en l'air pour les réglages ; une <i class="t" data-t="potence">potence</i> avec sangle qui le retient sans le porter pour la marche.</li>
+      <li><strong>Alimentation.</strong> Une <i class="t" data-t="alim-labo">alimentation de laboratoire</i> réglée à 7,4 V, limitée en courant comme indiqué au cours <a href="#cours-securite">Sécurité</a>. Pas de batterie avant la phase 6. La carte servo est donnée pour 9 à 12,6 V alors que le canard l'alimente en 7,4 V : à vérifier au banc.</li>
+      <li><strong>PC.</strong> Connecté au Pi en <i class="t" data-t="ssh">SSH</i>, c'est-à-dire par le réseau, depuis un terminal.</li>
+      <li><strong>Manette Xbox</strong> appairée au Pi (<i class="t" data-t="bluetooth-manette">manette Bluetooth</i>).</li>
+      <li><strong>Pied à coulisse, gabarits de zéro</strong> découpés au laser, feutre, étiquettes.</li>
+      <li><strong>Papiers.</strong> Le <i class="t" data-t="journal-de-bord">journal de bord</i> de la séance et la <i class="t" data-t="fiche-de-test">fiche de test</i> (ce qu'on vérifie, comment, avec quel critère, ce qu'on obtient), ouverts.</li>
+    </ul>
+    <h3>L'organisation</h3>
+    <p>Les commandes se lancent dans le dossier <code>scripts</code> du runtime, environnement Python activé. Trois rôles : un opérateur au clavier, un responsable de l'alimentation (main sur l'interrupteur), un secrétaire.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. La posture home</h2>
+    <p>La <i class="t" data-t="home-pose">posture home</i> est la position de repos debout de référence. Elle est définie dans la simulation et recopiée dans le runtime. Toutes les actions de la politique sont des écarts autour d'elle.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Si un offset est faux de quelques degrés, le « home » du vrai robot n'est plus celui de la simulation : chaque pas part d'une posture décalée, et la politique corrige en permanence un défaut qu'elle n'a jamais vu.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Étape 1 : configurer chaque servo avant montage</h2>
+    <p>Tous les servos sortent d'usine avec l'<i class="t" data-t="id-servo">ID</i> 1. On en branche <strong>un seul</strong> sur la carte, puis :</p>
+    <pre><code>python configure_motor.py --id 10</code></pre>
+    <p>Le script cherche le servo d'ID 1, écrit les réglages (P = 32, I = 0, D = 0, accélération 0, mode 0), lui donne son nouvel ID et le place en position 0. On monte alors le palonnier, aligné au mieux, et on écrit l'ID au feutre sur le boîtier.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Articulation</th><th>Droite</th><th>Gauche</th></tr></thead>
+      <tbody>
+        <tr><td><code>hip_yaw</code> (hanche lacet)</td><td>10</td><td>20</td></tr>
+        <tr><td><code>hip_roll</code> (hanche roulis)</td><td>11</td><td>21</td></tr>
+        <tr><td><code>hip_pitch</code> (hanche tangage)</td><td>12</td><td>22</td></tr>
+        <tr><td><code>knee</code> (genou)</td><td>13</td><td>23</td></tr>
+        <tr><td><code>ankle</code> (cheville)</td><td>14</td><td>24</td></tr>
+      </tbody>
+    </table></div>
+    <p>Cou et tête : 30 <code>neck_pitch</code>, 31 <code>head_pitch</code>, 32 <code>head_yaw</code>, 33 <code>head_roll</code>. Sur un robot déjà monté, <code>configure_all_motors.py</code> existe aussi : lire son aide avant usage.</p>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi P = 32 ici et 30 en marche.</strong> La configuration écrit des valeurs de départ dans le servo. Le script de marche impose ensuite ses propres gains (30 aux jambes, 8 à la tête) : c'est ce réglage-là que la politique connaît.</div></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Brancher deux servos neufs à la fois : ils portent tous deux l'ID 1 et répondent ensemble. Un servo, un ID, une étiquette, une ligne dans le journal.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Étape 2 : vérifier le bus</h2>
+    <p>Robot monté, sur son support, pieds en l'air :</p>
+    <pre><code>python check_motors.py
+python check_voltage.py</code></pre>
+    <p><code>check_motors.py</code> fait bouger chaque servo de 0,1 rad (environ 6°) : les 14 doivent répondre et bouger, chacun à sa place. <code>check_voltage.py</code> lit la tension vue par les servos ; elle doit être cohérente avec l'affichage de l'alimentation.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Si le servo 13 bouge quand on attend le genou gauche, c'est que deux ID ou deux câbles ont été intervertis : on corrige avant d'aller plus loin.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Étape 3 : mesurer les offsets</h2>
+    <h3>La procédure</h3>
+    <pre><code>python find_soft_offsets.py</code></pre>
+    <p>Pour chaque articulation, le script coupe le couple du servo. On place l'articulation à la main sur son zéro mécanique, c'est-à-dire la position que la CAO définit comme zéro, en s'aidant d'un gabarit ; le script mesure l'écart avec le zéro du servo. Le résultat s'écrit dans <code>~/duck_config.json</code>, section <code>joints_offsets</code>.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Les gabarits de zéro font partie des usages prévus de la découpeuse laser : des cales en contreplaqué, dessinées d'après la CAO, qui fixent l'angle entre deux pièces pendant la mesure. On les prépare avant la séance, un par type d'articulation.</p></div>
+    <h3>Trois règles de sécurité</h3>
+    <ul>
+      <li>Robot sur support, jamais posé au sol.</li>
+      <li>Une articulation à la fois.</li>
+      <li>Mains hors du robot dès que le script fait bouger quelque chose.</li>
+    </ul>
+    <h3>Enregistrer le résultat</h3>
+    <p>Une fois les 14 valeurs mesurées, on copie le fichier dans notre dépôt et on fait un <i class="t" data-t="commit">commit</i> (un enregistrement daté dans l'historique) avec le message « offsets du jour ».</p>
+    <div class="note bad"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Lancer le script sur un robot debout ou tenu à la main. Un constructeur a vu la tête et une jambe bouger en même temps pendant ce script, et des pièces ont cassé (issue n° 32 du runtime).</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Étape 4 : l'IMU</h2>
+    <p>L'<i class="t" data-t="imu">IMU</i> est l'oreille interne du robot. Sur le canard, c'est une <i class="t" data-t="bno055">BNO055</i> : accéléromètre, gyroscope et <i class="t" data-t="magnetometre">magnétomètre</i> (boussole), avec un petit processeur qui combine les trois.</p>
+    <ol>
+      <li><strong>Valeurs brutes.</strong> Avec le module <code>raw_imu.py</code> du runtime, vérifier que les valeurs sont stables robot immobile : ni figées, ni sautantes.</li>
+      <li><strong>Repère.</strong> Lancer <code>imu_server.py</code> sur le Pi et <code>imu_client.py --ip</code> suivi de l'adresse du Pi sur le PC. Pencher le robot en avant, puis sur le côté : l'affichage doit suivre dans le bon sens.</li>
+      <li><strong>Sens de montage.</strong> Si l'IMU est montée à l'envers, mettre <code>imu_upside_down</code> à <code>true</code>.</li>
+      <li><strong>Calibration.</strong> Lancer <code>calibrate_imu.py</code> et bouger le robot en dessinant des huit dans l'air, puis dans plusieurs orientations, jusqu'à la fin du script. Il écrit <code>imu_calib_data.pkl</code> dans le dossier d'où on l'a lancé.</li>
+    </ol>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le modèle de simulation place l'IMU en un point précis du tronc (coordonnées −0,08 ; 0 ; 0,05 m). On la fixe exactement à l'emplacement prévu par les pièces. Si ses valeurs se figent ou si des erreurs <code>[IMU]:</code> apparaissent, on regarde d'abord le bus <i class="t" data-t="i2c">I²C</i> (les deux fils de données qui relient l'IMU au Pi) : voir le cas (l) du dépannage.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Lancer la marche depuis un autre dossier que celui qui contient <code>imu_calib_data.pkl</code>. Le runtime affiche alors « running uncalibrated » (marche sans calibration). On lance toujours depuis le même dossier.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Étape 5 : les contacts de pied</h2>
+    <p>Chaque pied a deux <i class="t" data-t="contact-pied">contacts</i> câblés sur une même broche : GPIO22 (broche 15) à gauche, GPIO27 (broche 13) à droite. Une <i class="t" data-t="pull-up">résistance de pull-up</i> tient l'entrée haute ; un contact appuyé la tire à 0 V (« actif bas »).</p>
+    <p>Lancer <code>feet_contacts.py</code> (dans <code>mini_bdx_runtime</code>) et presser chaque interrupteur, un par un : la valeur du bon pied doit changer, puis revenir au relâchement. Quatre interrupteurs, quatre essais, quatre lignes dans le journal.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Les interrupteurs SS-10 sont pressés à force dans la semelle au montage des pieds. Un interrupteur trop enfoncé reste appuyé en permanence : ce test le révèle tout de suite, avant que la politique ne croie un pied toujours posé.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>9. Étape 6 : le test debout</h2>
+    <pre><code>python turn_on.py</code></pre>
+    <p>Le script active les servos avec un gain très faible (P = 2), puis le remonte : le robot rejoint la posture home en douceur. On commence sur support, puis pieds posés sur la table, sous potence.</p>
+    <p>Nos critères : posture home tenue 2 minutes, servos tièdes au toucher, aucune <i class="t" data-t="crc">erreur CRC</i> (message abîmé sur le bus) dans le terminal.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>À P = 2, le robot est mou : c'est voulu, il force peu. Si un servo claque, vibre ou chauffe pendant la montée du gain, on coupe l'alimentation, on note l'ID et on cherche la cause avant de recommencer.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>10. Étape 7 : la première marche</h2>
+    <p>Dans <code>duck_config.json</code>, <code>start_paused</code> à <code>true</code> : le robot attend le bouton A au lieu de partir tout de suite. Robot sous potence, sol plat, opérateur alimentation prêt. Depuis le dossier qui contient les fichiers pkl :</p>
+    <pre><code>python v2_rl_walk_mujoco.py --onnx_model_path BEST_WALK_ONNX_2.onnx</code></pre>
+    <ol>
+      <li>Appuyer sur A. Consigne nulle : le canard doit piétiner sur place.</li>
+      <li>Pousser très légèrement le stick vers l'avant : petite vitesse.</li>
+      <li>A pour mettre en pause. En cas de doute, couper l'alimentation.</li>
+    </ol>
+    <p>Le script tourne à 50 Hz (sa <i class="t" data-t="frequence-controle">fréquence de contrôle</i> : une décision toutes les 20 ms), avec P = 30 aux jambes et 8 à la tête, et un <i class="t" data-t="action-scale">action_scale</i> de 0,25 (le facteur qui réduit les ordres de la politique). Avec l'image prête du Pi, on peut aussi démarrer en tenant un pied : le droit lance la marche, le gauche le mode tête.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Consigne nulle, le canard piétine : ce n'est pas un défaut, c'est ainsi qu'un bipède reste en équilibre (cours <a href="#cours-marche">Marche</a>). On le laisse piétiner une minute sous potence avant de toucher au stick, et on filme.</p></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Tester le bouton Y « pour voir » : il commande la tête pendant la marche, et le projet d'origine le signale comme dangereux.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>11. Étape 8 : les mesures à consigner</h2>
+    <ul>
+      <li><strong>Courant crête</strong>, lu sur l'alimentation pendant la marche.</li>
+      <li><strong>Température des servos après 5 minutes</strong>, au toucher ou au thermomètre sans contact. La protection interne coupe à 70 °C.</li>
+      <li><strong>Absence du message « Policy control budget exceeded »</strong> pendant tout l'essai : la boucle a tenu ses 20 ms.</li>
+      <li><strong>Fréquence réelle</strong> de la boucle, si le terminal l'affiche ; sinon, l'absence du message ci-dessus en tient lieu.</li>
+    </ul>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Si l'alimentation de labo passe en limitation de courant pendant la marche, les servos n'ont pas reçu ce qu'ils demandaient : l'essai n'est pas représentatif. On le note, et on décide en équipe, avec le responsable sécurité, s'il faut relever la limite.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>12. Le fichier duck_config.json</h2>
+    <h3>Le fichier complet</h3>
+    <p>C'est un fichier <i class="t" data-t="json">JSON</i> : des paires « clé » : valeur entre accolades. Le JSON n'accepte pas de commentaires : ils sont dans le tableau. Les valeurs ci-dessous sont des valeurs d'attente ; la structure et les noms des 14 clés sont ceux du fichier d'exemple du dépôt, les offsets réels viennent de la mesure.</p>
+    <pre><code>{
+  "start_paused": true,
+  "imu_upside_down": false,
+  "phase_frequency_factor_offset": 0.0,
+  "expression_features": {
+    "eyes": false, "projector": false, "antennas": false,
+    "speaker": false, "microphone": false, "camera": false
+  },
+  "joints_offsets": {
+    "right_hip_yaw": 0.0, "right_hip_roll": 0.0, "right_hip_pitch": 0.0,
+    "right_knee": 0.0, "right_ankle": 0.0,
+    "left_hip_yaw": 0.0, "left_hip_roll": 0.0, "left_hip_pitch": 0.0,
+    "left_knee": 0.0, "left_ankle": 0.0,
+    "neck_pitch": 0.0, "head_pitch": 0.0, "head_yaw": 0.0, "head_roll": 0.0
+  }
+}</code></pre>
+    <h3>Les clés, une par une</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Clé</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td><code>joints_offsets</code></td><td>les 14 offsets, mesurés par <code>find_soft_offsets.py</code> (qui les affiche) et recopiés ici ; on ne modifie pas les noms des clés</td></tr>
+        <tr><td><code>imu_upside_down</code></td><td><code>true</code> si l'IMU est montée à l'envers</td></tr>
+        <tr><td><code>start_paused</code></td><td><code>true</code> : attendre le bouton A avant de marcher</td></tr>
+        <tr><td><code>phase_frequency_factor_offset</code></td><td>correction de la fréquence des pas, trouvée à la manette</td></tr>
+        <tr><td><code>expression_features</code></td><td>six interrupteurs (yeux, projecteur, antennes, haut-parleur, micro, caméra) ; tous à <code>false</code> tant que rien n'est monté</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Une virgule oubliée ou en trop, et le fichier devient illisible. On garde la copie commitée ; en cas de doute, on la compare ligne à ligne.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>13. Réglages autorisés et interdits</h2>
+    <p>Une fois la marche obtenue, deux réglages sont permis : la fréquence des pas, par crans de ±0,05 avec la croix de la manette (la valeur trouvée va dans <code>phase_frequency_factor_offset</code>), et le sprint ×1,3 sur LB.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Interdit</th><th>Valeur à garder</th><th>Raison</th></tr></thead>
+      <tbody>
+        <tr><td><i class="t" data-t="gain-p">Gain P</i></td><td>30 aux jambes</td><td>la raideur apprise en dépend</td></tr>
+        <tr><td>Filtre <code>--cutoff_frequency</code></td><td>désactivé</td><td>ajoute un retard inconnu de la politique</td></tr>
+        <tr><td>action_scale</td><td>0,25</td><td>fausse toutes les amplitudes</td></tr>
+        <tr><td>Fréquence</td><td>50 Hz</td><td>l'horloge de marche est calée dessus</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>14. La fiche de test de la phase 5</h2>
+    <p>La phase 5 (tête, calibration, première marche filaire) se clôt par une fiche de test. Voici le modèle rempli ; la colonne « Mesuré » se complète le jour de l'essai.</p>
+    <p><strong>En-tête :</strong> date, présents, version de l'image du Pi, numéro du commit de <code>duck_config.json</code>, tension réglée (7,4 V).</p>
+    <div class="tw"><table>
+      <thead><tr><th>Vérification</th><th>Méthode</th><th>Critère</th><th>Mesuré</th></tr></thead>
+      <tbody>
+        <tr><td>Bus servo</td><td><code>check_motors.py</code></td><td>14 sur 14 bougent de 0,1 rad, à la bonne place</td><td>… / 14</td></tr>
+        <tr><td>Tension</td><td><code>check_voltage.py</code></td><td>cohérente avec l'alimentation</td><td>… V</td></tr>
+        <tr><td>Offsets</td><td><code>find_soft_offsets.py</code></td><td>14 clés, fichier commité</td><td>commit …</td></tr>
+        <tr><td>IMU</td><td>client, calibration</td><td>repère juste, pas de « running uncalibrated »</td><td>oui / non</td></tr>
+        <tr><td>Contacts</td><td><code>feet_contacts.py</code></td><td>4 interrupteurs vus</td><td>… / 4</td></tr>
+        <tr><td>Debout</td><td><code>turn_on.py</code></td><td>home tenue 2 min, aucune erreur CRC</td><td>… min, … erreurs</td></tr>
+        <tr><td>Piétinement</td><td>marche, consigne nulle</td><td>régulier, sous potence</td><td>oui / non</td></tr>
+        <tr><td>Marche avant</td><td>stick à peine poussé</td><td>avance sans chute</td><td>oui / non</td></tr>
+        <tr><td>Courant crête</td><td>affichage de l'alimentation</td><td>à consigner</td><td>… A</td></tr>
+        <tr><td>Température à 5 min</td><td>toucher ou thermomètre</td><td>tiède, aucune coupure</td><td>… °C</td></tr>
+        <tr><td>Budget de temps</td><td>terminal</td><td>aucun « budget exceeded »</td><td>… messages</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>Décision :</strong> GO ou NO-GO, signée par le maître d'œuvre, avec la liste des réserves.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>15. Si ça ne marche pas</h2>
+    <p>On ne change pas trois choses à la fois. On note le symptôme exact et on suit le guide du cours <a href="#cours-depannage">Dépanner : du symptôme à la cause</a>.</p>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : le robot assemblé, support et potence, alimentation de labo, PC en SSH, manette, gabarits, pied à coulisse, fiche de test imprimée. Durée : 90 min, à trois (clavier, alimentation, secrétaire).</p>
+    <ol class="steps">
+      <li><div><b>Préparer</b> Poste installé, alimentation réglée, rôles attribués, journal ouvert.</div></li>
+      <li><div><b>Vérifier</b> <code>check_motors.py</code> et <code>check_voltage.py</code>.</div></li>
+      <li><div><b>Offsets</b> <code>find_soft_offsets.py</code> sur support, puis commit.</div></li>
+      <li><div><b>IMU et contacts</b> Repère, sens, calibration ; les quatre interrupteurs.</div></li>
+      <li><div><b>Debout</b> <code>turn_on.py</code>, 2 minutes en home.</div></li>
+      <li><div><b>Marcher</b> Sous potence : piétinement, puis petite vitesse avant.</div></li>
+      <li><div><b>Consigner</b> Remplir la fiche, la photographier, la déposer dans le dépôt.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> une fiche de test complète, un <code>duck_config.json</code> commité, et une décision GO ou NO-GO argumentée.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi ne pas copier les offsets d'un autre canard ?</summary><p>Parce qu'ils dépendent du cran exact de chaque palonnier, posé à la main : ils sont propres à chaque robot.</p></details>
+    <details class="quiz"><summary>Que fait <code>find_soft_offsets.py</code>, et quelle précaution prendre ?</summary><p>Il coupe le couple d'une articulation, on la place au zéro mécanique, il mesure l'écart. Robot sur support, une articulation à la fois, mains libres pendant les mouvements.</p></details>
+    <details class="quiz"><summary>Le script de marche affiche « running uncalibrated ». Pourquoi ?</summary><p><code>imu_calib_data.pkl</code> n'est pas dans le dossier d'où on lance le script.</p></details>
+    <details class="quiz"><summary>À quoi sert <code>start_paused: true</code> ?</summary><p>À ce que le robot attende le bouton A : on démarre quand tout le monde est prêt.</p></details>
+    <details class="quiz"><summary>Le canard piétine un peu vite. Que peut-on régler ?</summary><p>La fréquence des pas, à la croix (±0,05 par appui), puis reporter la valeur dans <code>phase_frequency_factor_offset</code>. Jamais P, le filtre, action_scale ou les 50 Hz.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>Les offsets sont propres à notre robot : on les mesure, on ne les copie jamais.</li>
+      <li>Un servo neuf à la fois pour lui donner son ID, étiquette comprise.</li>
+      <li>Ordre : configurer, vérifier le bus, offsets, IMU, contacts, debout, marche, mesures.</li>
+      <li><code>find_soft_offsets.py</code> : robot sur support, une articulation à la fois, mains libres.</li>
+      <li><code>imu_calib_data.pkl</code> doit être dans le dossier de lancement.</li>
+      <li>Première marche : <code>start_paused</code>, potence, sol plat, bouton A, consigne nulle d'abord.</li>
+      <li>Seules la fréquence des pas et le sprint se règlent ; P, filtre, action_scale et 50 Hz sont intouchables.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-depannage">Dépanner : du symptôme à la cause</a>.</p>
+  </div>
+</section>

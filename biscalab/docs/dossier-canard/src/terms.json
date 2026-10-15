@@ -1,0 +1,772 @@
+{
+  "git": {
+    "t": "Git",
+    "d": "Logiciel qui enregistre l'historique des fichiers d'un dossier : chaque enregistrement (commit) garde qui a changé quoi, quand et pourquoi. On peut revenir en arrière, comparer deux versions et travailler à plusieurs sans s'écraser.",
+    "c": "cours-git"
+  },
+  "github": {
+    "t": "GitHub",
+    "d": "Site web qui héberge des dépôts Git et y ajoute des outils de travail en équipe : issues, tableaux, relecture de modifications, publication de pages web. Gratuit pour les dépôts publics.",
+    "c": "cours-git"
+  },
+  "depot": {
+    "t": "Dépôt (repository)",
+    "d": "Un dossier suivi par Git, avec tout son historique. Pour le canard : le dépôt d'Antoine (l'original), le dépôt du club sur GitHub (partagé, le seul où l'on travaille) et une copie de travail sur chaque PC.",
+    "c": "cours-git"
+  },
+  "commit": {
+    "t": "Commit",
+    "d": "Un enregistrement dans l'historique : un ensemble de modifications accompagné d'un message qui dit ce qu'on a fait. C'est l'unité de base de Git.",
+    "c": "cours-git"
+  },
+  "branche": {
+    "t": "Branche",
+    "d": "Une ligne d'historique parallèle. On travaille dans une branche pour essayer quelque chose sans toucher à la ligne principale, puis on la fusionne si c'est bon. Chez nous, la ligne principale s'appelle v2 (ailleurs, souvent main).",
+    "c": "cours-git"
+  },
+  "fork": {
+    "t": "Fork",
+    "d": "Copie d'un dépôt GitHub sur un autre compte GitHub, qui reste reliée à l'original. Notre dépôt du club (JMTRIP/Open_Duck_Mini_Fablab) est un fork du dépôt d'Antoine, créé une fois pour toutes par Jean-Marie : personne d'autre n'a à en créer un.",
+    "c": "cours-git"
+  },
+  "clone": {
+    "t": "Clone",
+    "d": "Votre copie de travail du dépôt du club, sur votre PC. On la télécharge une seule fois avec GitHub Desktop, puis on la tient à jour avec Pull (récupérer) et Push (envoyer).",
+    "c": "cours-git"
+  },
+  "pull": {
+    "t": "Pull (récupérer)",
+    "d": "Télécharger sur son PC les commits que les autres ont poussés sur GitHub. À faire en arrivant, avant de travailler.",
+    "c": "cours-git"
+  },
+  "push": {
+    "t": "Push (pousser)",
+    "d": "Envoyer ses commits locaux vers GitHub pour que les autres les voient. À faire en partant.",
+    "c": "cours-git"
+  },
+  "pull-request": {
+    "t": "Pull request",
+    "d": "Proposition de fusionner une branche dans une autre, avec relecture : un collègue voit les modifications ligne par ligne, commente, puis accepte (merge).",
+    "c": "cours-git"
+  },
+  "issue": {
+    "t": "Issue",
+    "d": "Une fiche sur GitHub pour une tâche, un problème ou une question : titre, description, responsable, étiquettes. Quand c'est réglé, on la ferme. C'est notre liste de choses à faire.",
+    "c": "cours-git"
+  },
+  "milestone": {
+    "t": "Jalon (milestone)",
+    "d": "Sur GitHub, un regroupement d'issues à boucler pour une étape du projet, avec une date. Nous en avons un par phase.",
+    "c": "cours-methode"
+  },
+  "conflit": {
+    "t": "Conflit de fusion",
+    "d": "Quand deux personnes ont modifié la même ligne du même fichier, Git ne peut pas choisir : il demande à un humain. Pour les fichiers binaires (STL, FCStd) il n'y a aucune fusion possible, d'où la règle « un éditeur par fichier ».",
+    "c": "cours-git"
+  },
+  "amont": {
+    "t": "Amont (upstream)",
+    "d": "Le dépôt d'origine dont le dépôt du club est la copie : celui d'Antoine Pirrone (apirrone/Open_Duck_Mini). On n'y écrit jamais ; « Sync fork » récupère ses nouveautés dans le dépôt du club.",
+    "c": "cours-git"
+  },
+  "github-desktop": {
+    "t": "GitHub Desktop",
+    "d": "Application Windows/Mac gratuite qui fait les gestes Git avec des boutons (Fetch, Pull, Commit, Push) au lieu de la ligne de commande.",
+    "c": "cours-git"
+  },
+  "markdown": {
+    "t": "Markdown",
+    "d": "Façon d'écrire du texte avec des symboles simples (# pour un titre, - pour une liste, ** pour du gras) que GitHub affiche mis en forme. Nos journaux et fiches sont en Markdown.",
+    "c": "cours-git"
+  },
+  "csv": {
+    "t": "CSV",
+    "d": "Fichier texte de tableau : une ligne par enregistrement, les colonnes séparées par des virgules. S'ouvre dans un tableur et s'affiche en tableau sur GitHub.",
+    "c": "cours-git"
+  },
+  "licence-apache": {
+    "t": "Licence Apache-2.0",
+    "d": "Licence libre du projet amont : on peut copier, modifier et redistribuer, à condition de conserver la licence et les mentions d'auteur, et de signaler ce qu'on a modifié. Aucune garantie, aucun droit sur les marques.",
+    "c": "cours-methode"
+  },
+  "cao": {
+    "t": "CAO",
+    "d": "Conception assistée par ordinateur : dessiner des pièces en 3D dans un logiciel (FreeCAD, Onshape) pour les fabriquer ensuite. Le fichier de CAO est la « source » ; le STL en est une exportation.",
+    "c": "cours-cao"
+  },
+  "parametrique": {
+    "t": "CAO paramétrique",
+    "d": "Une pièce construite comme une suite d'opérations (esquisse, extrusion, perçage) dont les cotes sont des paramètres modifiables : changer un diamètre recalcule toute la pièce.",
+    "c": "cours-cao"
+  },
+  "solide": {
+    "t": "Solide (B-rep)",
+    "d": "Représentation exacte d'une pièce par ses surfaces mathématiques (plans, cylindres). C'est ce que contient un STEP ou un FCStd ; on peut encore le modifier proprement.",
+    "c": "cours-cao"
+  },
+  "maillage": {
+    "t": "Maillage",
+    "d": "Représentation approchée d'une pièce par des milliers de petits triangles. C'est ce que contient un STL. Parfait pour imprimer, mauvais pour modifier.",
+    "c": "cours-cao"
+  },
+  "stl": {
+    "t": "STL",
+    "d": "Format de fichier maillage (triangles) utilisé pour l'impression 3D. Pas d'unité, pas d'historique : on l'imprime, on ne le modifie pas.",
+    "c": "cours-cao"
+  },
+  "step": {
+    "t": "STEP",
+    "d": "Format d'échange de solides exacts entre logiciels de CAO. C'est le format à garder à côté de chaque fichier FreeCAD pour que les autres puissent réutiliser la pièce.",
+    "c": "cours-cao"
+  },
+  "3mf": {
+    "t": "3MF",
+    "d": "Format de projet d'impression : les pièces, leur position sur le plateau, les réglages, les supports peints. Un 3MF rejoue exactement une impression ; c'est notre façon de documenter orientation et supports.",
+    "c": "cours-impression"
+  },
+  "fcstd": {
+    "t": "FCStd",
+    "d": "Fichier natif de FreeCAD. C'est en réalité une archive zip : Git ne sait pas montrer les différences entre deux versions, il garde des copies complètes. Régler la compression à 0 et n'avoir qu'un éditeur à la fois.",
+    "c": "cours-cao"
+  },
+  "freecad": {
+    "t": "FreeCAD",
+    "d": "Logiciel libre de CAO paramétrique, hors ligne, fichiers chez nous. Version 1.0 et suivantes : atelier Part Design pour les pièces, Assembly pour les assemblages.",
+    "c": "cours-cao"
+  },
+  "onshape": {
+    "t": "Onshape",
+    "d": "Logiciel de CAO dans le navigateur. Gratuit si tous les documents sont publics. Le canard a été conçu dessus ; on peut copier le document et exporter des STL/STEP.",
+    "c": "cours-cao"
+  },
+  "tolerance": {
+    "t": "Tolérance",
+    "d": "Écart admis entre la cote dessinée et la cote réelle. Une imprimante FDM fait des trous un peu plus petits et des bossages un peu plus gros que le dessin : on compense (0,1 à 0,3 mm).",
+    "c": "cours-impression"
+  },
+  "jeu": {
+    "t": "Jeu mécanique",
+    "d": "Petit déplacement libre dans une articulation avant que le mouvement ne soit transmis (engrenages, axes). Sur le canard, la simulation suppose ±0,5° ; plus de jeu = marche moins stable.",
+    "c": "cours-assemblage"
+  },
+  "kerf": {
+    "t": "Kerf (trait de coupe)",
+    "d": "Largeur de matière que le laser brûle en passant (0,1 à 0,25 mm). Un trou sort plus grand et une pièce plus petite que le dessin ; on compense d'un demi-kerf de chaque côté.",
+    "c": "cours-laser"
+  },
+  "dxf-svg": {
+    "t": "DXF / SVG",
+    "d": "Formats de dessin 2D (traits, cercles) que lit la découpeuse laser. SVG vient du web, DXF du monde de la CAO. Les deux conviennent à XCS.",
+    "c": "cours-laser"
+  },
+  "fdm": {
+    "t": "FDM",
+    "d": "Dépôt de fil fondu : l'imprimante fait fondre un filament plastique et le dépose couche par couche. C'est la technique de notre Prusa.",
+    "c": "cours-impression"
+  },
+  "filament": {
+    "t": "Filament",
+    "d": "Le plastique en bobine (1,75 mm de diamètre) que l'imprimante fait fondre. PLA, PETG, TPU sont des matières de filament.",
+    "c": "cours-impression"
+  },
+  "couche": {
+    "t": "Hauteur de couche",
+    "d": "Épaisseur de chaque tranche déposée, typiquement 0,2 mm. Plus fin = plus précis et plus long.",
+    "c": "cours-impression"
+  },
+  "perimetre": {
+    "t": "Périmètres (parois)",
+    "d": "Les contours extérieurs de chaque couche, déposés en premier. 2 à 4 périmètres donnent une paroi de 0,8 à 1,7 mm : c'est ce qui fait la solidité d'une pièce.",
+    "c": "cours-impression"
+  },
+  "remplissage": {
+    "t": "Remplissage (infill)",
+    "d": "Le motif creux qui remplit l'intérieur d'une pièce. 15 % = la pièce est pleine à 15 %. Le canard est prévu à 15 % : sa masse en dépend, et la simulation aussi.",
+    "c": "cours-impression"
+  },
+  "support": {
+    "t": "Supports",
+    "d": "Structures jetables que l'imprimante construit sous les parties en surplomb (au-delà de 45°) pour qu'elles ne s'effondrent pas. On les casse après impression.",
+    "c": "cours-impression"
+  },
+  "orientation": {
+    "t": "Orientation d'impression",
+    "d": "La façon de poser la pièce sur le plateau. Elle décide des supports nécessaires, de la résistance (les couches se décollent plus facilement que le fil ne casse) et de l'état de surface.",
+    "c": "cours-impression"
+  },
+  "pla": {
+    "t": "PLA",
+    "d": "Filament le plus courant : facile, rigide, précis, peu cher. Ramollit vers 60 °C et flue sous charge continue. Le canard est en PLA à 15 %.",
+    "c": "cours-impression"
+  },
+  "petg": {
+    "t": "PETG",
+    "d": "Filament un peu plus souple et plus résistant à la chaleur que le PLA, plus délicat à imprimer (fils, adhérence). Pour une pièce qui chauffe ou qui plie.",
+    "c": "cours-impression"
+  },
+  "tpu": {
+    "t": "TPU",
+    "d": "Filament souple (caoutchouc imprimable). Lent à imprimer. Les semelles du canard sont en TPU : c'est leur adhérence au sol que la simulation a apprise.",
+    "c": "cours-impression"
+  },
+  "buse": {
+    "t": "Buse",
+    "d": "La pointe chauffée par laquelle sort le plastique fondu, en général 0,4 mm. Les filaments chargés de fibres (CF) l'usent : il faut une buse durcie.",
+    "c": "cours-impression"
+  },
+  "insert": {
+    "t": "Insert fileté à chaud",
+    "d": "Petit écrou en laiton qu'on fond dans un trou du plastique avec un fer à souder. Il permet de visser et dévisser des vis M3 sans abîmer la pièce.",
+    "c": "cours-assemblage"
+  },
+  "roulement": {
+    "t": "Roulement 608",
+    "d": "Roulement à billes standard 8 × 22 × 7 mm (celui des rollers). Trois sont pressés dans le tronc et la tête du canard pour guider des axes.",
+    "c": "cours-assemblage"
+  },
+  "gcode": {
+    "t": "G-code",
+    "d": "Le fichier d'instructions que le slicer produit pour l'imprimante : déplacements, températures, extrusion. On ne le modifie pas ; on régénère depuis le 3MF.",
+    "c": "cours-impression"
+  },
+  "slicer": {
+    "t": "Slicer (trancheur)",
+    "d": "Logiciel qui découpe un modèle 3D en couches et calcule le trajet de la buse : PrusaSlicer pour nous. C'est là qu'on règle remplissage, supports, orientation.",
+    "c": "cours-impression"
+  },
+  "prusaslicer": {
+    "t": "PrusaSlicer",
+    "d": "Le slicer de Prusa, gratuit. On y importe un STL, on règle, on exporte le G-code ou on enregistre le projet en 3MF.",
+    "c": "cours-impression"
+  },
+  "laser-co2": {
+    "t": "Laser CO₂",
+    "d": "Découpeuse dont le faisceau infrarouge brûle la matière le long d'un tracé. La xTool P2S fait 55 W : contreplaqué et acrylique jusqu'à ~10 mm en pratique.",
+    "c": "cours-laser"
+  },
+  "gravure": {
+    "t": "Gravure",
+    "d": "Passage du laser à faible puissance qui marque la surface sans traverser (texte, repères). La découpe traverse ; la gravure décore ou étiquette.",
+    "c": "cours-laser"
+  },
+  "xcs": {
+    "t": "XCS (xTool Creative Space)",
+    "d": "Logiciel gratuit de xTool qui pilote la P2S : import du dessin, réglages puissance/vitesse, caméra, compensation de kerf.",
+    "c": "cours-laser"
+  },
+  "tension": {
+    "t": "Tension (V)",
+    "d": "La « pression » électrique entre deux points, en volts. Une cellule 18650 fait 3,0 à 4,2 V ; deux en série font 6,0 à 8,4 V ; le Pi veut 5 V.",
+    "c": "cours-electronique"
+  },
+  "courant": {
+    "t": "Courant (A)",
+    "d": "Le débit d'électricité, en ampères. Un servo peut tirer 2,5 A en forçant ; 14 servos peuvent dépasser 10 A en pointe. C'est le courant qui chauffe les fils.",
+    "c": "cours-electronique"
+  },
+  "puissance": {
+    "t": "Puissance (W)",
+    "d": "Tension × courant, en watts. 7,4 V × 2 A = 14,8 W. C'est ce qui vide la batterie et chauffe les composants.",
+    "c": "cours-electronique"
+  },
+  "loi-ohm": {
+    "t": "Loi d'Ohm",
+    "d": "U = R × I : la tension aux bornes d'un fil ou d'une résistance vaut sa résistance multipliée par le courant qui la traverse. Un fil trop fin (résistance élevée) fait chuter la tension quand le courant monte.",
+    "c": "cours-electronique"
+  },
+  "li-ion": {
+    "t": "Li-ion",
+    "d": "Chimie de batterie rechargeable légère et puissante, mais qui exige des précautions : jamais sous 2,5 V ni au-dessus de 4,2 V par cellule, jamais de court-circuit, charge surveillée.",
+    "c": "cours-electronique"
+  },
+  "18650": {
+    "t": "Cellule 18650",
+    "d": "Cellule Li-ion cylindrique de 18 mm × 65 mm, 3,6 V nominal, environ 3000 mAh. « Haute décharge » = peut fournir 25 à 30 A sans s'effondrer.",
+    "c": "cours-electronique"
+  },
+  "2s": {
+    "t": "Pack 2S",
+    "d": "Deux cellules en série : les tensions s'ajoutent (7,4 V nominal, 8,4 V plein, 6,0 V vide). « 2S » = 2 en série. La capacité reste celle d'une cellule.",
+    "c": "cours-electronique"
+  },
+  "bms": {
+    "t": "BMS",
+    "d": "Circuit de protection de la batterie : coupe si une cellule descend trop bas ou monte trop haut, limite le courant, équilibre les cellules à la charge. Obligatoire sur un pack Li-ion.",
+    "c": "cours-electronique"
+  },
+  "ubec": {
+    "t": "UBEC (régulateur 5 V)",
+    "d": "Convertisseur à découpage qui transforme les 6 à 8,4 V du pack en 5 V stables pour le Raspberry Pi, avec un bon rendement. « 8 A » = courant maximal qu'il peut fournir.",
+    "c": "cours-electronique"
+  },
+  "xt30": {
+    "t": "Connecteur XT30",
+    "d": "Connecteur jaune à deux broches, détrompé, prévu pour 30 A : on l'utilise entre batterie, interrupteur et carte servo. Rouge = +, noir = −.",
+    "c": "cours-electronique"
+  },
+  "gpio": {
+    "t": "GPIO",
+    "d": "Les broches d'entrée/sortie du Raspberry Pi. Chacune lit ou écrit un niveau 0 V / 3,3 V. Jamais 5 V dessus : le Pi grille.",
+    "c": "cours-raspberry"
+  },
+  "pull-up": {
+    "t": "Résistance de pull-up",
+    "d": "Résistance qui maintient une entrée à 3,3 V quand rien n'est branché ; le contact de pied la tire à 0 V quand il est appuyé. Sans elle, l'entrée « flotte » et lit n'importe quoi.",
+    "c": "cours-capteurs"
+  },
+  "i2c": {
+    "t": "I²C",
+    "d": "Bus série à deux fils (SDA données, SCL horloge) pour parler à des capteurs. Chaque capteur a une adresse. La BNO055 est en I²C sur le Pi.",
+    "c": "cours-electronique"
+  },
+  "uart": {
+    "t": "UART (série)",
+    "d": "Liaison série à deux fils (TX émission, RX réception) sans horloge, à une vitesse convenue (baud). Alternative à l'I²C pour la BNO055 si le Pi n'arrive pas à la suivre.",
+    "c": "cours-electronique"
+  },
+  "bus-serie": {
+    "t": "Bus série (servos)",
+    "d": "Un seul câble à 3 fils (alimentation, masse, données) qui relie tous les servos en chaîne. Chaque servo a un numéro (ID) et ne répond qu'aux messages qui lui sont adressés.",
+    "c": "cours-servos"
+  },
+  "half-duplex": {
+    "t": "Half-duplex",
+    "d": "Un seul fil de données partagé : on parle à tour de rôle, jamais en même temps. Le bus des servos Feetech est half-duplex à 1 Mbit/s.",
+    "c": "cours-servos"
+  },
+  "baud": {
+    "t": "Baud (vitesse série)",
+    "d": "Nombre de symboles par seconde sur une liaison série. 1 000 000 baud (1 Mbit/s) sur le bus servo ; les deux côtés doivent avoir la même valeur.",
+    "c": "cours-electronique"
+  },
+  "multimetre": {
+    "t": "Multimètre",
+    "d": "Appareil de mesure : tension (V), courant (A), résistance (Ω), continuité (bip). Les cinq mesures à savoir faire sont dans le cours d'électronique.",
+    "c": "cours-electronique"
+  },
+  "soudure": {
+    "t": "Soudure (à l'étain)",
+    "d": "Assembler deux conducteurs avec un alliage fondu au fer. Bon joint = brillant et concave ; joint mat et boursouflé = « sèche », à refaire.",
+    "c": "cours-electronique"
+  },
+  "court-circuit": {
+    "t": "Court-circuit",
+    "d": "Contact direct entre + et − : le courant devient énorme, les fils fondent, une Li-ion peut prendre feu. On protège les pôles nus et on coupe toujours avant de manipuler.",
+    "c": "cours-securite"
+  },
+  "gnd": {
+    "t": "Masse (GND)",
+    "d": "Le fil de référence 0 V commun à tout le circuit. Toutes les masses doivent être reliées, sinon rien ne se comprend.",
+    "c": "cours-electronique"
+  },
+  "servo": {
+    "t": "Servomoteur",
+    "d": "Moteur avec réducteur, capteur de position et électronique intégrés : on lui donne une position cible, il s'y rend et s'y maintient.",
+    "c": "cours-servos"
+  },
+  "servo-bus": {
+    "t": "Servo bus série (« intelligent »)",
+    "d": "Servo qu'on commande par messages numériques sur un bus partagé, et qui renvoie sa position, sa vitesse, sa tension, sa température. Les STS3215 en sont.",
+    "c": "cours-servos"
+  },
+  "pwm": {
+    "t": "PWM",
+    "d": "Modulation de largeur d'impulsion : un signal qui alterne vite entre 0 et 3,3 V ; la durée de l'état haut code une valeur. Les micro-servos 9 g des antennes se commandent ainsi.",
+    "c": "cours-servos"
+  },
+  "codeur": {
+    "t": "Codeur magnétique",
+    "d": "Capteur d'angle à aimant dans le servo : 4096 positions par tour (0,088°). Il permet au servo de connaître sa position absolue, même après une coupure.",
+    "c": "cours-servos"
+  },
+  "id-servo": {
+    "t": "ID de servo",
+    "d": "Numéro unique (0 à 253) de chaque servo sur le bus. Tous sortent d'usine à 1 : on doit en attribuer un à chacun avant montage (10-14, 20-24, 30-33).",
+    "c": "cours-servos"
+  },
+  "couple": {
+    "t": "Couple",
+    "d": "Force de rotation, en N·m ou en kg·cm. 19,5 kg·cm = le servo peut tenir 19,5 kg au bout d'un bras de 1 cm (≈ 1,9 N·m). Le couple de blocage est le maximum, atteint à l'arrêt.",
+    "c": "cours-servos"
+  },
+  "kg-cm": {
+    "t": "kg·cm",
+    "d": "Unité pratique de couple : 1 kg·cm ≈ 0,098 N·m. Diviser par 10 pour avoir une idée en N·m.",
+    "c": "cours-servos"
+  },
+  "pid": {
+    "t": "Régulateur PID",
+    "d": "La petite logique dans le servo qui calcule l'effort à fournir d'après l'écart à la cible. P réagit à l'écart, I à l'écart accumulé, D à la vitesse d'écart. Le canard utilise P seul (P = 32 à la configuration, 30 en marche).",
+    "c": "cours-servos"
+  },
+  "gain-p": {
+    "t": "Gain P",
+    "d": "Coefficient de proportionnalité : effort = P × écart. Plus P est grand, plus le servo est raide et rapide, jusqu'à osciller. La politique de marche a été entraînée avec P = 30 : on n'y touche pas.",
+    "c": "cours-servos"
+  },
+  "backlash": {
+    "t": "Backlash",
+    "d": "Le jeu entre les dents des engrenages du réducteur : l'axe peut bouger d'un petit angle sans que le moteur tourne. Modélisé à ±0,5° dans la simulation du canard.",
+    "c": "cours-servos"
+  },
+  "offset": {
+    "t": "Offset (décalage de zéro)",
+    "d": "Écart entre la position « 0 » du servo et la position mécanique réelle de l'articulation quand le robot est droit. Mesuré robot par robot, stocké dans duck_config.json.",
+    "c": "cours-calibration"
+  },
+  "palonnier": {
+    "t": "Palonnier (horn)",
+    "d": "La pièce qu'on visse sur l'axe du servo pour transmettre le mouvement. On le monte quand le servo est à sa position 0, aligné au mieux.",
+    "c": "cours-servos"
+  },
+  "sts3215": {
+    "t": "Feetech STS3215",
+    "d": "Le servo bus série du canard. Version à acheter : 7,4 V, rapport 1/345, 19,5 kg·cm (référence C001). Les versions 12 V ou à autre rapport ne conviennent pas.",
+    "c": "cours-servos"
+  },
+  "waveshare": {
+    "t": "Carte Waveshare (Bus Servo Adapter)",
+    "d": "Petite carte qui fait le pont entre l'USB du Pi et le bus série des servos, et qui distribue l'alimentation aux servos. Sa tension d'entrée est celle des servos.",
+    "c": "cours-servos"
+  },
+  "raspberry-pi": {
+    "t": "Raspberry Pi",
+    "d": "Mini-ordinateur de la taille d'une carte de crédit, sous Linux. Il lit les capteurs, fait tourner la politique de marche et commande les servos.",
+    "c": "cours-raspberry"
+  },
+  "pi-zero-2w": {
+    "t": "Raspberry Pi Zero 2 W",
+    "d": "La plus petite Raspberry Pi : 4 cœurs, 512 Mo de mémoire, Wi-Fi et Bluetooth, alimentée en 5 V par micro-USB. Suffisante pour la marche, pas pour de l'IA lourde.",
+    "c": "cours-raspberry"
+  },
+  "os": {
+    "t": "Système d'exploitation",
+    "d": "Le logiciel de base (Windows, macOS, Linux) qui fait tourner les autres. Sur le Pi, c'est Raspberry Pi OS, un Linux.",
+    "c": "cours-raspberry"
+  },
+  "raspberry-pi-os": {
+    "t": "Raspberry Pi OS",
+    "d": "Le Linux officiel du Pi. Version « Lite » = sans bureau graphique, tout se fait en terminal. Version « Bookworm » = celle attendue par le runtime (Python 3.11).",
+    "c": "cours-raspberry"
+  },
+  "carte-sd": {
+    "t": "Carte microSD",
+    "d": "La « disque dur » du Pi : elle contient le système et les programmes. On y écrit (flashe) une image complète avec Raspberry Pi Imager.",
+    "c": "cours-raspberry"
+  },
+  "flasher": {
+    "t": "Flasher une image",
+    "d": "Copier un système complet (fichier .img) sur une carte SD avec Raspberry Pi Imager. La carte est effacée. Après, le Pi démarre dessus.",
+    "c": "cours-raspberry"
+  },
+  "ssh": {
+    "t": "SSH",
+    "d": "Se connecter au terminal du Pi depuis son PC par le réseau, sans écran ni clavier branchés sur le Pi. Commande : ssh utilisateur@adresse.",
+    "c": "cours-raspberry"
+  },
+  "terminal": {
+    "t": "Terminal (ligne de commande)",
+    "d": "Fenêtre où l'on tape des commandes texte au lieu de cliquer. Sur le Pi Lite, c'est la seule interface. Quinze commandes suffisent pour notre usage.",
+    "c": "cours-raspberry"
+  },
+  "python": {
+    "t": "Python",
+    "d": "Langage de programmation lisible, celui de tout le logiciel du canard. On n'a pas besoin de savoir programmer pour lancer un script et modifier un paramètre.",
+    "c": "cours-python"
+  },
+  "venv": {
+    "t": "Environnement virtuel (venv)",
+    "d": "Un dossier isolé qui contient une version de Python et les bibliothèques d'un projet, pour ne pas mélanger avec le reste du système. On l'« active » avant de lancer les scripts.",
+    "c": "cours-python"
+  },
+  "pip": {
+    "t": "pip",
+    "d": "L'installateur de bibliothèques Python : pip install nom. Le runtime s'installe avec pip install -e . dans son dossier.",
+    "c": "cours-python"
+  },
+  "json": {
+    "t": "JSON",
+    "d": "Format texte pour des réglages : des paires « clé »: valeur entre accolades. duck_config.json est en JSON. Une virgule ou un guillemet manquant suffit à le rendre illisible.",
+    "c": "cours-python"
+  },
+  "script": {
+    "t": "Script",
+    "d": "Un fichier Python qu'on lance en une commande (python nom.py) pour faire une tâche : configurer un servo, calibrer l'IMU, marcher.",
+    "c": "cours-python"
+  },
+  "log": {
+    "t": "Log (journal)",
+    "d": "Les lignes de texte qu'un programme affiche pendant qu'il tourne. Lire un log, c'est chercher la dernière ligne qui commence par Error ou Traceback.",
+    "c": "cours-python"
+  },
+  "systemd": {
+    "t": "systemd",
+    "d": "Le gestionnaire de services de Linux : il lance des programmes au démarrage et les relance s'ils plantent. L'image prête du canard lance la marche ainsi.",
+    "c": "cours-raspberry"
+  },
+  "bluetooth-manette": {
+    "t": "Manette Bluetooth",
+    "d": "Manette Xbox appairée au Pi par Bluetooth (commande bluetoothctl). Les sticks donnent la direction, les boutons les fonctions (A = pause).",
+    "c": "cours-raspberry"
+  },
+  "imu": {
+    "t": "IMU (centrale inertielle)",
+    "d": "Capteur qui mesure les accélérations et les rotations du corps auquel il est fixé. C'est l'oreille interne du robot : sans elle, pas d'équilibre.",
+    "c": "cours-capteurs"
+  },
+  "bno055": {
+    "t": "BNO055",
+    "d": "L'IMU du canard (Bosch) : accéléromètre + gyroscope + magnétomètre + un petit processeur qui fusionne le tout. Communique en I²C ou UART.",
+    "c": "cours-capteurs"
+  },
+  "accelerometre": {
+    "t": "Accéléromètre",
+    "d": "Mesure l'accélération sur trois axes, gravité comprise. Au repos, il indique où est le « bas » ; en mouvement, il mélange gravité et secousses.",
+    "c": "cours-capteurs"
+  },
+  "gyroscope": {
+    "t": "Gyroscope",
+    "d": "Mesure la vitesse de rotation sur trois axes (en rad/s ou °/s). Très réactif, mais dérive lentement si on l'intègre seul.",
+    "c": "cours-capteurs"
+  },
+  "magnetometre": {
+    "t": "Magnétomètre",
+    "d": "Boussole électronique : mesure le champ magnétique terrestre pour connaître le cap. Perturbé par les moteurs et les vis en acier.",
+    "c": "cours-capteurs"
+  },
+  "fusion": {
+    "t": "Fusion de capteurs",
+    "d": "Combiner accéléromètre, gyroscope et magnétomètre pour obtenir une orientation stable et réactive. La BNO055 le fait en interne (mode NDOF).",
+    "c": "cours-capteurs"
+  },
+  "quaternion": {
+    "t": "Quaternion",
+    "d": "Façon mathématique de représenter une orientation 3D avec quatre nombres, sans les blocages des angles classiques. Le runtime du canard n'en a pas besoin : il lit gyro et accéléromètre bruts.",
+    "c": "cours-capteurs"
+  },
+  "derive": {
+    "t": "Dérive",
+    "d": "Erreur qui s'accumule avec le temps quand on intègre un capteur bruité (le gyroscope). La fusion avec l'accéléromètre la corrige.",
+    "c": "cours-capteurs"
+  },
+  "contact-pied": {
+    "t": "Contact de pied",
+    "d": "Micro-interrupteur sous chaque semelle (SS-10) qui dit si le pied touche le sol. Le robot en a quatre, lus sur deux broches GPIO (une par pied).",
+    "c": "cours-capteurs"
+  },
+  "ddl": {
+    "t": "Degré de liberté (DDL)",
+    "d": "Un mouvement indépendant possible : une articulation = un degré de liberté. Le canard en a 14 motorisés : 5 par jambe (hanche lacet, hanche roulis, hanche tangage, genou, cheville) et 4 pour le cou et la tête.",
+    "c": "cours-marche"
+  },
+  "cinematique": {
+    "t": "Cinématique",
+    "d": "La géométrie du mouvement : longueurs des segments, axes des articulations, angles. Changer une longueur de tibia change la cinématique et tout ce qui a été calculé avec.",
+    "c": "cours-marche"
+  },
+  "centre-de-masse": {
+    "t": "Centre de masse",
+    "d": "Le point où toute la masse du robot semble concentrée. S'il sort de la surface d'appui, le robot tombe. Sur le canard il est haut (tête lourde) : 28 % de la masse dans le cou et la tête.",
+    "c": "cours-marche"
+  },
+  "polygone-sustentation": {
+    "t": "Polygone de sustentation",
+    "d": "La surface au sol délimitée par les points d'appui (les semelles). Tant que la projection du centre de masse reste dedans, le robot ne tombe pas, à l'arrêt.",
+    "c": "cours-marche"
+  },
+  "phase-appui": {
+    "t": "Phases d'appui",
+    "d": "Pendant la marche, chaque pied alterne appui (au sol) et balancement (en l'air). Double appui = les deux pieds au sol. Le canard : simple appui 0,18 s, période complète 0,54 s.",
+    "c": "cours-marche"
+  },
+  "periode-marche": {
+    "t": "Période de marche",
+    "d": "Durée d'un cycle complet (deux pas). 0,54 s pour le canard, soit 27 pas de calcul à 50 Hz. Le runtime la lit dans le fichier pkl.",
+    "c": "cours-marche"
+  },
+  "inertie": {
+    "t": "Inertie (moment d'inertie)",
+    "d": "Résistance d'un corps à être mis en rotation ; dépend de la masse et de sa répartition. Chaque pièce du robot a une masse, un centre de masse et une inertie dans le modèle de simulation.",
+    "c": "cours-marche"
+  },
+  "simulation": {
+    "t": "Simulation physique",
+    "d": "Un programme qui calcule, pas de temps par pas de temps, comment bougerait le robot sous l'effet des moteurs, de la gravité et des contacts. MuJoCo le fait des milliers de fois plus vite que le réel.",
+    "c": "cours-rl"
+  },
+  "mujoco": {
+    "t": "MuJoCo",
+    "d": "Simulateur physique libre, rapide et précis pour les robots. Le canard y est décrit par un fichier MJCF ; MuJoCo Playground y ajoute les outils d'apprentissage.",
+    "c": "cours-rl"
+  },
+  "mjcf": {
+    "t": "MJCF",
+    "d": "Fichier XML qui décrit un robot pour MuJoCo : corps, masses, inerties, articulations, moteurs, contacts. C'est le « jumeau numérique » du canard.",
+    "c": "cours-rl"
+  },
+  "urdf": {
+    "t": "URDF",
+    "d": "Autre format de description de robot (XML), utilisé ici par Placo pour générer les mouvements de référence. Même géométrie que le MJCF, format différent.",
+    "c": "cours-rl"
+  },
+  "placo": {
+    "t": "Placo",
+    "d": "Bibliothèque de l'équipe Rhoban qui calcule des trajectoires de marche « idéales » (où poser les pieds, comment déplacer le bassin) à partir du modèle du robot.",
+    "c": "cours-rl"
+  },
+  "mouvement-reference": {
+    "t": "Mouvement de référence",
+    "d": "Une démarche calculée par Placo que la politique apprend à imiter. 240 démarches (avant, arrière, côté, rotation) sont résumées dans un fichier pkl.",
+    "c": "cours-rl"
+  },
+  "rl": {
+    "t": "Apprentissage par renforcement (RL)",
+    "d": "Méthode où un programme (l'agent) apprend par essais et erreurs : il agit, reçoit une récompense, et ajuste pour en obtenir plus. Des millions d'essais en simulation donnent une marche.",
+    "c": "cours-rl"
+  },
+  "politique": {
+    "t": "Politique",
+    "d": "Le « cerveau » appris : une fonction qui transforme ce que le robot perçoit (observation) en ce qu'il fait (action). Ici un réseau de neurones de 101 entrées et 14 sorties.",
+    "c": "cours-rl"
+  },
+  "recompense": {
+    "t": "Récompense",
+    "d": "Le score donné à chaque instant pendant l'apprentissage : positif pour avancer à la bonne vitesse et rester debout, négatif pour les mouvements brusques. L'agent cherche à maximiser le total.",
+    "c": "cours-rl"
+  },
+  "ppo": {
+    "t": "PPO",
+    "d": "L'algorithme d'apprentissage utilisé (Proximal Policy Optimization) : il améliore la politique par petits pas prudents pour ne pas détruire ce qui marche déjà.",
+    "c": "cours-rl"
+  },
+  "reseau-neurones": {
+    "t": "Réseau de neurones",
+    "d": "Fonction mathématique faite de couches de « neurones » (des multiplications et additions) dont on règle les coefficients pendant l'apprentissage. Celui du canard a trois couches cachées (512, 256, 128).",
+    "c": "cours-rl"
+  },
+  "observation": {
+    "t": "Observation",
+    "d": "Les 101 nombres que la politique reçoit 50 fois par seconde : gyroscope, accéléromètre, consigne de la manette, positions et vitesses des 14 articulations, actions précédentes, contacts de pied, phase de marche.",
+    "c": "cours-rl"
+  },
+  "action": {
+    "t": "Action",
+    "d": "Les 14 nombres que la politique produit : un décalage par articulation autour de la posture de repos, multiplié par 0,25 (action_scale) puis envoyé aux servos.",
+    "c": "cours-rl"
+  },
+  "onnx": {
+    "t": "ONNX",
+    "d": "Format de fichier standard pour un réseau de neurones entraîné. Le fichier BEST_WALK_ONNX_2.onnx est la marche du canard, exécutable sur le Pi avec onnxruntime.",
+    "c": "cours-rl"
+  },
+  "sim2real": {
+    "t": "Sim2real",
+    "d": "Le passage de la simulation au robot réel. Tout ce qui diffère entre les deux (masse, frottement, jeu, tension) peut faire échouer la marche : c'est le cœur de notre travail d'adaptation.",
+    "c": "cours-rl"
+  },
+  "domain-randomization": {
+    "t": "Randomisation de domaine",
+    "d": "Pendant l'apprentissage, faire varier au hasard masses, frottements, gains et retards pour que la politique tolère un robot réel un peu différent du modèle (±10 % de masse, par exemple).",
+    "c": "cours-rl"
+  },
+  "gpu": {
+    "t": "GPU",
+    "d": "Carte graphique : des milliers de petits processeurs en parallèle. Indispensable pour entraîner (8192 robots simulés en même temps). Le Pi n'en a pas besoin pour exécuter la politique.",
+    "c": "cours-rl"
+  },
+  "bam": {
+    "t": "BAM",
+    "d": "Méthode de l'équipe Rhoban pour mesurer un servo réel (frottements, couple, réactivité) et en déduire les paramètres à mettre dans la simulation. Fait pour le STS3215 7,4 V, pas pour la version 12 V.",
+    "c": "cours-rl"
+  },
+  "frequence-controle": {
+    "t": "Fréquence de contrôle (50 Hz)",
+    "d": "La politique calcule 50 fois par seconde (toutes les 20 ms). Si le Pi met plus de 20 ms, le robot réagit en retard : « Policy control budget exceeded ».",
+    "c": "cours-rl"
+  },
+  "runtime": {
+    "t": "Runtime",
+    "d": "Le programme qui tourne sur le Pi pendant la marche : lit les capteurs, exécute l'ONNX, envoie les positions aux servos, lit la manette. Dépôt Open_Duck_Mini_Runtime.",
+    "c": "cours-python"
+  },
+  "duck-config": {
+    "t": "duck_config.json",
+    "d": "Le fichier de réglages propre à notre robot : offsets des 14 articulations, IMU à l'envers ou non, démarrage en pause. À commiter après chaque calibration.",
+    "c": "cours-calibration"
+  },
+  "fiche-de-test": {
+    "t": "Fiche de test",
+    "d": "Un document court qui dit ce qu'on a voulu vérifier, comment, avec quel critère chiffré, et ce qu'on a obtenu. Sans fiche validée, pas de phase suivante.",
+    "c": "cours-methode"
+  },
+  "dod": {
+    "t": "Définition de « fini »",
+    "d": "La liste des conditions pour qu'une tâche soit vraiment terminée (imprimée ET contrôlée ET notée ET photographiée). Évite les « c'est presque fait ».",
+    "c": "cours-methode"
+  },
+  "go-no-go": {
+    "t": "GO / NO-GO",
+    "d": "Décision formelle de continuer ou non à la fin d'une phase, prise sur la base de la fiche de test. La phase 2 (banc servo) est le GO/NO-GO avant d'acheter les 12 servos restants.",
+    "c": "cours-methode"
+  },
+  "journal-de-bord": {
+    "t": "Journal de bord",
+    "d": "Un fichier par séance de travail : présents, fait, mesures, problèmes, décisions. C'est la mémoire du projet ; ce qui n'y est pas n'a pas existé.",
+    "c": "cours-methode"
+  },
+  "bom": {
+    "t": "BOM (nomenclature)",
+    "d": "Bill of Materials : la liste complète des composants à acheter, avec quantités, références et prix. Celle du canard fait une vingtaine de lignes.",
+    "c": "cours-methode"
+  },
+  "fablab": {
+    "t": "FabLab",
+    "d": "Atelier partagé avec des machines numériques (imprimantes 3D, laser) et des gens qui apprennent en faisant. Le BiscaLab en est un.",
+    "c": "cours-methode"
+  },
+  "home-pose": {
+    "t": "Posture « home »",
+    "d": "La position de repos debout de référence, définie dans la simulation et codée dans le runtime (init_pos). Toutes les actions de la politique sont des écarts autour d'elle.",
+    "c": "cours-calibration"
+  },
+  "action-scale": {
+    "t": "action_scale (0,25)",
+    "d": "Facteur qui réduit les sorties du réseau avant de les envoyer aux servos : une sortie de 1 devient un écart de 0,25 rad (14°) autour de la posture home.",
+    "c": "cours-rl"
+  },
+  "ndof": {
+    "t": "Mode NDOF",
+    "d": "Mode de la BNO055 où elle fusionne ses trois capteurs et fournit une orientation absolue. Demande une calibration (bouger la carte en huit) qu'on sauvegarde.",
+    "c": "cours-capteurs"
+  },
+  "clock-stretching": {
+    "t": "Clock stretching (I²C)",
+    "d": "Quand un capteur retient l'horloge I²C pour gagner du temps. Le Raspberry Pi le gère mal : avec la BNO055, on ralentit le bus ou on passe en UART.",
+    "c": "cours-capteurs"
+  },
+  "crc": {
+    "t": "Erreur CRC",
+    "d": "Un message du bus servo est arrivé abîmé (somme de contrôle fausse). Cause fréquente : chute de tension sous charge ou câble douteux.",
+    "c": "cours-depannage"
+  },
+  "firmware": {
+    "t": "Firmware",
+    "d": "Le petit programme gravé dans un composant (servo, IMU). Deux servos avec des firmwares différents peuvent répondre différemment au même message.",
+    "c": "cours-servos"
+  },
+  "potence": {
+    "t": "Potence (harnais)",
+    "d": "Support au-dessus du robot avec une sangle qui le retient s'il tombe, sans le porter. Indispensable aux premiers essais de marche.",
+    "c": "cours-calibration"
+  },
+  "banc-servo": {
+    "t": "Banc servo",
+    "d": "Montage d'essai : un ou deux servos vissés sur une plaque, la carte Waveshare, le Pi et une alimentation de laboratoire. On y apprend tout avant de monter le robot.",
+    "c": "cours-servos"
+  },
+  "alim-labo": {
+    "t": "Alimentation de laboratoire",
+    "d": "Alimentation réglable en tension ET limitable en courant. Réglée à 7,4 V / 3 A, elle coupe avant qu'une erreur ne brûle quelque chose. On l'utilise à la place de la batterie pour tous les essais.",
+    "c": "cours-securite"
+  }
+}

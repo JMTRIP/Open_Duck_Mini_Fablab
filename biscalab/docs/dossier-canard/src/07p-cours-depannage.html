@@ -1,0 +1,280 @@
+<section class="page" id="page-cours-depannage" data-title="Cours · Dépannage" data-sub="Du symptôme à la cause" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 16 · Marche</div>
+    <h1>Dépanner : du symptôme à la cause</h1>
+    <p class="lead">Quand le canard ne fait pas ce qu'on attend, la cause est presque toujours simple : un câble, une tension, un fichier au mauvais endroit. Ce cours donne une méthode, puis un guide des pannes connues du projet.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 45 min</span>
+      <span class="pill mute">Niveau : intermédiaire</span>
+      <span class="pill mute">Prérequis : calibration</span>
+      <span class="pill p">Rôles : tout le monde</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Appliquer une méthode : un seul changement à la fois, noter, revenir en arrière.</li>
+      <li>Lire un message d'erreur en allant droit à la dernière ligne.</li>
+      <li>Retrouver dans le guide la famille de panne à partir du symptôme.</li>
+      <li>Faire la mesure qui tranche, et la noter.</li>
+      <li>Rédiger une demande d'aide complète.</li>
+    </ul>
+    <p class="muted"><strong>Prérequis :</strong> le cours <a href="#cours-calibration">Calibration</a> ; savoir utiliser un multimètre (cours <a href="#cours-electronique">Électronique</a>) et un terminal (cours <a href="#cours-raspberry">Raspberry Pi</a>).</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. La méthode</h2>
+    <p>Un bon garagiste vérifie qu'il y a de l'essence avant de démonter le moteur. On fait pareil.</p>
+    <ol class="steps">
+      <li><div><b>L'alimentation d'abord</b> Tension à l'alimentation, tension à l'entrée de la carte servo au <i class="t" data-t="multimetre">multimètre</i>, puis <code>check_voltage.py</code>. Une tension qui s'effondre explique bien des pannes bizarres.</div></li>
+      <li><div><b>La dernière ligne de l'erreur</b> Un programme Python qui plante affiche un <i class="t" data-t="log">log</i> : des lignes de texte, souvent un long « Traceback » (trace des appels). La cause est dans la <strong>dernière</strong> ligne : <code>ModuleNotFoundError</code>, <code>PermissionError</code>…</div></li>
+      <li><div><b>Qu'est-ce qui a changé ?</b> Depuis la dernière fois que ça marchait : un fichier, un câble, une pièce, la batterie ? L'historique des commits et le journal répondent.</div></li>
+      <li><div><b>Un seul changement à la fois</b> On essaie, on note le résultat, et si ça n'aide pas, on revient en arrière avant d'essayer autre chose.</div></li>
+      <li><div><b>Reproduire, mesurer, noter</b> Une panne qu'on sait reproduire est à moitié réglée. Tout va dans le <i class="t" data-t="journal-de-bord">journal de bord</i>.</div></li>
+    </ol>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Changer trois choses d'un coup « pour gagner du temps ». Si ça repart, on ne sait pas laquelle a réglé le problème ; si ça empire, on ne sait pas laquelle l'a causé.</div></div>
+    <p>Dans le guide qui suit, chaque cas donne les causes probables, la vérification qui tranche et le remède, puis une ligne <b>Reproduire</b>, <b>Mesurer</b>, <b>Noter</b>.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Le bus des servos</h2>
+    <p>Rappel : les 14 servos sont chaînés sur un même <i class="t" data-t="bus-serie">bus série</i> ; chacun répond à son <i class="t" data-t="id-servo">ID</i>. La carte <i class="t" data-t="waveshare">Waveshare</i> relie ce bus à l'USB du Pi, qui la voit sous le nom <code>/dev/ttyACM0</code>, et alimente les servos avec sa propre tension d'entrée, jamais par l'USB.</p>
+    <h3>(a) Rien ne répond sur le bus</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td>Carte non vue (câble USB de charge seule, prise)</td><td><code>ls /dev/ttyACM*</code> ne montre rien</td><td>câble USB de données, autre prise</td></tr>
+        <tr><td>Droits sur le port</td><td><code>PermissionError</code></td><td>cas (k)</td></tr>
+        <tr><td>Pas de tension aux servos</td><td>multimètre à l'entrée de la carte</td><td>alimentation, polarité, connecteur <i class="t" data-t="xt30">XT30</i></td></tr>
+        <tr><td>Câble de chaîne débranché</td><td>suivre la chaîne servo par servo</td><td>rebrancher à fond</td></tr>
+        <tr><td>Deux servos avec le même ID</td><td>rebrancher les servos un par un</td><td>reconfigurer l'un des deux</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><b>Reproduire</b> <code>check_motors.py</code>. <b>Mesurer</b> tension à la carte, sortie de <code>ls</code>. <b>Noter</b> la sortie exacte et la liste des servos vus.</p>
+    <h3>(b) Un seul servo ne répond pas</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td>ID faux ou jamais configuré</td><td>servo seul sur le banc, recherche avec le logiciel Feetech sous Windows</td><td><code>configure_motor.py --id N</code></td></tr>
+        <tr><td>Câble ou connecteur</td><td>échanger avec le câble du voisin</td><td>remplacer</td></tr>
+        <tr><td><i class="t" data-t="firmware">Firmware</i> (logiciel interne) différent</td><td>cas (d)</td><td>cas (d)</td></tr>
+        <tr><td>Protection déclenchée : 70 °C, plus de 2 A pendant 2 s, blocage</td><td>servo chaud au toucher</td><td>couper, laisser refroidir, chercher la cause (n)</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><b>Reproduire</b> <code>check_motors.py</code>. <b>Mesurer</b> l'ID muet, sa place dans la chaîne, sa température. <b>Noter</b> les trois.</p>
+    <h3>(c) Erreurs CRC</h3>
+    <p>Une <i class="t" data-t="crc">erreur CRC</i> signale un message arrivé abîmé sur le bus.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td>Chute de tension sous charge, cellules faibles (<i class="t" data-t="issue">issue</i> n° 49, une fiche de suivi du projet d'origine)</td><td>refaire l'essai sur l'alimentation de labo</td><td>si l'erreur disparaît : cellules chargées et saines</td></tr>
+        <tr><td>Câbles d'alimentation trop fins, connecteur mal serti</td><td>multimètre sur la carte pendant le mouvement</td><td>câbles plus gros, connecteurs refaits</td></tr>
+        <tr><td>Câble de bus abîmé</td><td>échange de câble</td><td>remplacer</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><b>Reproduire</b> <code>turn_on.py</code> puis la marche. <b>Mesurer</b> la tension minimale à la carte en mouvement. <b>Noter</b> si les erreurs viennent au repos ou en mouvement, sur batterie ou sur alimentation.</p>
+    <h3>(d) « Parsing error in set_kps() »</h3>
+    <p>Les servos n'ont pas tous la même version de firmware (issue n° 26 du runtime) et répondent différemment au réglage des gains. <b>Vérifier</b> la version de chaque servo avec le logiciel Feetech sous Windows. <b>Remède</b> : les mettre tous à la même version, un servo à la fois.</p>
+    <p class="muted"><b>Reproduire</b> lancer la marche : l'erreur apparaît au réglage des gains. <b>Mesurer</b> la version de firmware de chaque servo. <b>Noter</b> le tableau ID et version.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Nos servos viendront peut-être de deux commandes différentes. Dès réception, on lit et on note la version de firmware de chacun : c'est une ligne de plus dans le tableau des ID.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. Le comportement du robot</h2>
+    <h3>(e) Il tremble ou oscille</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td><i class="t" data-t="gain-p">Gain P</i> modifié</td><td>relire la commande, la configuration, l'historique</td><td>revenir à 30</td></tr>
+        <tr><td>Filtre passe-bas activé</td><td><code>--cutoff_frequency</code> dans la commande ?</td><td>le retirer</td></tr>
+        <tr><td>Jeu excessif</td><td>servos actifs, bouger doucement chaque articulation à la main</td><td>resserrer, changer palonnier ou servo</td></tr>
+        <tr><td><i class="t" data-t="imu">IMU</i> mal calibrée ou orientée</td><td><code>imu_client.py</code></td><td>recalibrer, <code>imu_upside_down</code></td></tr>
+        <tr><td>Batterie pleine (8,4 V : servos 13,5 % plus raides)</td><td>même essai à 7,4 V sur l'alimentation</td><td>comparer, noter</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><b>Reproduire</b> même consigne, même sol, filmé. <b>Mesurer</b> la tension. <b>Noter</b> la commande exacte et la vidéo.</p>
+    <h3>(f) Il tombe toujours du même côté</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td><i class="t" data-t="offset">Offset</i> faux</td><td>posture home face à la CAO, de face et de profil</td><td>refaire l'offset de l'articulation suspecte</td></tr>
+        <tr><td>IMU à l'envers</td><td><code>imu_client.py</code></td><td><code>imu_upside_down</code></td></tr>
+        <tr><td>Semelle TPU absente ou desserrée</td><td>regarder sous les pieds</td><td>remonter (2 vis M3×6)</td></tr>
+        <tr><td>Masse asymétrique (câbles, batterie)</td><td>comparer les deux côtés</td><td>redistribuer</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><b>Reproduire</b> trois essais identiques. <b>Mesurer</b> le côté et le moment de la chute. <b>Noter</b> les trois résultats.</p>
+    <h3>(g) Il piétine mais n'avance pas</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td>Consigne non reçue</td><td>manette connectée ? cas (p)</td><td>reconnecter</td></tr>
+        <tr><td>Fréquence décalée</td><td><code>phase_frequency_factor_offset</code></td><td>remettre 0, ajuster par crans de 0,05</td></tr>
+        <tr><td>Sol glissant</td><td>essai sur le sol de référence</td><td>sol de référence</td></tr>
+        <tr><td><i class="t" data-t="contact-pied">Contacts de pied</i> muets</td><td><code>feet_contacts.py</code></td><td>cas (m)</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><b>Reproduire</b> stick à mi-course, 30 s. <b>Mesurer</b> la distance parcourue. <b>Noter</b> sol, consigne, distance.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Nos premiers essais se feront sur alimentation de labo à 7,4 V, la tension du modèle. Si le canard tremble plus tard sur batterie pleine, on compare d'abord à 7,4 V avant de soupçonner la mécanique.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Le Pi et le logiciel</h2>
+    <h3>(h) « Policy control budget exceeded »</h3>
+    <p>La boucle de marche a dépassé ses 20 ms (<i class="t" data-t="frequence-controle">fréquence de contrôle</i> de 50 Hz) : le Pi est surchargé.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td>Autre programme actif</td><td><code>top</code></td><td>l'arrêter</td></tr>
+        <tr><td><i class="t" data-t="carte-sd">Carte SD</i> lente</td><td>essai avec une autre carte</td><td>carte plus rapide</td></tr>
+        <tr><td>Recherche de réseaux Wi-Fi</td><td>messages par salves, au moment d'une coupure Wi-Fi ?</td><td>réseau stable, aucune recherche pendant la marche</td></tr>
+        <tr><td>Pi trop chaud</td><td><code>vcgencmd measure_temp</code>, <code>vcgencmd get_throttled</code> (autre chose que <code>0x0</code> = ralentissement)</td><td>ventiler</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><b>Reproduire</b> 5 min de marche. <b>Mesurer</b> le nombre de messages, la température du Pi. <b>Noter</b> les deux.</p>
+    <h3>(i) « running uncalibrated »</h3>
+    <p><code>imu_calib_data.pkl</code> n'est pas dans le dossier d'où l'on lance la marche. <b>Vérifier</b> : <code>ls imu_calib_data.pkl</code> dans ce dossier. <b>Remède</b> : lancer depuis le bon dossier, ou y copier le fichier ; s'il est perdu, refaire <code>calibrate_imu.py</code>.</p>
+    <p class="muted"><b>Reproduire</b> lancer la marche depuis un autre dossier. <b>Mesurer</b> <code>pwd</code> (dossier courant) et <code>ls</code>. <b>Noter</b> le dossier de lancement retenu.</p>
+    <h3>(j) ModuleNotFoundError, onnxruntime introuvable</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td><i class="t" data-t="venv">Environnement virtuel</i> non activé</td><td>nom de l'environnement absent de l'invite</td><td><code>source</code> suivi du chemin de <code>bin/activate</code></td></tr>
+        <tr><td>Python 3.13 au lieu de 3.11 (issue n° 38)</td><td><code>python --version</code></td><td>Python 3.11 : image v0.2.3 ou Bookworm</td></tr>
+        <tr><td>Installation incomplète</td><td><code>pip list</code></td><td><code>pip install -e .</code> dans le runtime</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><b>Reproduire</b> nouveau terminal, même commande. <b>Mesurer</b> <code>python --version</code>. <b>Noter</b> la dernière ligne de l'erreur et la version.</p>
+    <h3>(k) PermissionError sur /dev/ttyACM0</h3>
+    <p>L'utilisateur n'a pas le droit d'ouvrir le port série. <b>Vérifier</b> : <code>groups</code> doit contenir <code>dialout</code>. <b>Remède</b> : <code>sudo usermod -aG dialout $USER</code>, puis se déconnecter et se reconnecter ; vérifier la règle udev (règle d'accès aux périphériques) prévue par l'installation.</p>
+    <p class="muted"><b>Reproduire</b> <code>check_motors.py</code>. <b>Mesurer</b> la sortie de <code>groups</code>. <b>Noter</b> l'utilisateur concerné.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>L'image prête v0.2.3 (Bookworm) fournit Python 3.11. Le cas (j) touche donc surtout une installation manuelle sur une image récente, livrée avec Python 3.13.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Les capteurs</h2>
+    <h3>(l) L'IMU renvoie des valeurs figées ou des erreurs [IMU]:</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td><i class="t" data-t="clock-stretching">Clock stretching</i> (le capteur retient l'horloge, le Pi suit mal)</td><td>erreurs intermittentes</td><td>ralentir le bus : <code>dtparam=i2c_arm_baudrate=10000</code> dans <code>/boot/firmware/config.txt</code>, redémarrer ; ou passer en <i class="t" data-t="uart">UART</i> (broche PS1 au 3,3 V)</td></tr>
+        <tr><td>Câblage <i class="t" data-t="i2c">I²C</i></td><td><code>i2cdetect -y 1</code> doit montrer une adresse</td><td>SDA GPIO2 (broche 3), SCL GPIO3 (broche 5), 3V3 broche 1, GND broche 9</td></tr>
+      </tbody>
+    </table></div>
+    <p>Le projet d'origine n'a pas tranché entre les deux remèdes : on note celui qu'on choisit et pourquoi.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le bus ralenti ne demande qu'une ligne de configuration ; l'UART demande un recâblage (broche PS1). L'équipe choisit, essaie et consigne le résultat.</p></div>
+    <p class="muted"><b>Reproduire</b> lecture de l'IMU pendant 5 min. <b>Mesurer</b> le nombre d'erreurs <code>[IMU]:</code>. <b>Noter</b> le réglage du bus en vigueur.</p>
+    <h3>(m) Un contact de pied toujours à 1 ou à 0</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td>Toujours « relâché » : fil coupé</td><td>continuité au multimètre</td><td>ressouder</td></tr>
+        <tr><td>Toujours « appuyé » : interrupteur coincé, trop enfoncé dans la semelle</td><td>démonter la semelle</td><td>repositionner</td></tr>
+        <tr><td>Valeur qui saute : <i class="t" data-t="pull-up">pull-up</i> absente, entrée qui flotte</td><td>configuration de la broche</td><td>activer le pull-up</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><b>Reproduire</b> <code>feet_contacts.py</code>, chaque interrupteur pressé tour à tour. <b>Mesurer</b> la broche : GPIO22 (broche 15) à gauche, GPIO27 (broche 13) à droite. <b>Noter</b> l'interrupteur fautif.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. La mécanique et la chaleur</h2>
+    <h3>(n) Un servo chauffe, sent ou bourdonne</h3>
+    <p>On coupe l'alimentation tout de suite. Les protections internes protègent le servo, pas nos pièces.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Cause probable</th><th>Vérification</th><th>Remède</th></tr></thead>
+      <tbody>
+        <tr><td>Blocage mécanique</td><td>hors tension, l'articulation bouge-t-elle librement ?</td><td>démonter, dégager</td></tr>
+        <tr><td>Câble pincé</td><td>inspecter le passage</td><td>refaire le passage</td></tr>
+        <tr><td>Cible derrière une butée : le servo pousse sans fin</td><td>posture home face à la CAO</td><td>vérifier l'offset de l'articulation</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted"><b>Reproduire</b> seulement après correction, sous surveillance. <b>Mesurer</b> la température au toucher toutes les minutes. <b>Noter</b> l'ID, la posture et le moment.</p>
+    <h3>(o) Une pièce casse pendant find_soft_offsets.py</h3>
+    <ol>
+      <li>Couper l'alimentation. Photographier avant de toucher.</li>
+      <li>Identifier la pièce par son nom de fichier STL.</li>
+      <li>La réimprimer avec les réglages d'origine (PLA à 15 % de remplissage, TPU à 40 % pour une semelle).</li>
+      <li>Remonter, puis refaire les offsets des articulations concernées.</li>
+      <li>Ouvrir une issue dans notre dépôt et garder un double des pièces déjà cassées.</li>
+    </ol>
+    <div class="ex"><b>Exemple sur notre canard</b><p>C'est arrivé à un autre constructeur : tête et jambe ont bougé ensemble pendant ce script (issue n° 32). D'où la règle : robot sur support, une articulation à la fois, mains libres.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Manette, simulation, servos et antennes</h2>
+    <h3>(p) La manette n'est pas reconnue</h3>
+    <p>Dans <code>bluetoothctl</code> : <code>scan on</code>, puis <code>pair</code>, <code>trust</code> et <code>connect</code> suivis de l'adresse de la manette. <code>trust</code> évite de tout refaire au prochain démarrage. Pour vérifier que Python la voit :</p>
+    <pre><code>python -c "import pygame; pygame.init(); pygame.joystick.init(); print(pygame.joystick.get_count())"</code></pre>
+    <p class="muted"><b>Reproduire</b> redémarrer le Pi, manette allumée. <b>Mesurer</b> la réponse de la ligne ci-dessus : elle doit être 1. <b>Noter</b> l'adresse de la manette.</p>
+    <h3>(q) Il marche en simulation, pas en vrai</h3>
+    <p>C'est le <i class="t" data-t="sim2real">sim2real</i> : tout ce qui diffère entre les deux mondes. <b>Vérifier</b> les masses (pesées face aux 2,107 kg du modèle), la semelle (TPU), la tension (7,4 V), le gain (P = 30). <b>Tester</b> <code>mujoco_infer.py</code> avec un modèle corrigé par nos masses réelles (cours <a href="#cours-rl">Simulation</a>). <b>Noter</b> chaque écart chiffré.</p>
+    <p class="muted"><b>Reproduire</b> même consigne en simulation et en vrai. <b>Mesurer</b> les masses des sous-ensembles. <b>Noter</b> le tableau modèle contre réel.</p>
+    <h3>(r) Le pied ne se lève pas assez</h3>
+    <p>Mauvaise version de servo : un constructeur avec des servos 12 V aux genoux a vu le pied ne plus se lever assez (issue n° 52) ; les rapports 1/191 (C044) et 1/147 (C046) sont aussi à éviter : ce ne sont pas les servos du modèle. <b>Vérifier</b> l'étiquette : il faut un <i class="t" data-t="sts3215">STS3215</i> 7,4 V, rapport 1/345, référence C001. <b>Remède</b> : remplacer. Question ouverte : l'issue n° 48 signale que même la C001 plafonnerait vers 2,7 rad/s, contre 5,24 rad/s en simulation.</p>
+    <p class="muted"><b>Reproduire</b> piétinement sous potence, filmé de profil. <b>Mesurer</b> la levée du pied sur la vidéo, face aux 4 cm du modèle. <b>Noter</b> la référence relevée sur chaque servo de jambe.</p>
+    <h3>(s) Les antennes tremblent</h3>
+    <p>Les micro-servos des antennes sont commandés en <i class="t" data-t="pwm">PWM</i> (signal à impulsions) sur GPIO12 et GPIO13. Le tremblement est un problème connu, sans remède publié. Pendant les essais de marche, on peut les débrancher.</p>
+    <p class="muted"><b>Reproduire</b> antennes branchées, robot au repos puis en marche. <b>Mesurer</b> si le tremblement change avec l'activité du Pi. <b>Noter</b> l'observation, pour comparer après chaque mise à jour.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Demander de l'aide</h2>
+    <p>Une demande d'aide se rédige comme une fiche de test : on doit pouvoir reproduire le problème sans vous. On l'ouvre en issue dans notre dépôt (rubrique <a href="#github">GitHub</a>). Avant d'écrire au projet d'origine, on cherche dans ses issues : les n° 26, 32, 38, 48, 49 et 52 sont déjà connues.</p>
+    <p>À joindre : la version de l'image du Pi (ou le commit du runtime), la commande et la sortie exacte de l'erreur copiées en texte, une photo du câblage, le <i class="t" data-t="duck-config">duck_config.json</i>, et ce qui a changé depuis la dernière fois que ça marchait.</p>
+    <pre><code>Titre : Problème : le servo 13 ne répond plus après la marche
+
+## Symptôme
+Ce que j'ai vu, quand, combien de fois.
+
+## Pour reproduire
+1. Commande exacte :
+2. Ce qui se passe :
+
+## Sortie de l'erreur (copiée, pas photographiée)
+
+## Contexte
+- Image du Pi : v0.2.3, ou installation manuelle (commit du runtime)
+- Python : résultat de python --version
+- Alimentation : labo ou batterie, tension mesurée
+- duck_config.json et photo du câblage : en pièces jointes
+
+## Ce qui a changé depuis la dernière fois que ça marchait
+
+## Ce que j'ai déjà essayé (une ligne par essai, avec le résultat)</code></pre>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : le banc servo (deux servos, carte, Pi, alimentation de labo), un PC en SSH, ce guide, le journal. Durée : 45 min, en binômes : l'un provoque la panne en secret, l'autre la diagnostique.</p>
+    <ol class="steps">
+      <li><div><b>Panne 1 : USB débranché</b> Débrancher le câble USB de la carte. Le diagnostiqueur lance <code>check_motors.py</code>, lit la dernière ligne, suit le cas (a).</div></li>
+      <li><div><b>Panne 2 : ID en double</b> Mettre sur le bus deux servos de même ID (par exemple deux servos neufs, tous deux à 1). Diagnostiquer avec le cas (a), puis reconfigurer l'un des deux.</div></li>
+      <li><div><b>Panne 3 : environnement non activé</b> Ouvrir un nouveau terminal sans activer l'environnement. Lancer un script, lire l'erreur, suivre le cas (j).</div></li>
+      <li><div><b>Consigner</b> Pour chaque panne : symptôme, vérification faite, cause, remède, temps mis. Puis inverser les rôles.</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> trois pannes diagnostiquées, chacune en moins de 10 minutes, et trois entrées de journal rédigées comme une issue.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Le robot tombe depuis qu'on a changé P et mis à jour un firmware. Par quoi commencer ?</summary><p>Revenir en arrière sur un seul des deux changements (P à 30 d'abord), réessayer, noter. Un seul changement à la fois.</p></details>
+    <details class="quiz"><summary>Erreurs CRC seulement sur batterie, jamais sur l'alimentation de labo. Cause probable ?</summary><p>Une chute de tension sous charge : cellules faibles ou câbles et connecteurs insuffisants.</p></details>
+    <details class="quiz"><summary><code>ModuleNotFoundError: onnxruntime</code> : quelles vérifications ?</summary><p>Environnement virtuel activé ? <code>python --version</code> donne-t-il 3.11 et pas 3.13 ?</p></details>
+    <details class="quiz"><summary>Des servos neufs, mais le pied se lève à peine. Que vérifier ?</summary><p>La référence : STS3215 7,4 V, rapport 1/345, C001. Une version 12 V ou à autre rapport ne correspond pas au modèle appris.</p></details>
+    <details class="quiz"><summary>Que joindre à une demande d'aide ?</summary><p>Version de l'image, commande et sortie exacte de l'erreur, photo du câblage, <code>duck_config.json</code>, ce qui a changé depuis la dernière fois que ça marchait.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>L'alimentation d'abord : tension à l'alimentation, à la carte, puis <code>check_voltage.py</code>.</li>
+      <li>La cause d'une erreur Python est dans la dernière ligne.</li>
+      <li>Un seul changement à la fois, noté, annulé s'il n'aide pas.</li>
+      <li>Erreurs CRC : penser chute de tension ; « Parsing error in set_kps() » : firmwares différents.</li>
+      <li>« running uncalibrated » : fichier de calibration absent du dossier de lancement.</li>
+      <li>Une bonne demande d'aide permet de reproduire le problème sans vous.</li>
+    </ul>
+    <p class="muted">Retour au <a href="#parcours">parcours de formation</a>.</p>
+  </div>
+</section>

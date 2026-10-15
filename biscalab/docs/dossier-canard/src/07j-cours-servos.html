@@ -1,0 +1,222 @@
+<section class="page" id="page-cours-servos" data-title="Cours · Servomoteurs STS3215" data-sub="Configurer, comprendre, surveiller" hidden>
+  <div class="page-head">
+    <div class="eyebrow">Cours 10 · Électronique</div>
+    <h1>Les servomoteurs intelligents STS3215</h1>
+    <p class="lead">Les 14 articulations du canard sont des servos Feetech STS3215. Ce cours explique ce qu'ils savent faire, pourquoi une seule version convient, et comment les configurer et les surveiller au banc.</p>
+    <div class="lesson-meta">
+      <span class="pill info">Durée : 60 min</span>
+      <span class="pill mute">Niveau : débutant</span>
+      <span class="pill mute">Prérequis : électronique</span>
+      <span class="pill p">Rôles : électronique, banc d'essai, assemblage</span>
+    </div>
+  </div>
+
+  <div class="card lesson-objectives">
+    <h2>À la fin de ce cours, vous saurez</h2>
+    <ul>
+      <li>Expliquer ce qu'est un servo et ce qui distingue un servo bus série d'un servo classique.</li>
+      <li>Reconnaître la bonne version du STS3215 et dire pourquoi les autres sont exclues.</li>
+      <li>Convertir couple et vitesse en unités utiles, et comprendre le réglage P.</li>
+      <li>Configurer un servo neuf, monter son palonnier et vérifier qu'il répond.</li>
+      <li>Lire les valeurs renvoyées par un servo et repérer un servo fatigué.</li>
+    </ul>
+    <p><strong>Prérequis :</strong> <a href="#cours-electronique">L'électronique du robot</a> (tension, alimentation de laboratoire, bus série) et savoir lancer un script sur le Pi (cours <a href="#cours-python">Lire et modifier le logiciel du robot</a>).</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>1. Qu'est-ce qu'un servomoteur ?</h2>
+    <p>Un <i class="t" data-t="servo">servomoteur</i> réunit dans un boîtier quatre éléments : un petit moteur électrique, un réducteur (des engrenages qui transforment beaucoup de tours rapides et faibles en peu de tours lents et puissants), un capteur qui mesure l'angle de sortie, et une électronique qui compare cet angle à la consigne. On ne lui demande pas de tourner : on lui donne une <strong>cible</strong>, un angle à atteindre et à tenir. Il corrige tout seul si on le pousse.</p>
+    <h3>Servo classique ou servo bus série</h3>
+    <p>Le servo classique se commande en <i class="t" data-t="pwm">PWM</i> (modulation de largeur d'impulsion) : un fil reçoit un signal qui alterne vite entre 0 et 3,3 V, et la durée de chaque impulsion code l'angle voulu. C'est simple, mais à sens unique : le servo n'informe de rien.</p>
+    <p>Le <i class="t" data-t="sts3215">STS3215</i> de Feetech est un <i class="t" data-t="servo-bus">servo bus série</i>, dit « intelligent » : il reçoit des messages numériques et répond. On peut lui demander sa position, sa vitesse, sa tension d'alimentation, sa température, l'effort qu'il fournit.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Les deux sortes coexistent. Les antennes sont des micro-servos 9 g classiques, commandés en PWM par deux <i class="t" data-t="gpio">GPIO</i> (broches d'entrée-sortie) du <i class="t" data-t="raspberry-pi">Raspberry Pi</i>, le mini-ordinateur du robot : GPIO12 et GPIO13. Les 14 articulations des jambes, du cou et de la tête sont des STS3215, sur bus série.</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>2. Codeur, ID et bus</h2>
+    <h3>Le codeur magnétique</h3>
+    <p>Le capteur d'angle du STS3215 est un <i class="t" data-t="codeur">codeur magnétique</i> : un aimant sur l'axe, une puce qui lit son orientation. Il découpe le tour en 4096 pas, soit 0,088° par pas. La position est <strong>absolue</strong> : à la mise sous tension, le servo sait où il est, sans chercher de butée.</p>
+    <h3>L'ID, le numéro de chaque servo</h3>
+    <p>Tous les servos partagent le même câble. Chacun a donc un <i class="t" data-t="id-servo">ID</i>, un numéro unique entre 0 et 253, et ne répond qu'aux messages qui portent son numéro. Ils sortent tous d'usine avec l'ID 1 : on attribue le sien à chacun avant le montage.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Articulation</th><th>Jambe droite</th><th>Jambe gauche</th></tr></thead>
+        <tbody>
+          <tr><td>Hanche, rotation autour de la verticale (<code>hip_yaw</code>)</td><td>10</td><td>20</td></tr>
+          <tr><td>Hanche, écart latéral (<code>hip_roll</code>)</td><td>11</td><td>21</td></tr>
+          <tr><td>Hanche, avant-arrière (<code>hip_pitch</code>)</td><td>12</td><td>22</td></tr>
+          <tr><td>Genou (<code>knee</code>)</td><td>13</td><td>23</td></tr>
+          <tr><td>Cheville (<code>ankle</code>)</td><td>14</td><td>24</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Cou et tête : 30 <code>neck_pitch</code> (cou, avant-arrière), 31 <code>head_pitch</code> (tête, hochement), 32 <code>head_yaw</code> (tête, gauche-droite), 33 <code>head_roll</code> (tête, inclinaison).</p>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Brancher deux servos neufs à la fois pour les configurer. Ils ont tous les deux l'ID 1 : ils répondent ensemble, leurs réponses se mélangent, et l'un peut recevoir l'ID destiné à l'autre. On configure <strong>un seul servo à la fois</strong> sur le bus.</div></div>
+    <h3>Le bus</h3>
+    <p>Le bus est un câble à trois fils (plus, masse, données) qui passe d'un servo au suivant, en chaîne. Le fil de données est <i class="t" data-t="half-duplex">half-duplex</i> (à l'alternat) : le Pi parle, puis le servo interrogé répond, jamais les deux en même temps. Vitesse : 1 Mbit/s. La <i class="t" data-t="waveshare">carte Waveshare</i> fait le pont entre l'USB du Pi (où elle apparaît sous le nom <code>/dev/ttyACM0</code>) et ce bus. Elle distribue aussi l'alimentation : les servos reçoivent exactement sa tension d'entrée.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>3. La bonne version, et pas une autre</h2>
+    <p>Le STS3215 existe en plusieurs versions qui se ressemblent toutes, mais n'ont ni le même <i class="t" data-t="couple">couple</i> (la force de rotation, exprimée en <i class="t" data-t="kg-cm">kg·cm</i>, voir section 4) ni la même vitesse. Une seule correspond au robot.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Version</th><th>Couple de blocage</th><th>Vitesse à vide</th><th>Courant bloqué</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td><strong>7,4 V, rapport 1/345, référence C001</strong></td><td>19,5 kg·cm</td><td>52 tr/min</td><td>2,5 A</td><td><span class="pill ok">la nôtre</span></td></tr>
+          <tr><td>12 V</td><td>30 kg·cm</td><td>45 tr/min</td><td>2,7 A</td><td><span class="pill bad">à éviter</span></td></tr>
+          <tr><td>7,4 V, rapports 1/191 (C044) ou 1/147 (C046)</td><td colspan="3">autre réducteur, autre comportement</td><td><span class="pill bad">à éviter</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Pourquoi tant d'exigence ? La marche n'a pas été programmée à la main : elle a été <strong>apprise en <i class="t" data-t="simulation">simulation</i></strong> (un programme qui calcule comment bougerait le robot), avec un modèle mathématique de ce servo précis (même couple, même réducteur, même tension). Un autre servo, même « meilleur » sur le papier, ne réagit pas comme le modèle, et la marche apprise ne lui convient plus.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Deux retours d'autres constructeurs. Le premier (<i class="t" data-t="issue">issue</i> #52, une fiche de discussion du dépôt du projet) a mis des servos 12 V aux genoux : le pied ne se levait plus assez. Le second (issue #48) rapporte que même la C001 plafonnerait vers 2,7 rad/s au lieu des 5,24 rad/s simulés, avec des mouvements réduits à 31-49 % de la commande ; la question est restée sans réponse. Nous mesurerons ce point au <i class="t" data-t="banc-servo">banc servo</i>, notre montage d'essai (section 8).</p></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>4. Couple et vitesse</h2>
+    <h3>Le couple</h3>
+    <p>Le couple est une force de rotation. On l'exprime souvent en kg·cm : 19,5 kg·cm veut dire que le servo retient 19,5 kg suspendus au bout d'un bras de 1 cm. L'unité officielle est le newton-mètre (N·m) : 1 kg·cm ≈ 0,098 N·m, donc 19,5 kg·cm ≈ 1,9 N·m. Le couple de blocage est le maximum, atteint à l'arrêt ; plus le servo tourne vite, moins il pousse.</p>
+    <p>Tout est affaire de <strong>bras de levier</strong>. Le même servo retient 19,5 kg à 1 cm, mais seulement 1,95 kg à 10 cm.</p>
+    <div class="ex"><b>Exemple sur notre canard</b><p>Le robot pèse environ 2,1 kg (masse du modèle de simulation). Debout sur une jambe, son <i class="t" data-t="centre-de-masse">centre de masse</i> (le point où toute sa masse semble concentrée) reste presque à l'aplomb du pied : le bras de levier vu par le genou ou la cheville ne fait que quelques centimètres. Avec 5 cm (valeur d'exemple, pas une cote mesurée), il faut 2,1 × 5 ≈ 10,5 kg·cm, environ la moitié du couple de blocage. La marge sert aux accélérations, aux chocs de pose du pied et à la baisse de couple quand la batterie se vide.</p></div>
+    <h3>La vitesse</h3>
+    <p>Les fiches donnent la vitesse en tours par minute (tr/min) ; la simulation compte en radians par seconde (rad/s). Un tour vaut 2π ≈ 6,28 radians. 52 tr/min × 6,28 ÷ 60 ≈ 5,4 rad/s. La simulation limite les articulations à 5,24 rad/s, juste en dessous de la vitesse à vide du servo.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>5. Le régulateur : pourquoi seulement P</h2>
+    <p>Dans chaque servo, une petite logique décide de l'effort à fournir : le <i class="t" data-t="pid">régulateur PID</i>. Imaginons un conducteur qui veut rester au milieu de sa voie.</p>
+    <ul>
+      <li><strong>P (proportionnel) :</strong> plus la voiture est loin du milieu, plus il tourne le volant. L'effort est proportionnel à l'écart.</li>
+      <li><strong>I (intégral) :</strong> si un vent de côté le décale sans cesse, il finit par garder un peu de volant en permanence. L'effort tient compte de l'écart accumulé.</li>
+      <li><strong>D (dérivé) :</strong> s'il revient vers le milieu très vite, il relâche le volant pour ne pas dépasser. L'effort tient compte de la vitesse de l'écart.</li>
+    </ul>
+    <p>Le canard n'utilise que le <i class="t" data-t="gain-p">gain P</i> (I = 0, D = 0). Plus P est grand, plus le servo est raide et rapide, jusqu'à osciller s'il est trop fort.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Moment</th><th>P</th></tr></thead>
+        <tbody>
+          <tr><td>Configuration d'un servo neuf (<code>configure_motor.py</code>)</td><td>32</td></tr>
+          <tr><td>Mise sous tension douce (<code>turn_on.py</code>), puis montée du gain</td><td>2</td></tr>
+          <tr><td>Marche : jambes</td><td>30</td></tr>
+          <tr><td>Marche : tête</td><td>8</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note info"><svg><use href="#i-info"/></svg><div><strong>Pourquoi on ne touche pas à P.</strong> Le modèle de moteur de la simulation a été calé avec P = 30 et 7,4 V. La marche a été apprise avec ce servo-là, réglé ainsi. Changer P, c'est changer le robot que la marche croit piloter.</div></div>
+    <h3>Le jeu des engrenages</h3>
+    <p>Entre les dents du réducteur, il reste un petit jeu, le <i class="t" data-t="backlash">backlash</i> : l'axe peut bouger d'un petit angle sans que le moteur tourne. La simulation le modélise à ±0,5°. Un servo dont le jeu grandit s'éloigne donc du modèle.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>6. Protections, tension et firmware</h2>
+    <p>Le servo se protège seul, grâce à son <i class="t" data-t="firmware">firmware</i> (micrologiciel, le petit programme gravé dans sa puce). Il coupe son effort :</p>
+    <ul>
+      <li>au-delà de 70 °C ;</li>
+      <li>s'il tire plus de 2 A pendant 2 s ;</li>
+      <li>s'il force à plus de 80 % de son maximum pendant 2 s (blocage).</li>
+    </ul>
+    <p>La boucle de marche, elle, ne surveille ni le courant ni la température. Si un servo se coupe en pleine marche, l'articulation devient molle et le robot tombe.</p>
+    <h3>La tension change le couple</h3>
+    <p>Le modèle est calé à 7,4 V. À 8,4 V (pack plein), couple et raideur augmentent de 13,5 % ; à 6,8 V, ils baissent de 8 %. Le robot ne se comporte donc pas tout à fait pareil batterie pleine et batterie basse.</p>
+    <h3>Des firmwares différents</h3>
+    <p>Deux servos du même modèle peuvent porter des versions de firmware différentes, et répondre différemment au même message. Symptôme connu : <code>Parsing error in set_kps()</code> (issue #26 du logiciel embarqué). Remède : mise à jour par le logiciel Feetech, sous Windows. Prévention : acheter les 14 servos du même lot.</p>
+  </div>
+
+  <div class="card lesson">
+    <h2>7. Configurer un servo neuf</h2>
+    <p>On branche <strong>un seul</strong> servo neuf sur la carte Waveshare, puis sur le Pi :</p>
+<pre><code>python configure_motor.py --id 10</code></pre>
+    <p>Ce que fait le script, dans l'ordre :</p>
+    <ol class="steps">
+      <li><div><b>Trouver le servo</b> Il interroge l'ID 1, celui d'usine. S'il ne trouve rien, il essaie tous les numéros un par un.</div></li>
+      <li><div><b>Régler le mode</b> Mode 0 : le mode « position », où le servo va à un angle et s'y tient.</div></li>
+      <li><div><b>Supprimer l'accélération</b> Accélération 0 : le servo ne lisse pas ses départs lui-même, c'est le logiciel de marche qui décide du mouvement, comme en simulation.</div></li>
+      <li><div><b>Écrire le régulateur</b> P = 32, I = 0, D = 0.</div></li>
+      <li><div><b>Changer l'ID</b> Le servo prend le numéro demandé (ici 10).</div></li>
+      <li><div><b>Aller en position 0</b> Le servo rejoint son zéro de référence. Le script affiche ensuite les valeurs relues, pour contrôle.</div></li>
+    </ol>
+    <h3>Monter le palonnier</h3>
+    <p>Le <i class="t" data-t="palonnier">palonnier</i> est la pièce vissée sur l'axe pour transmettre le mouvement. On le monte <strong>pendant que le servo est en position 0</strong>, aligné au mieux avec le boîtier. Un palonnier décalé d'une dent fausse le zéro de l'articulation ; la petite erreur restante sera mesurée plus tard comme un <i class="t" data-t="offset">offset</i> (décalage de zéro), dans le cours <a href="#cours-calibration">Calibrer et mettre en route le robot</a>.</p>
+    <h3>Vérifier</h3>
+    <ul>
+      <li><code>check_motors.py</code> : chaque servo répond, affiche sa position, puis bouge de 0,1 rad (environ 6°) et revient.</li>
+      <li><code>check_voltage.py</code> : affiche la tension vue par chaque servo, en volts. Il interroge les 14 ID du robot : au banc, s'il s'arrête sur une erreur, on en fait une copie limitée aux ID 10 et 11.</li>
+    </ul>
+    <div class="note warn"><svg><use href="#i-warn"/></svg><div><strong>Erreur classique.</strong> Visser le palonnier avant d'avoir lancé la configuration, « parce qu'il est déjà au milieu ». Rien ne garantit qu'un servo neuf est en position 0 : on monte le palonnier après le script, jamais avant.</div></div>
+  </div>
+
+  <div class="card lesson">
+    <h2>8. Le banc servo et la lecture des valeurs</h2>
+    <p>Le banc servo est notre montage d'essai : deux servos vissés sur un socle découpé au laser, la carte Waveshare, le Pi, et une <i class="t" data-t="alim-labo">alimentation de laboratoire</i> réglée à 7,4 V et limitée à 3 A à la place de la batterie. On y apprend tout avant de monter le robot. C'est aussi là que se décide le <i class="t" data-t="go-no-go">GO / NO-GO</i>, la décision formelle de continuer ou non avant d'acheter les 12 autres servos.</p>
+    <h3>Checklist du banc</h3>
+    <ul>
+      <li>Alimentation réglée à 7,4 V, limite 3 A, sortie coupée avant tout branchement.</li>
+      <li>La carte Waveshare fonctionne alimentée en 7,4 V (sa fiche annonce 9 à 12,6 V).</li>
+      <li>Les deux servos configurés (ID 10 et 11), palonniers montés en position 0.</li>
+      <li><code>check_motors.py</code> et <code>check_voltage.py</code> passent.</li>
+      <li>Même version de firmware sur les deux servos.</li>
+      <li>Courant noté : au repos, en mouvement, en blocage.</li>
+      <li><i class="t" data-t="fiche-de-test">Fiche de test</i> remplie (ce qu'on a vérifié, comment, le résultat) et décision notée.</li>
+    </ul>
+    <h3>Ce que renvoie un servo</h3>
+    <p>Les scripts du projet en lisent une partie (position, tension). Le logiciel Feetech sur le PC Windows, carte Waveshare branchée en USB, les affiche toutes.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Valeur</th><th>Normal</th><th>À surveiller</th></tr></thead>
+        <tbody>
+          <tr><td>Position</td><td>Égale à la consigne, à quelques pas près</td><td>Écart qui persiste, position qui dérive</td></tr>
+          <tr><td>Vitesse</td><td>Nulle à l'arrêt</td><td>Non nulle servo immobile</td></tr>
+          <tr><td>Charge (effort)</td><td>Faible au repos, monte quand on pousse</td><td>Élevée sans raison : frottement, pièce qui coince</td></tr>
+          <tr><td>Tension</td><td>Proche du réglage de l'alimentation (7,4 V au banc)</td><td>Nettement plus basse en mouvement : chute de tension</td></tr>
+          <tr><td>Température</td><td>Proche de la pièce au repos, monte avec l'effort</td><td>Qui approche 70 °C : la coupure est proche</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Les signes d'un servo fatigué</h3>
+    <ul>
+      <li>Il chauffe plus que ses voisins pour le même travail.</li>
+      <li>Il grince, claque ou bourdonne à l'arrêt.</li>
+      <li>On sent du jeu à la main, plus qu'avant.</li>
+      <li>Il ne tient plus sa position, ou oscille.</li>
+    </ul>
+    <p>On le note dans le journal, on le compare à un servo neuf au banc, et on le remplace si l'écart se confirme.</p>
+  </div>
+
+  <div class="card lesson-exo">
+    <h2>Exercice pratique au FabLab</h2>
+    <p>Matériel : banc servo (socle, carte Waveshare, Pi, alimentation de laboratoire), 2 STS3215 neufs, leurs palonniers et vis, multimètre. Durée : 40 min.</p>
+    <ol class="steps">
+      <li><div><b>Préparer</b> Alimentation à 7,4 V, limite 3 A, sortie coupée. Un seul servo branché sur la carte.</div></li>
+      <li><div><b>Configurer le premier</b> Sortie allumée, <code>python configure_motor.py --id 10</code>. Lire les valeurs affichées : P 32, I 0, D 0, mode 0.</div></li>
+      <li><div><b>Monter son palonnier</b> Servo en position 0, palonnier aligné, vissé.</div></li>
+      <li><div><b>Configurer le second</b> Couper, débrancher le premier, brancher le second, recommencer avec <code>--id 11</code> et monter son palonnier.</div></li>
+      <li><div><b>Provoquer la protection</b> Juste après le script, le servo 11 tient sa position 0 avec P = 32. Pousser doucement son palonnier par l'extrémité, doigts hors de tout pincement, et le retenir. Observer le courant monter sur l'alimentation, puis le servo relâcher au bout d'environ 2 s. Noter comment il repart.</div></li>
+      <li><div><b>Vérifier</b> Couper, brancher les deux servos en chaîne, rallumer. Lancer <code>check_motors.py</code> : il signale les 12 servos absents, répondre <kbd>y</kbd> ; les deux présents bougent de 0,1 rad. Lancer <code>check_voltage.py</code> et noter la tension. Lire la température (logiciel Feetech).</div></li>
+    </ol>
+    <p><strong>Résultat attendu :</strong> deux servos configurés aux ID 10 et 11, palonniers alignés, tension et température notées, déclenchement de la protection observé et consigné dans le journal.</p>
+  </div>
+
+  <div class="card">
+    <h2>Auto-contrôle</h2>
+    <details class="quiz"><summary>Pourquoi configure-t-on les servos un par un ?</summary><p>Ils sortent tous d'usine avec l'ID 1 : à deux sur le bus, ils répondraient ensemble et les messages se mélangeraient.</p></details>
+    <details class="quiz"><summary>Un vendeur propose des STS3215 12 V, 30 kg·cm, « plus puissants ». Pourquoi refuser ?</summary><p>La marche a été apprise avec le modèle de la version 7,4 V 1/345 (C001). Un autre servo ne réagit pas comme ce modèle ; un constructeur a constaté que le pied ne se levait plus assez (issue #52).</p></details>
+    <details class="quiz"><summary>Combien font 52 tr/min en rad/s ?</summary><p>52 × 6,28 ÷ 60 ≈ 5,4 rad/s. La simulation limite à 5,24 rad/s.</p></details>
+    <details class="quiz"><summary>Pourquoi ne pas augmenter P pour rendre le robot plus nerveux ?</summary><p>La marche a été apprise avec P = 30. Changer P change le comportement des articulations par rapport à ce que la marche attend.</p></details>
+    <details class="quiz"><summary>Un servo se coupe en pleine marche. Quelles causes chercher ?</summary><p>Ses protections : plus de 70 °C, plus de 2 A pendant 2 s, ou un blocage à plus de 80 % pendant 2 s. La boucle de marche, elle, ne surveille rien.</p></details>
+  </div>
+
+  <div class="card lesson-recap">
+    <h2>À retenir</h2>
+    <ul>
+      <li>Un servo bus série reçoit une cible et renvoie position, vitesse, charge, tension et température.</li>
+      <li>Seule la version 7,4 V, 1/345, C001 (19,5 kg·cm, 52 tr/min) convient.</li>
+      <li>IDs : 10-14 jambe droite, 20-24 jambe gauche, 30-33 cou et tête. Un seul servo neuf à la fois sur le bus.</li>
+      <li>P seul : 32 à la configuration, 30 en marche, 8 pour la tête, 2 à la mise sous tension. On n'y touche pas.</li>
+      <li>Palonnier monté après <code>configure_motor.py</code>, en position 0.</li>
+      <li>Protections : 70 °C, 2 A pendant 2 s, blocage pendant 2 s. La marche ne surveille rien d'autre.</li>
+      <li>Tout essai se fait au banc, à 7,4 V et 3 A, avant le robot.</li>
+    </ul>
+    <p class="muted">Cours suivant : <a href="#cours-capteurs">Les capteurs : centrale inertielle et contacts de pied</a>.</p>
+  </div>
+</section>
