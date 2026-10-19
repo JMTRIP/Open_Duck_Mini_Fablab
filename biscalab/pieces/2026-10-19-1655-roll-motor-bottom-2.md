@@ -1,0 +1,11 @@
+---
+type: piece
+piece: roll_motor_bottom
+exemplaire: 2
+statut: imprimee
+masse_g: 
+rev: amont
+date: 2026-10-19
+par: Philippe
+---
+
