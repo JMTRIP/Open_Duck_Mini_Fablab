@@ -1,3 +1,14 @@
+> [!IMPORTANT]
+> ## Canard BiscaLab : ouvrir le dossier de travail
+>
+> ### 👉 <https://jmtrip.github.io/Open_Duck_Mini_Fablab/>
+>
+> C'est **cette page** qu'on ouvre : tableau de bord, séances, pièces, achats, tests, cours. Elle s'installe sur le téléphone comme une application.
+>
+> Ce dépôt n'en est que le classeur : tout ce qui appartient au BiscaLab est dans [`biscalab/`](biscalab/). Cliquer sur un fichier `index.html` ici affiche son code, pas la page. Le texte en anglais ci-dessous est la présentation du projet d'origine (Antoine Pirrone).
+
+---
+
 # Open Duck Mini v2
 
 <table>
