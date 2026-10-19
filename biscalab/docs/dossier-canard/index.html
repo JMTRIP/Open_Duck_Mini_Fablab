@@ -710,6 +710,39 @@ details.quiz + details.quiz { margin-top: 8px; }
 .fld .static { padding: 8px 10px; border-radius: var(--radius-lg); background: var(--color-muted); font-size: 0.95rem; }
 .f-out:empty { display: none; }
 .f-out { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+
+/* Registre des pièces : frise Imprimée → Contrôlée → Montée */
+.piece-row { padding: 10px 4px 12px; }
+.prow-main { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pdot { width: 20px; height: 20px; border-radius: 6px; flex: none; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: var(--color-primary-fg); border: 2px dashed var(--color-border-strong); }
+.pdot.imprimee, .pdot.controlee, .pdot.montee, .pdot.a_refaire { border: 0; }
+.pdot.imprimee { background: var(--color-consumption); } .pdot.controlee { background: var(--color-battery); } .pdot.montee { background: var(--color-primary); } .pdot.a_refaire { background: var(--color-alert); }
+.pname { flex: 1 1 auto; min-width: 0; }
+.pmasse { font-size: 12px; font-variant-numeric: tabular-nums; }
+.prow-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 8px 0 0 30px; }
+.psteps { display: inline-flex; align-items: center; flex-wrap: nowrap; }
+.pstep-sep { width: 16px; height: 2px; flex: none; background: var(--color-border); }
+.pstep-sep.on { background: var(--color-border-strong); }
+.pstep { --c: var(--color-muted-fg); --cm: var(--color-muted); display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 12px; border-radius: 999px; font: inherit; font-size: 12.5px; font-weight: 600; white-space: nowrap; cursor: pointer; background: transparent; color: var(--color-muted-fg); border: 1.5px solid var(--color-border); transition: background .15s, color .15s, border-color .15s; }
+.pstep.imprimee { --c: var(--color-consumption); --cm: var(--color-consumption-muted); }
+.pstep.controlee { --c: var(--color-battery); --cm: var(--color-battery-muted); }
+.pstep.montee { --c: var(--color-primary); --cm: var(--color-primary-muted); }
+.pstep.st-fait { color: var(--c); background: var(--cm); border-color: transparent; }
+.pstep.st-actuel { color: var(--color-primary-fg); background: var(--c); border-color: var(--c); cursor: default; box-shadow: 0 0 0 3px var(--cm); }
+.pstep.st-suivant { color: var(--c); border: 1.5px dashed var(--c); }
+.pstep.st-a-faire:not(.st-suivant) { opacity: .6; }
+.pstep:not(.st-actuel):hover { color: var(--c); background: var(--cm); border-color: var(--c); opacity: 1; }
+.pstep .ck { font-weight: 800; }
+.psteps.off .pstep { opacity: .45; }
+.pmeta { flex: 1 1 auto; margin: 0; color: var(--color-muted-fg); font-size: 12px; }
+.pside { margin-left: auto; }
+.pbad { background: none; border: 1.5px solid transparent; font: inherit; font-size: 12px; font-weight: 600; color: var(--color-muted-fg); cursor: pointer; height: 30px; padding: 0 10px; border-radius: 999px; }
+.pbad:hover { color: var(--color-alert); background: var(--color-alert-muted); border-color: var(--color-alert); }
+.piece-row.ps-a_refaire { background: var(--color-alert-muted); border-radius: 10px; padding-left: 8px; padding-right: 8px; }
+.pleg { display: inline-flex; align-items: center; gap: 5px; font-weight: 650; white-space: nowrap; }
+.pleg::before { content: ''; width: 10px; height: 10px; border-radius: 3px; background: currentColor; }
+.pleg.imprimee { color: var(--color-consumption); } .pleg.controlee { color: var(--color-battery); } .pleg.montee { color: var(--color-primary-active); } .pleg.a_refaire { color: var(--color-alert); }
+@media (max-width: 640px) { .prow-foot { padding-left: 0; } .pstep { padding: 0 9px; } .pstep-sep { width: 8px; } .psteps { flex-basis: 100%; } }
 </style>
 
 
@@ -7117,13 +7150,22 @@ Ce que j'ai vu, quand, combien de fois.
     PLAN.phases.forEach(function (p) { h += phaseCard(st, p, 'ph-'); });
     return h;
   }
+  var PIECE_ETAPES = ['imprimee', 'controlee', 'montee'];
+  var PIECE_AIDE = { a_imprimer: 'pas encore imprimée', imprimee: 'sortie de l\'imprimante, pas encore vérifiée', controlee: 'cotes, aspect et pesée vérifiés : prête à monter', montee: 'assemblée sur le robot', a_refaire: 'défaut constaté : à réimprimer' };
   function pieceRow(st, p, e) {
-    var ev = st.pieces[p[1] + '#' + e], st2 = ev ? ev.statut : 'a_imprimer', nxt = NEXT_STATUT[st2] || 'imprimee';
-    var cls = st2 === 'a_refaire' ? ' bad' : (st2 === 'controlee' || st2 === 'montee') ? ' done' : st2 === 'imprimee' ? ' part' : '';
-    var box = st2 === 'a_refaire' ? '✕' : (st2 === 'controlee' || st2 === 'montee') ? '✓' : '';
-    var meta = PIECE_LABELS[st2] + (ev ? (ev.par ? ' · ' + esc(ev.par) : '') + (ev.date ? ' le ' + frDate(ev.date) : '') + (ev.rev && ev.rev !== 'amont' ? ' · rév. ' + esc(ev.rev) : '') + (ev.note ? ' · ' + esc(ev.note.slice(0, 80)) : '') : '');
-    var acts = PIECE_STATUTS.filter(function (x) { return x !== 'a_imprimer' && x !== st2; }).map(function (x) { return '<button type="button" class="btn sm' + (x === nxt ? ' primary' : '') + '" data-act="form" data-form="piece"' + preAttr(piecePre(p[1], e, ev, x)) + '>' + esc(PIECE_LABELS[x].charAt(0).toUpperCase() + PIECE_LABELS[x].slice(1)) + '</button>'; }).join('');
-    return '<div class="task piece-row' + cls + '" data-anchor="pc-' + p[1] + '-' + e + '"><div class="task-main"><button type="button" class="chk chk-btn" data-act="form" data-form="piece"' + preAttr(piecePre(p[1], e, ev)) + ' title="' + esc('Cliquer : ' + PIECE_LABELS[nxt]) + '"><span class="box"' + (st2 === 'imprimee' ? ' style="background:linear-gradient(90deg, var(--color-consumption) 50%, transparent 50%)"' : '') + '>' + box + '</span><span class="t"><span class="lbl"><code>' + esc(p[1]) + '</code> n° ' + e + ' <small class="muted">' + esc(p[3]) + '</small></span></span></button><span class="task-pct">' + statutPill(st2, PIECE_LABELS) + (ev && !isNaN(ev.masse) ? '<b>' + ev.masse + ' g</b>' : '') + '</span></div><div class="task-foot"><small>' + meta + '</small><span class="task-acts">' + acts + '</span></div></div>';
+    var ev = st.pieces[p[1] + '#' + e], st2 = ev ? ev.statut : 'a_imprimer', bad = st2 === 'a_refaire', idx = PIECE_ETAPES.indexOf(st2);
+    var steps = PIECE_ETAPES.map(function (s, i) {
+      var etat = bad ? 'st-a-faire' : i < idx ? 'st-fait' : i === idx ? 'st-actuel' : 'st-a-faire', next = !bad && i === idx + 1;
+      var lab = PIECE_LABELS[s].charAt(0).toUpperCase() + PIECE_LABELS[s].slice(1);
+      var tip = etat === 'st-actuel' ? 'État actuel : ' + PIECE_AIDE[s] : etat === 'st-fait' ? 'Étape franchie. Cliquer pour revenir à « ' + PIECE_LABELS[s] + ' » (correction)' : 'Cliquer quand l\'exemplaire est ' + PIECE_LABELS[s] + ' : ' + PIECE_AIDE[s];
+      var attrs = etat === 'st-actuel' ? ' aria-current="step"' : ' data-act="form" data-form="piece"' + preAttr(piecePre(p[1], e, ev, s));
+      return (i ? '<i class="pstep-sep' + (!bad && i <= idx ? ' on' : '') + '"></i>' : '') + '<button type="button" class="pstep ' + s + ' ' + etat + (next ? ' st-suivant' : '') + '"' + attrs + ' title="' + esc(tip) + '">' + (etat === 'st-a-faire' ? '' : '<b class="ck">✓</b>') + esc(lab) + '</button>';
+    }).join('');
+    var side = bad ? '<button type="button" class="btn sm pside" data-act="form" data-form="piece"' + preAttr(piecePre(p[1], e, ev, 'imprimee')) + '>Réimprimée</button>'
+      : st2 === 'a_imprimer' ? '' : '<button type="button" class="pbad pside" data-act="form" data-form="piece"' + preAttr(piecePre(p[1], e, ev, 'a_refaire')) + ' title="Défaut constaté : renvoyer cet exemplaire à l\'impression">✕ À refaire</button>';
+    var meta = ev ? [ev.par ? esc(ev.par) : '', ev.date ? frDate(ev.date) : '', ev.rev && ev.rev !== 'amont' ? 'rév. ' + esc(ev.rev) : '', ev.note ? esc(ev.note.slice(0, 80)) : ''].filter(Boolean).join(' · ') : '';
+    var box = bad ? '✕' : idx > 0 ? '✓' : '';
+    return '<div class="task piece-row ps-' + st2 + '" data-anchor="pc-' + p[1] + '-' + e + '"><div class="prow-main"><span class="pdot ' + st2 + '" title="' + esc(PIECE_LABELS[st2] + ' : ' + PIECE_AIDE[st2]) + '">' + box + '</span><span class="pname"><code>' + esc(p[1]) + '</code> n° ' + e + ' <small class="muted">' + esc(p[3]) + '</small></span>' + (bad ? statutPill('a_refaire', PIECE_LABELS) : '') + (ev && !isNaN(ev.masse) ? '<b class="pmasse">' + ev.masse + ' g</b>' : '') + '</div><div class="prow-foot"><span class="psteps' + (bad ? ' off' : '') + '">' + steps + '</span><small class="pmeta">' + meta + '</small>' + side + '</div></div>';
   }
   function viewPieces(st) {
     var h = '<div class="row" style="justify-content:space-between"><div class="data-status"></div><button type="button" class="btn primary" data-act="form" data-form="piece">' + svgUse('i-printer') + 'Enregistrer une pièce</button></div>' + slotHtml();
@@ -7133,6 +7175,7 @@ Ce que j'ai vu, quand, combien de fois.
     ['controlee', 'montee', 'a_refaire'].forEach(function (x) { h += '<div class="kpi"><div class="v">' + (cnt[x] || 0) + '</div><div class="l">' + PIECE_LABELS[x] + '</div><div class="d">exemplaires</div></div>'; });
     var masses = Object.keys(st.pieces).map(function (k) { return st.pieces[k].masse; }).filter(function (m) { return !isNaN(m); });
     h += '<div class="kpi"><div class="v">' + Math.round(masses.reduce(function (a, b) { return a + b; }, 0)) + '<small>g</small></div><div class="l">Masse pesée</div><div class="d">' + masses.length + ' exemplaire' + (masses.length > 1 ? 's' : '') + ' pesé' + (masses.length > 1 ? 's' : '') + '</div></div></div>';
+    h += '<div class="note info"><svg><use href="#i-info"/></svg><div><strong>Chaque exemplaire passe par trois étapes</strong>, dans les couleurs du dessin : <span class="pleg imprimee">imprimée</span> sortie de l\'imprimante, <span class="pleg controlee">contrôlée</span> cotes, aspect et pesée vérifiés, <span class="pleg montee">montée</span> assemblée sur le robot. L\'étape pleine est l\'état actuel ; celle en pointillés est la suivante : un clic ouvre l\'enregistrement, déjà rempli. <span class="pleg a_refaire">À refaire</span> se signale à part et renvoie l\'exemplaire à l\'impression.</div></div>';
     var groups = []; PLAN.pieces.forEach(function (p) { if (groups.indexOf(p[0]) < 0) groups.push(p[0]); });
     groups.forEach(function (g) {
       var ps = PLAN.pieces.filter(function (p) { return p[0] === g; }), tot = 0, done = 0, part = 0;
@@ -7227,7 +7270,7 @@ Ce que j'ai vu, quand, combien de fois.
     tache: { titre: 'Avancement d\'une tâche', dir: 'avancement', page: null, icon: 'i-check', aide: 'Un enregistrement par changement d\'avancement ; le dernier l\'emporte. 100 % = fait. Pour cocher plusieurs tâches d\'un coup, préférer l\'enregistrement d\'une séance.',
       fields: [['label', 'Tâche', 'static'], ['tache', 'Identifiant', 'static'], ['avancement', 'Avancement', 'select', ['100|fait (100 %)', '75|75 %', '50|50 %', '25|25 %', '0|pas commencé (0 %)']], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['note', 'Note (facultatif)', 'text']],
       build: function (v) { var pct = parseInt0(v.avancement) || 0; return { name: v.date + '-' + nowHHMM() + '-' + slug(v.tache) + '.md', text: '---\ntype: tache\ntache: ' + v.tache + '\navancement: ' + pct + '\nfait: ' + (pct >= 100 ? 'oui' : 'non') + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n' + (v.note ? v.note + '\n' : '') + (v.label ? '> ' + v.label + '\n' : '') }; } },
-    piece: { titre: 'Enregistrer une pièce imprimée', dir: 'pieces', page: 'pieces', icon: 'i-printer', aide: 'Un enregistrement par exemplaire et par changement d\'état. La pesée sert à comparer avec le modèle de simulation.',
+    piece: { titre: 'Enregistrer l\'état d\'une pièce', dir: 'pieces', page: 'pieces', icon: 'i-printer', aide: 'Un enregistrement par exemplaire et par changement d\'état. La pesée sert à comparer avec le modèle de simulation.',
       fields: [['piece', 'Pièce', 'piece'], ['exemplaire', 'Exemplaire n°', 'number', '1'], ['statut', 'État', 'select', PIECE_STATUTS.map(function (s) { return s + '|' + PIECE_LABELS[s]; })], ['masse_g', 'Masse pesée (g, facultatif)', 'text'], ['rev', 'Révision (amont, b1, b2…)', 'text', 'amont'], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['note', 'Note (orientation, supports, défaut…)', 'textarea']],
       build: function (v) { if (v.piece === 'autre') v.piece = slug(v.piece_autre || 'piece'); return { name: v.date + '-' + nowHHMM() + '-' + slug(v.piece) + '-' + (v.exemplaire || 1) + '.md', text: '---\ntype: piece\npiece: ' + v.piece + '\nexemplaire: ' + (v.exemplaire || 1) + '\nstatut: ' + v.statut + '\nmasse_g: ' + (v.masse_g || '') + '\nrev: ' + (v.rev || 'amont') + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n' + (v.note || '') + '\n' }; } },
     achat: { titre: 'Enregistrer un achat', dir: 'achats', page: 'achats', icon: 'i-cart', aide: 'Une entrée par commande, au moment où elle est passée. Quand son statut change (commandé → reçu → remboursé), bouton « modifier » sur la ligne : même objet, nouveau statut. Le dernier enregistrement l\'emporte, rien n\'est compté deux fois.',
