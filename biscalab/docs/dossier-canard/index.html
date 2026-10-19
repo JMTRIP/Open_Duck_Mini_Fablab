@@ -743,6 +743,41 @@ details.quiz + details.quiz { margin-top: 8px; }
 .pleg::before { content: ''; width: 10px; height: 10px; border-radius: 3px; background: currentColor; }
 .pleg.imprimee { color: var(--color-consumption); } .pleg.controlee { color: var(--color-battery); } .pleg.montee { color: var(--color-primary-active); } .pleg.a_refaire { color: var(--color-alert); }
 @media (max-width: 640px) { .prow-foot { padding-left: 0; } .pstep { padding: 0 9px; } .pstep-sep { width: 8px; } .psteps { flex-basis: 100%; } }
+
+/* Dessin du canard : mise en évidence d'une pièce ou d'un état */
+.duck .dk { transition: opacity .25s; }
+.duck.focus .dk:not(.hl) { opacity: .14; }
+.duck .dk.hl { stroke: var(--color-fg); stroke-width: 2.4; stroke-dasharray: none; fill-opacity: 1; animation: dk-pulse 1.2s ease-in-out 3; }
+@keyframes dk-pulse { 50% { stroke-width: 6; } }
+.dleg { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border: 1px solid transparent; border-radius: var(--radius-pill); background: none; font: inherit; color: inherit; cursor: pointer; }
+.dleg:hover { border-color: var(--color-border-strong); color: var(--color-fg); }
+.dleg.on { border-color: var(--color-primary); background: var(--color-primary-muted); color: var(--color-fg); }
+.duck-legend { justify-content: center; align-items: center; }
+.duck-cap { min-height: 1.5em; text-align: center; font-size: 13px; color: var(--color-muted-fg); }
+.duck-cap strong { color: var(--color-fg); }
+.pview { display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--color-border); background: none; font: inherit; font-size: 12px; font-weight: 600; color: var(--color-muted-fg); cursor: pointer; }
+.pview svg { width: 15px; height: 15px; }
+.pview:hover { color: var(--color-primary-active); border-color: var(--color-primary); background: var(--color-primary-muted); }
+/* Achats : liste d'articles */
+.art-filters { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+.art-filters .chips { align-items: center; gap: 6px; }
+.art-filters .chip, .art-foot .chip { font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; padding: 3px 10px; }
+.art-filters small { margin-right: 2px; }
+.art-bar { position: sticky; top: 8px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 10px; border: 1.5px solid var(--color-primary); border-radius: var(--radius-xl); background: var(--color-card); box-shadow: var(--shadow-md); }
+.art-bar[hidden] { display: none; }
+.art-bar:has(+ .inline-slot) { position: static; box-shadow: none; }
+.art-bar-t { flex: 1 1 auto; font-weight: 600; font-size: 13px; }
+.art-row { padding: 10px 4px 12px; }
+.art-main { display: flex; align-items: flex-start; gap: 10px; }
+.art-sel { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--color-primary); flex: none; cursor: pointer; }
+.art-sel-x { width: 18px; flex: none; text-align: center; font-weight: 800; color: var(--color-battery); }
+.art-txt { flex: 1 1 auto; min-width: 0; }
+.art-txt small { display: block; margin-top: 2px; color: var(--color-muted-fg); font-size: 12px; }
+.art-row.ae-recu .art-txt strong { color: var(--color-muted-fg); }
+.art-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 8px 0 0 28px; }
+.art-foot .chips { flex: 1 1 auto; }
+.art-hist { display: block; padding: 6px 0 0 28px; color: var(--color-muted-fg); font-size: 11.5px; }
+@media (max-width: 640px) { .art-foot, .art-hist { padding-left: 0; } .art-main { display: grid; grid-template-columns: 18px minmax(0, 1fr); column-gap: 10px; row-gap: 6px; } .art-main .pill { grid-column: 2; justify-self: start; } }
 </style>
 
 
@@ -776,7 +811,7 @@ details.quiz + details.quiz { margin-top: 8px; }
       <span>Thème</span>
     </button>
     <div class="data-status sb-status"></div>
-    <small>Dossier v2.0 · 15 oct. 2026<br/>Open Duck Mini V2 · Apache-2.0</small>
+    <small>Dossier v2.1 · 19 oct. 2026<br/>Open Duck Mini V2 · Apache-2.0</small>
   </div>
 </aside>
 
@@ -868,7 +903,7 @@ details.quiz + details.quiz { margin-top: 8px; }
   <div class="page-head">
     <div class="eyebrow">Suivi</div>
     <h1>Achats et budget</h1>
-    <p class="lead">Une entrée par commande, du « prévu » au « remboursé ». Le budget engagé se compare au plan d'achats par phase (socle 476,25 €). Les factures restent sur le Nextcloud, jamais dans le dépôt public.</p>
+    <p class="lead">La liste des articles à acheter, un par ligne, chacun commandé sur le site de son choix, seul ou avec d'autres. Une entrée par commande, du « prévu » au « remboursé » ; le budget engagé se compare au plan (socle 476,25 €). Les factures restent sur le Nextcloud, jamais dans le dépôt public.</p>
     <div class="read-first"><span>Le plan et les fournisseurs :</span> <a href="#bom"><svg style="width:12px;height:12px" aria-hidden="true"><use href="#i-cart"/></svg>BOM et plan d'achats</a></div>
   </div>
   <div data-view="achats"></div>
@@ -6453,14 +6488,31 @@ Ce que j'ai vu, quand, combien de fois.
     'p5.1': 'cours-assemblage cours-servos', 'p5.2': 'cours-capteurs logiciel', 'p5.3': 'cours-calibration marche', 'p5.4': 'cours-laser risques', 'p5.5': 'marche', 'p5.6': 'mesures decisions', 'p5.7': 'tests journal',
     'p6.1': 'achats bom', 'p6.2': 'cours-electronique risques', 'p6.3': 'logiciel cours-depannage', 'p6.4': 'mesures tests', 'p6.5': 'pieces cours-assemblage', 'p6.6': 'github cours-git'
   };
-  // Les six commandes du plan d'achats (une par phase), prêtes à enregistrer
-  PLAN.achats = [
-    { phase: 1, titre: 'Achat phase 1 : filament, inserts, roulements', montant: '55,70', servos: 0, lignes: '- Filament PLA ≈ 1 kg + TPU (plan : 1,3 kg)\n- Inserts filetés M3, lot de 100 (référence BOM)\n- 3 × roulements 608ZZ\n- Consommables (colle, adhésif)' },
-    { phase: 2, titre: 'Achat phase 2 : cerveau et banc servo', montant: '99,55', servos: 2, lignes: '- Raspberry Pi Zero 2 W\n- Carte microSD 32 Go (U3 / A1)\n- Waveshare Bus Servo Adapter (A)\n- IMU BNO055\n- 2 × Feetech STS3215 7,4 V 1/345 (C001), étiquette vérifiée à la réception' },
-    { phase: 3, titre: 'Achat phase 3 : jambe 1', montant: '63,10', servos: 3, lignes: '- 3 × STS3215 7,4 V 1/345 (C001), même lot que les premiers\n- 4 × contacts Omron SS-10' },
-    { phase: 4, titre: 'Achat phase 4 : jambe 2', montant: '99,50', servos: 5, lignes: '- 5 × STS3215 7,4 V 1/345 (C001), même lot' },
-    { phase: 5, titre: 'Achat phase 5 : tête et finitions', montant: '95,25', servos: 4, lignes: '- 4 × STS3215 7,4 V 1/345 (C001), même lot\n- 2 × micro-servos 9 g (antennes)\n- Gaine spirale 6 mm, 3 m' },
-    { phase: 6, titre: 'Achat phase 6 : énergie', montant: '63,15', servos: 0, lignes: '- 2 × Molicel P30B 18650\n- Support 2S avec câbles\n- BMS 2S (calibre validé en phase 5)\n- UBEC 5 V 8 A\n- Interrupteur à verrouillage lumineux\n- Chargeur Li-ion 2S (selon la décision prise)\n- 2 × jacks DC 2,1 mm\n- 4 × paires XT30' }
+  // Les articles à acheter, un par ligne (BOM du socle). Chacun se commande où l'on veut, seul ou avec d'autres pris sur le même site.
+  // besoin : { phase: quantité } ; paliers : quantités cumulées conseillées (servos : 2 d'abord, puis le reste du même lot) ;
+  // prix : prix indicatif pour la quantité totale (vérifié le 1er oct. 2026) ; mots : reconnaissance des achats enregistrés sans liste d'articles.
+  PLAN.articles = [
+    { id: 'filament', nom: 'Filament PLA + TPU', ref: 'PLA ≈ 1 kg + TPU 40 % (plan : 1,3 kg)', qte: 1, unite: 'lot', besoin: { 1: 1 }, prix: 36.40, sites: ['Prusa', 'Sunlu'], note: 'Prusament ou Sunlu.', mots: ['filament', 'prusament', 'sunlu'] },
+    { id: 'inserts', nom: 'Inserts filetés M3', ref: 'lot de 100, référence BOM', qte: 1, unite: 'lot', besoin: { 1: 1 }, prix: 5.99, sites: ['Amazon.fr', 'Prusa'], note: 'Prusa vend aussi des M3 standard.', mots: ['insert'] },
+    { id: '608zz', nom: 'Roulements 608ZZ', ref: '8 × 22 × 7 mm', qte: 3, besoin: { 1: 3 }, prix: 10.50, sites: ['Amazon.fr'], note: 'Vendus par lot de 10.', mots: ['608zz', 'roulement'] },
+    { id: 'consommables', nom: 'Consommables d\'impression', ref: 'colle, adhésif', qte: 1, unite: 'lot', besoin: { 1: 1 }, prix: null, sites: ['Amazon.fr'], note: '', mots: ['consommable', 'colle'] },
+    { id: 'pizero', nom: 'Raspberry Pi Zero 2 W', ref: 'le calculateur embarqué', qte: 1, besoin: { 2: 1 }, prix: 19.50, sites: ['Kubii'], note: 'Rupture fréquente : commander tôt.', mots: ['zero 2', 'pi zero'] },
+    { id: 'microsd', nom: 'Carte microSD 32 Go', ref: 'classe U3 / A1', qte: 1, besoin: { 2: 1 }, prix: 10.00, sites: ['Amazon.fr'], note: 'L\'image prête à flasher vise 32 Go.', mots: ['microsd', 'micro sd', 'carte sd'] },
+    { id: 'waveshare', nom: 'Carte bus servo Waveshare', ref: 'Bus Servo Adapter (A)', qte: 1, besoin: { 2: 1 }, prix: 5.00, sites: ['Waveshare'], note: 'Entrée 9 à 12,6 V : à vérifier en 2S sur le banc.', mots: ['waveshare', 'bus servo adapter'] },
+    { id: 'bno055', nom: 'IMU BNO055', ref: 'Adafruit 2472 ou équivalent I²C', qte: 1, besoin: { 2: 1 }, prix: 40.00, sites: ['Mouser', 'Lextronic'], note: 'Rester sur la BNO055 : c\'est celle du code.', mots: ['imu', 'bno055', 'bno 055'] },
+    { id: 'usb', nom: 'Câbles micro-USB → USB-C', ref: '15 cm et 50 cm', qte: 2, besoin: { 2: 2 }, prix: 13.00, sites: ['Amazon.fr'], note: '', mots: ['cable usb', 'cables usb', 'micro-usb'] },
+    { id: 'sts3215', nom: 'Servo Feetech STS3215', ref: '7,4 V, 1/345 (C001)', qte: 14, besoin: { 2: 2, 3: 3, 4: 5, 5: 4 }, paliers: [2, 14], prix: 340.90, sites: ['Eckstein', 'OpenELAB', 'RobotShop EU'], note: 'Pas la 12 V, ni C044/C046. 2 d\'abord pour le banc, puis les 12 autres du même lot. Vérifier « 7,4 V » à la réception.', mots: ['sts3215', 'sts 3215', 'feetech'] },
+    { id: 'ss10', nom: 'Contacts de pied Omron SS-10', ref: 'micro-interrupteurs', qte: 4, besoin: { 3: 4 }, prix: 15.16, sites: ['RS Components'], note: 'En stock chez RS (le lien officiel AliExpress est exclu).', mots: ['ss-10', 'ss10', 'omron'] },
+    { id: 'microservo', nom: 'Micro-servos 9 g', ref: 'pour les antennes', qte: 2, besoin: { 5: 2 }, prix: 6.66, sites: ['Amazon.fr', 'Gotronic'], note: '', mots: ['micro-servo', 'micro servo', 'sg90'] },
+    { id: 'gaine', nom: 'Gaine spirale', ref: '6 mm, 3 m', qte: 1, besoin: { 5: 1 }, prix: 9.00, sites: ['Amazon.fr'], note: '', mots: ['gaine'] },
+    { id: 'p30b', nom: 'Accus 18650 Molicel P30B', ref: '3000 mAh, ≥ 25 A', qte: 2, besoin: { 6: 2 }, prix: 10.00, sites: ['NKON'], note: 'Des cellules « molles » donnent des erreurs CRC sur le bus en charge.', mots: ['p30b', 'molicel'] },
+    { id: 'support2s', nom: 'Support 2S', ref: '2 × 18650, avec câbles', qte: 1, besoin: { 6: 1 }, prix: 4.99, sites: ['Amazon.fr'], note: '', mots: ['support 2s', 'support 18650', 'boitier 18650'] },
+    { id: 'bms', nom: 'BMS Li-ion 2S', ref: 'équilibrage, 6 A', qte: 1, besoin: { 6: 1 }, prix: 8.40, sites: ['Amazon.fr', 'Gotronic'], note: 'Calibre à confirmer avec le courant crête mesuré en phase 5.', mots: ['bms'] },
+    { id: 'ubec', nom: 'Régulateur UBEC 5 V', ref: '8 A, pour le Pi et les périphériques', qte: 1, besoin: { 6: 1 }, prix: 4.00, sites: ['Amazon.fr'], note: '', mots: ['ubec'] },
+    { id: 'interrupteur', nom: 'Interrupteur', ref: 'à verrouillage, lumineux', qte: 1, besoin: { 6: 1 }, prix: 4.49, sites: ['Amazon.fr'], note: '', mots: ['interrupteur'] },
+    { id: 'chargeur', nom: 'Chargeur Li-ion 2S', ref: 'USB-C, 8,4 V', qte: 1, besoin: { 6: 1 }, prix: 9.99, sites: ['Amazon.fr'], note: 'À trancher : chargeur 2S équilibré ou charge externe par les jacks. Pas le « TP4056 2S » du plan.', mots: ['chargeur'] },
+    { id: 'jack', nom: 'Prises jack DC 2,1 mm', ref: 'montage panneau', qte: 2, besoin: { 6: 2 }, prix: 2.00, sites: ['Amazon.fr', 'Gotronic'], note: '', mots: ['jack'] },
+    { id: 'xt30', nom: 'Connecteurs XT30', ref: 'paires mâle + femelle', qte: 4, besoin: { 6: 4 }, prix: 8.00, sites: ['Amazon.fr'], note: '', mots: ['xt30'] }
   ];
   // Les fiches de test que le plan attend, avec leur critère écrit d'avance (chiffres du dossier)
   PLAN.tests = [
@@ -6497,18 +6549,62 @@ Ce que j'ai vu, quand, combien de fois.
   function duckSvg(st, view, h) {
     var V = DUCK && DUCK.views && DUCK.views[view]; if (!V) return '';
     var b = V.box, w = Math.round(h * b[2] / b[3]), out = '<svg class="duck" viewBox="' + b.join(' ') + '" width="' + w + '" height="' + h + '" role="img" aria-label="Le canard vu de ' + (view === 'side' ? 'côté' : 'face') + ' : pièces imprimées en couleur, les autres en transparence">';
-    V.parts.forEach(function (p) {
-      if (p.hw) { out += '<path class="dk hw" d="' + p.d + '"/>'; return; }
+    V.parts.forEach(function (p, i) {
+      if (p.hw) { out += '<path class="dk hw" data-i="' + i + '" d="' + p.d + '"/>'; return; }
       var ev = st.pieces[p.piece + '#' + p.ex], st2 = ev ? ev.statut : 'a_imprimer', nxt = NEXT_STATUT[st2] || 'imprimee';
-      out += '<path class="dk ' + st2 + '" d="' + p.d + '" fill-rule="evenodd" data-act="form" data-form="piece"' + preAttr(piecePre(p.piece, p.ex, ev)) + '><title>' + esc(p.piece + ' n° ' + p.ex + ' : ' + PIECE_LABELS[st2] + (ev && ev.par ? ' · ' + ev.par : '') + (ev && ev.date ? ' · ' + frDate(ev.date) : '') + (ev && !isNaN(ev.masse) ? ' · ' + ev.masse + ' g' : '') + ' — cliquer : ' + PIECE_LABELS[nxt]) + '</title></path>';
+      out += '<path class="dk ' + st2 + '" data-i="' + i + '" data-pc="' + esc(p.piece + '#' + p.ex) + '" d="' + p.d + '" fill-rule="evenodd" data-act="form" data-form="piece"' + preAttr(piecePre(p.piece, p.ex, ev)) + '><title>' + esc(p.piece + ' n° ' + p.ex + ' : ' + PIECE_LABELS[st2] + (ev && ev.par ? ' · ' + ev.par : '') + (ev && ev.date ? ' · ' + frDate(ev.date) : '') + (ev && !isNaN(ev.masse) ? ' · ' + ev.masse + ' g' : '') + ' — cliquer : ' + PIECE_LABELS[nxt]) + '</title></path>';
     });
     return out + '</svg>';
   }
-  function duckLegend() { return '<div class="legend duck-legend"><span><i class="sw" style="background:var(--color-fg);opacity:.25;border:1px dashed var(--color-border-strong)"></i>à imprimer</span><span><i class="sw" style="background:var(--color-consumption)"></i>imprimée</span><span><i class="sw" style="background:var(--color-battery)"></i>contrôlée</span><span><i class="sw" style="background:var(--color-primary)"></i>montée</span><span><i class="sw" style="background:var(--color-alert)"></i>à refaire</span><span><i class="sw" style="background:var(--color-muted-fg);opacity:.3"></i>servos, cartes, batterie</span></div>'; }
+  var DUCK_HAS = {}; if (DUCK && DUCK.views && DUCK.views.side) DUCK.views.side.parts.forEach(function (p) { if (!p.hw) DUCK_HAS[p.piece + '#' + p.ex] = true; });
+  function duckLegend(st) {
+    var cnt = {}; if (st) Object.keys(st.pieces).forEach(function (k) { var x = st.pieces[k].statut; cnt[x] = (cnt[x] || 0) + 1; });
+    var it = [['a_imprimer', 'background:var(--color-fg);opacity:.25;border:1px dashed var(--color-border-strong)'], ['imprimee', 'background:var(--color-consumption)'], ['controlee', 'background:var(--color-battery)'], ['montee', 'background:var(--color-primary)'], ['a_refaire', 'background:var(--color-alert)']];
+    return '<div class="legend duck-legend">' + it.map(function (x) { return '<button type="button" class="dleg" data-act="duck-state" data-state="' + x[0] + '" title="' + esc('Mettre en évidence les pièces « ' + PIECE_LABELS[x[0]] + ' »') + '"><i class="sw" style="' + x[1] + '"></i>' + PIECE_LABELS[x[0]] + (x[0] !== 'a_imprimer' && cnt[x[0]] ? ' · ' + cnt[x[0]] : '') + '</button>'; }).join('') + '<span><i class="sw" style="background:var(--color-muted-fg);opacity:.3"></i>servos, cartes, batterie</span></div>';
+  }
+  var duckSel = null;   // { sel, label, back } : la mise en évidence en cours sur le dessin du registre
+  function duckFocus(f, scroll) {
+    var page = $('#page-pieces'); if (!page) return; duckSel = f && f.sel ? f : null; var n = 0;
+    $$('svg.duck', page).forEach(function (svg) {
+      $$('path.dk', svg).sort(function (a, b) { return a.getAttribute('data-i') - b.getAttribute('data-i'); }).forEach(function (e) { e.classList.remove('hl'); svg.appendChild(e); });
+      svg.classList.toggle('focus', !!duckSel);
+      if (duckSel) $$('path.dk' + duckSel.sel, svg).forEach(function (e) { e.classList.add('hl'); svg.appendChild(e); n++; });
+    });
+    $$('.dleg', page).forEach(function (b) { b.classList.toggle('on', !!duckSel && duckSel.sel === '.' + b.getAttribute('data-state')); });
+    var cap = $('.duck-cap', page);
+    if (cap) cap.innerHTML = duckSel ? '<strong>' + esc(duckSel.label) + '</strong>' + (n ? '' : ' : rien sur le dessin') + (duckSel.back ? ' · <button type="button" class="lnk" data-act="duck-back" data-back="' + esc(duckSel.back) + '">revenir à la ligne</button>' : '') + ' · <button type="button" class="lnk" data-act="duck-clear">tout afficher</button>' : '';
+    if (duckSel && scroll) { var card = $('[data-anchor="duck"]', page); if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  }
   // ─── Progression calculée depuis les registres (une tâche « automatique » se termine quand les enregistrements le prouvent) ───
   function pctOf(n, d) { return d ? Math.round(100 * Math.max(0, Math.min(n, d)) / d) : 0; }
   function piecesGroup(st, group) { var tot = 0, sum = 0; PLAN.pieces.filter(function (p) { return p[0] === group; }).forEach(function (p) { for (var e = 1; e <= p[2]; e++) { tot++; var ev = st.pieces[p[1] + '#' + e]; if (ev) sum += ev.statut === 'imprimee' ? 0.5 : (ev.statut === 'controlee' || ev.statut === 'montee') ? 1 : 0; } }); return { pct: pctOf(sum, tot), info: Math.floor(sum) + '/' + tot + ' pièces au registre' }; }
-  function achatPhase(st, n) { var best = 0, lab = 'commande non enregistrée'; st.achats.filter(function (a) { return a.phase === n; }).forEach(function (a) { var v = { recu: 100, rembourse: 100, commande: 50, prevu: 20 }[a.statut] || 0; if (v >= best) { best = v; lab = 'commande ' + (ACHAT_LABELS[a.statut] || a.statut); } }); return { pct: best, info: lab }; }
+  function articleOf(id) { return PLAN.articles.filter(function (A) { return A.id === id; })[0] || null; }
+  function artPhases(A) { return Object.keys(A.besoin).map(Number).sort(function (a, b) { return a - b; }); }
+  function artNeedUpTo(A, n) { var s = 0; artPhases(A).forEach(function (k) { if (k <= n) s += A.besoin[k]; }); return s; }
+  function parseArticles(s) { var out = []; String(s || '').split(/[,;]/).forEach(function (x) { var m = x.trim().toLowerCase().match(/^([a-z0-9_-]+)\s*(?:[x×*]\s*(\d+))?$/); if (m && articleOf(m[1])) out.push([m[1], m[2] ? parseInt(m[2], 10) : 1]); }); return out; }
+  function motTrouve(txt, w) { return new RegExp('(^|[^a-z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(txt); }
+  // [[article, quantité], …] : la liste explicite de l'achat ; à défaut (achat saisi à la main), les articles reconnus dans l'objet et les lignes.
+  function achatArticles(a) {
+    if (a.articles && a.articles.length) return a.articles;
+    var txt = norm(a.titre + '\n' + (a.body || ''));
+    return PLAN.articles.filter(function (A) { return A.mots.some(function (w) { return motTrouve(txt, w); }); }).map(function (A) { return [A.id, A.id === 'sts3215' ? (a.servos || 0) : A.qte]; }).filter(function (x) { return x[1] > 0; });
+  }
+  function coverArticles(st) {
+    var c = {}; PLAN.articles.forEach(function (A) { c[A.id] = { commande: 0, recu: 0, prevu: 0, achats: [] }; });
+    st.achats.forEach(function (a) {
+      var k = a.statut === 'recu' || a.statut === 'rembourse' ? 'recu' : a.statut === 'commande' ? 'commande' : a.statut === 'prevu' ? 'prevu' : null; if (!k) return;
+      achatArticles(a).forEach(function (x) { var cv = c[x[0]]; if (cv) { cv[k] += x[1]; cv.achats.push(a); } });
+    });
+    return c;
+  }
+  function artEtat(A, c) { var have = c.recu + c.commande; return c.recu >= A.qte ? 'recu' : have >= A.qte ? 'commande' : have > 0 ? 'partiel' : 'a_commander'; }
+  function artSuggest(A, c) { var have = c.recu + c.commande, next = (A.paliers || [A.qte]).filter(function (p) { return p > have; })[0]; return next ? next - have : 0; }
+  function achatPhase(st, n) {
+    var arts = PLAN.articles.filter(function (A) { return A.besoin[n]; }); if (!arts.length) return { pct: 0, info: '—' };
+    var cv = st.cover || coverArticles(st), sum = 0, rec = 0;
+    arts.forEach(function (A) { var need = artNeedUpTo(A, n), c = cv[A.id]; sum += Math.min(1, (c.recu + 0.5 * c.commande) / need); if (c.recu >= need) rec++; });
+    return { pct: Math.round(100 * sum / arts.length), info: rec + '/' + arts.length + ' article' + (arts.length > 1 ? 's reçus' : ' reçu') };
+  }
   function testOf(st, id) { var T = PLAN.tests.filter(function (t) { return t.id === id; })[0]; if (!T) return null; var k = slug(T.titre); return st.tests.filter(function (t) { return slug(t.titre) === k; })[0] || null; }
   function testPct(st, id) { var t = testOf(st, id); if (!t) return { pct: 0, info: 'fiche de test à rédiger' }; var r = t.resultat === 'NOGO' ? 'NO-GO' : t.resultat; return { pct: r === 'GO' ? 100 : r === 'PARTIEL' ? 50 : r === 'NO-GO' ? 25 : 10, info: 'fiche de test : ' + (r ? r.toLowerCase() : 'sans résultat') }; }
   function mesureOf(st, M) { var want = norm(M.objet); return st.mesures.filter(function (m) { if (m.grandeur !== M.grandeur) return false; var o = norm(m.objet); return o === want || (M.match && M.match.length && M.match.every(function (w) { return o.indexOf(w) >= 0; })); })[0] || null; }
@@ -6535,13 +6631,12 @@ Ce que j'ai vu, quand, combien de fois.
   };
   function taskAuto(st, k) { var f = TASK_AUTO[k]; if (!f) return null; try { return f(st); } catch (e) { return null; } }
   // ─── Le bouton de chaque tâche : le formulaire qui produit la preuve, déjà rempli ───
-  function achatPre(n) { var A = PLAN.achats.filter(function (a) { return a.phase === n; })[0]; return A ? { titre: A.titre, montant: A.montant, phase: n, statut: 'commande', servos: A.servos, lignes: A.lignes } : { phase: n }; }
   function testPre(id) { var T = PLAN.tests.filter(function (t) { return t.id === id; })[0]; return T ? { titre: T.titre, phase: T.phase, objectif: T.objectif, montage: T.montage, procedure: T.procedure, critere: T.critere } : {}; }
   function mesurePre(key) { var M = PLAN.mesures.filter(function (m) { return m.key === key; })[0]; return M ? { grandeur: M.grandeur, objet: M.objet, unite: M.unite, note: M.ref ? 'Référence : ' + M.ref : '' } : {}; }
   var TASK_DO = {
     'p0.1': { form: 'equipe', label: 'Attribuer les rôles' },
     'p0.9': { form: 'decision', pre: { titre: 'Chargeur 2S', statut: 'prise' }, label: 'Enregistrer une décision' },
-    'p1.1': { form: 'achat', pre: achatPre(1), label: 'Enregistrer la commande' }, 'p2.1': { form: 'achat', pre: achatPre(2), label: 'Enregistrer la commande' }, 'p6.1': { form: 'achat', pre: achatPre(6), label: 'Enregistrer la commande' },
+    'p1.1': { goto: 'achats', anchor: 'articles', label: 'Articles à commander' }, 'p2.1': { goto: 'achats', anchor: 'articles', label: 'Articles à commander' }, 'p6.1': { goto: 'achats', anchor: 'articles', label: 'Articles à commander' },
     'p1.5': { form: 'piece', pre: { piece: 'foot_top' }, label: 'Pièce imprimée' }, 'p1.6': { form: 'piece', pre: { piece: 'knee_to_ankle_left_sheet' }, label: 'Pièce imprimée' }, 'p1.7': { form: 'piece', pre: { piece: 'trunk_bottom' }, label: 'Pièce imprimée' }, 'p1.8': { form: 'piece', pre: { piece: 'body_front' }, label: 'Pièce imprimée' },
     'p1.9': { form: 'mesure', pre: mesurePre('masse-tronc'), label: 'Noter une masse' },
     'p2.4': { goto: 'electronique', anchor: 'banc', label: 'Liste de contrôle banc servo' },
@@ -6896,7 +6991,7 @@ Ce que j'ai vu, quand, combien de fois.
         var t = { key: r.key, date: r.date, phase: parseInt0(m.phase), titre: m.titre || r.name.replace(/\.md$/, ''), resultat: (m.resultat || '').toUpperCase().replace(/\s+/g, ''), par: m.par || '', body: r.body, sec: r.sections, path: r.path };
         st.tests.push(t); st.events.push({ key: r.key, date: r.date, kind: 'test', titre: 'Test : ' + t.titre, sub: t.resultat || '', href: '#tests' });
       } else if (r.kind === 'achat') {
-        var a = { key: r.key, date: r.date, fournisseur: m.fournisseur || '', montant: parseNum(m.montant), phase: parseInt0(m.phase), statut: norm(m.statut || 'commande').replace(/[^a-z]/g, ''), par: m.par || '', servos: parseInt0(m.servos) || 0, titre: m.titre || m.objet || r.name.replace(/^\d{4}-\d{2}-\d{2}-?/, '').replace(/\.md$/, ''), body: r.body, path: r.path };
+        var a = { key: r.key, date: r.date, fournisseur: m.fournisseur || '', montant: parseNum(m.montant), phase: parseInt0(m.phase), statut: norm(m.statut || 'commande').replace(/[^a-z]/g, ''), par: m.par || '', servos: parseInt0(m.servos) || 0, articles: parseArticles(m.articles), articlesRaw: m.articles || '', titre: m.titre || m.objet || r.name.replace(/^\d{4}-\d{2}-\d{2}-?/, '').replace(/\.md$/, ''), body: r.body, path: r.path };
         if (isNaN(a.montant)) a.montant = 0;
         st.achats.push(a); st.events.push({ key: r.key, date: r.date, kind: 'achat', titre: 'Achat : ' + a.titre, sub: eur(a.montant) + ' · ' + (ACHAT_LABELS[a.statut] || a.statut), href: '#achats' });
       } else if (r.kind === 'decision') {
@@ -6930,7 +7025,7 @@ Ce que j'ai vu, quand, combien de fois.
     st.phase = ph == null ? 0 : ph;
     // Budget
     st.depense = st.achats.filter(function (a) { return a.statut === 'commande' || a.statut === 'recu' || a.statut === 'rembourse'; }).reduce(function (s, a) { return s + a.montant; }, 0);
-    st.servosRecus = st.achats.filter(function (a) { return a.statut === 'recu' || a.statut === 'rembourse'; }).reduce(function (s, a) { return s + a.servos; }, 0);
+    st.cover = coverArticles(st); st.servosRecus = st.cover.sts3215.recu;
     // Pièces
     var tot = 0, imp = 0; PLAN.pieces.forEach(function (p) { tot += p[2]; for (var e = 1; e <= p[2]; e++) { var ev = st.pieces[p[1] + '#' + e]; if (ev && ev.statut !== 'a_imprimer' && ev.statut !== 'a_refaire') imp++; } });
     st.piecesTotal = tot; st.piecesImprimees = imp;
@@ -6963,6 +7058,7 @@ Ce que j'ai vu, quand, combien de fois.
     else { var d = new Date(data.when); html = '<span class="dot ok"></span>' + data.files.length + ' enregistrement' + (data.files.length > 1 ? 's' : '') + ' · lu à ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + (data.warn ? ' · ' + esc(data.warn) : '') + ' <button type="button" class="lnk" data-act="refresh">Actualiser</button>'; }
     $$('.data-status').forEach(function (el) { el.innerHTML = html; });
   }
+  document.addEventListener('change', function (e) { if (e.target.classList && e.target.classList.contains('art-sel')) artBar(); });
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-act]'); if (!b) return;
     var act = b.getAttribute('data-act');
@@ -6972,6 +7068,14 @@ Ce que j'ai vu, quand, combien de fois.
     else if (act === 'fold') { var ft = $('#' + b.getAttribute('data-target')); if (ft) { ft.hidden = !ft.hidden; b.classList.toggle('open', !ft.hidden); b.setAttribute('aria-expanded', String(!ft.hidden)); } }
     else if (act === 'goto') { pendingAnchor = b.getAttribute('data-anchor'); if (current === b.getAttribute('data-page')) scrollToAnchor(); else location.hash = '#' + b.getAttribute('data-page'); }
     else if (act === 'toggle') { var tgt = $('#' + b.getAttribute('data-target')); if (tgt) { tgt.hidden = !tgt.hidden; b.textContent = tgt.hidden ? (b.getAttribute('data-open') || 'Voir') : (b.getAttribute('data-close') || 'Replier'); } }
+    else if (act === 'duck-show') { var pc = b.getAttribute('data-pc'), row = b.closest('[data-anchor]'); duckFocus({ sel: '[data-pc="' + pc + '"]', label: pc.replace('#', ' n° '), back: row ? row.getAttribute('data-anchor') : '' }, true); }
+    else if (act === 'duck-state') { var ds = b.getAttribute('data-state'); duckFocus(b.classList.contains('on') ? null : { sel: '.' + ds, label: 'Pièces « ' + PIECE_LABELS[ds] + ' »' }, false); }
+    else if (act === 'duck-clear') duckFocus(null);
+    else if (act === 'duck-back') { pendingAnchor = b.getAttribute('data-back'); scrollToAnchor(); }
+    else if (act === 'art-etat') { artFilter.etat = b.getAttribute('data-etat'); artApply(); }
+    else if (act === 'art-site') { var sx = b.getAttribute('data-site'); artFilter.site = artFilter.site === sx ? '' : sx; artApply(); var ac = $('#page-achats [data-anchor="articles"]'); if (ac && b.closest('.art-row')) ac.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    else if (act === 'art-none') { $$('#page-achats .art-sel:checked').forEach(function (x) { x.checked = false; }); artBar(); }
+    else if (act === 'art-order') { var ids = artSelected(); if (ids.length) openForm('achat', artPre(ids, data.state || fold([])), b); }
     else if (act === 'copy') { var fc = b.closest('.form-card'), ta = fc ? fc.querySelector('textarea.io') : null; copyText(b.getAttribute('data-text') || (ta ? ta.value : ''), 'Texte copié'); }
   });
 
@@ -7025,6 +7129,8 @@ Ce que j'ai vu, quand, combien de fois.
       var fresh = box.querySelector('[data-form-slot]:not([data-after])'); if (fresh) fresh.parentNode.replaceChild(sl, fresh); else box.insertBefore(sl, box.firstChild);
     });
     renderChecklists(st); renderStatus();
+    if (id === 'achats') { artApply(); artBar(); }
+    if (id === 'pieces' && duckSel) duckFocus(duckSel, false);
     // Page de suivi vide : le formulaire est directement là, pas de bouton à chercher.
     var af = AUTO_FORM[id];
     if (af && data.ok && !formClosedBy[id]) {
@@ -7089,8 +7195,8 @@ Ce que j'ai vu, quand, combien de fois.
     function kpi(href, pct, color, v, small, l, d) { return '<a class="kpi kpi-ring" href="' + href + '">' + (pct != null ? donut(pct, color, 56, Math.round(pct) + '%') : '<span class="kpi-ic">' + svgUse(color) + '</span>') + '<div class="kpi-b"><div class="v">' + v + (small ? '<small>' + small + '</small>' : '') + '</div><div class="l">' + l + '</div><div class="d">' + d + ' →</div></div></a>'; }
     h += '<div class="kpis">';
     h += kpi('#pieces', 100 * st.piecesImprimees / (st.piecesTotal || 1), 'var(--color-battery)', st.piecesImprimees, '/ ' + st.piecesTotal, 'Pièces imprimées', 'registre des pièces');
-    h += kpi('#achats', 100 * st.servosRecus / 14, 'var(--color-consumption)', st.servosRecus, '/ 14', 'Servos reçus', 'achats par phase');
-    h += kpi('#achats', 100 * st.depense / PLAN.budget, 'var(--color-solar-fg)', Math.round(st.depense), '€ / ' + Math.round(PLAN.budget), 'Budget engagé', 'les six commandes du plan');
+    h += kpi('#achats', 100 * st.servosRecus / 14, 'var(--color-consumption)', st.servosRecus, '/ 14', 'Servos reçus', 'liste des articles');
+    h += kpi('#achats', 100 * st.depense / PLAN.budget, 'var(--color-solar-fg)', Math.round(st.depense), '€ / ' + Math.round(PLAN.budget), 'Budget engagé', 'plan du socle');
     h += kpi('#tests', 100 * st.tests.filter(function (t) { return t.resultat === 'GO'; }).length / PLAN.tests.length, 'var(--color-battery)', st.tests.filter(function (t) { return t.resultat === 'GO'; }).length, '/ ' + PLAN.tests.length + ' GO', 'Fiches de test', nogo.length + ' NO-GO · ' + st.tests.length + ' fiche' + (st.tests.length > 1 ? 's' : ''));
     var mesN = PLAN.mesures.filter(function (M) { return mesureOf(st, M); }).length;
     h += kpi('#mesures', 100 * mesN / PLAN.mesures.length, 'var(--color-consumption)', mesN, '/ ' + PLAN.mesures.length, 'Mesures attendues', st.mesures.length + ' notée' + (st.mesures.length > 1 ? 's' : '') + ' en tout');
@@ -7133,11 +7239,11 @@ Ce que j'ai vu, quand, combien de fois.
     var v = phasePct(st, p), c = phaseCounts(st, p), gg = p.gonogo ? gonogo(st, p) : null;
     var anyPart = PLAN.phases.some(function (q) { var x = phasePct(st, q); return x > 0 && x < 100; });
     var open = anyPart ? (v > 0 && v < 100) : p.n === st.phase;
-    var A = PLAN.achats.filter(function (a) { return a.phase === p.n; })[0], ap = achatPhase(st, p.n);
+    var arts = PLAN.articles.filter(function (A) { return A.besoin[p.n]; }), ap = achatPhase(st, p.n);
     var engage = st.achats.filter(function (a) { return a.phase === p.n && a.statut !== 'prevu' && a.statut !== 'annule'; }).reduce(function (x, a) { return x + a.montant; }, 0);
     var h = '<div class="card phase-card" data-anchor="phase-' + p.n + '" style="--ph:' + p.tint + '"><button type="button" class="ph-head' + (open ? ' open' : '') + '" data-act="fold" data-target="' + idPrefix + p.n + '" aria-expanded="' + open + '"><span class="ph-t"><span class="sw" style="background:' + p.tint + '"></span><strong>Phase ' + p.n + ' · ' + esc(p.titre) + '</strong>' + (p.n === st.phase ? ' <span class="pill p">déclarée en cours</span>' : '') + (gg ? ' ' + statutPill(gg) : '') + '<small>' + esc(p.jalon) + ' · ' + esc(p.mois) + (p.montant ? ' · ' + eur(p.montant) : '') + '</small></span><span class="ph-n">' + v + ' %</span><svg class="chev"><use href="#i-chevron"/></svg></button>' + sbar(c);
     h += '<div class="ph-body" id="' + idPrefix + p.n + '"' + (open ? '' : ' hidden') + '>' + legend(c);
-    if (A) h += '<div class="ph-line">' + svgUse('i-cart') + '<span><strong>Commande de la phase</strong> : plan ' + eur(p.montant) + (engage ? ' · engagé ' + eur(engage) : '') + ' · ' + esc(ap.info) + '</span>' + (ap.pct < 50 ? '<button type="button" class="btn sm" data-act="form" data-form="achat"' + preAttr(achatPre(p.n)) + '>' + svgUse('i-cart') + 'Enregistrer la commande</button>' : '<a class="lnk" href="#achats">achats</a>') + '</div>';
+    if (arts.length) h += '<div class="ph-line">' + svgUse('i-cart') + '<span><strong>Achats de la phase</strong> : ' + arts.map(function (A) { return esc(A.nom) + (A.besoin[p.n] > 1 ? ' × ' + A.besoin[p.n] : ''); }).join(', ') + ' · ' + esc(ap.info) + (engage ? ' · engagé ' + eur(engage) : '') + '</span><button type="button" class="btn sm" data-act="goto" data-page="achats" data-anchor="articles">' + svgUse('i-cart') + 'Articles à commander</button></div>';
     h += '<div class="chklist">' + p.taches.map(function (t) { return taskRow(st, t); }).join('') + '</div>';
     if (p.gonogo) h += '<div class="ph-line">' + svgUse('i-check') + '<span><strong>GO / NO-GO</strong> : ' + (gg ? 'décidé ' + gg : 'à décider quand le banc est validé') + '</span><button type="button" class="btn sm" data-act="form" data-form="test"' + preAttr(testPre('gonogo-2')) + '>' + svgUse('i-check') + (gg ? 'Refaire la fiche' : 'Fiche GO / NO-GO') + '</button></div>';
     return h + '</div></div>';
@@ -7165,11 +7271,11 @@ Ce que j'ai vu, quand, combien de fois.
       : st2 === 'a_imprimer' ? '' : '<button type="button" class="pbad pside" data-act="form" data-form="piece"' + preAttr(piecePre(p[1], e, ev, 'a_refaire')) + ' title="Défaut constaté : renvoyer cet exemplaire à l\'impression">✕ À refaire</button>';
     var meta = ev ? [ev.par ? esc(ev.par) : '', ev.date ? frDate(ev.date) : '', ev.rev && ev.rev !== 'amont' ? 'rév. ' + esc(ev.rev) : '', ev.note ? esc(ev.note.slice(0, 80)) : ''].filter(Boolean).join(' · ') : '';
     var box = bad ? '✕' : idx > 0 ? '✓' : '';
-    return '<div class="task piece-row ps-' + st2 + '" data-anchor="pc-' + p[1] + '-' + e + '"><div class="prow-main"><span class="pdot ' + st2 + '" title="' + esc(PIECE_LABELS[st2] + ' : ' + PIECE_AIDE[st2]) + '">' + box + '</span><span class="pname"><code>' + esc(p[1]) + '</code> n° ' + e + ' <small class="muted">' + esc(p[3]) + '</small></span>' + (bad ? statutPill('a_refaire', PIECE_LABELS) : '') + (ev && !isNaN(ev.masse) ? '<b class="pmasse">' + ev.masse + ' g</b>' : '') + '</div><div class="prow-foot"><span class="psteps' + (bad ? ' off' : '') + '">' + steps + '</span><small class="pmeta">' + meta + '</small>' + side + '</div></div>';
+    return '<div class="task piece-row ps-' + st2 + '" data-anchor="pc-' + p[1] + '-' + e + '"><div class="prow-main"><span class="pdot ' + st2 + '" title="' + esc(PIECE_LABELS[st2] + ' : ' + PIECE_AIDE[st2]) + '">' + box + '</span><span class="pname"><code>' + esc(p[1]) + '</code> n° ' + e + ' <small class="muted">' + esc(p[3]) + '</small></span>' + (bad ? statutPill('a_refaire', PIECE_LABELS) : '') + (ev && !isNaN(ev.masse) ? '<b class="pmasse">' + ev.masse + ' g</b>' : '') + (DUCK_HAS[p[1] + '#' + e] ? '<button type="button" class="pview" data-act="duck-show" data-pc="' + esc(p[1] + '#' + e) + '" title="Voir cette pièce sur le dessin du canard">' + svgUse('i-duck') + 'Voir</button>' : '') + '</div><div class="prow-foot"><span class="psteps' + (bad ? ' off' : '') + '">' + steps + '</span><small class="pmeta">' + meta + '</small>' + side + '</div></div>';
   }
   function viewPieces(st) {
     var h = '<div class="row" style="justify-content:space-between"><div class="data-status"></div><button type="button" class="btn primary" data-act="form" data-form="piece">' + svgUse('i-printer') + 'Enregistrer une pièce</button></div>' + slotHtml();
-    h += '<div class="card big"><h2>' + svgUse('i-printer') + 'Le canard, pièce par pièce</h2><p class="sub">Les pièces enregistrées au registre sont en couleur, les autres en transparence. Cliquer une pièce sur le dessin ou dans la liste prépare l\'enregistrement de son état suivant. Posture « home » de la marche fournie, contours tirés du modèle de simulation.</p><div class="duck-wrap">' + duckSvg(st, 'side', 300) + duckSvg(st, 'front', 300) + '</div>' + duckLegend() + '</div>';
+    h += '<div class="card big" data-anchor="duck"><h2>' + svgUse('i-printer') + 'Le canard, pièce par pièce</h2><p class="sub">Les pièces enregistrées au registre sont en couleur, les autres en transparence. Cliquer un état de la légende, ou « Voir » sur une ligne de la liste, met les pièces correspondantes en évidence (même celles cachées derrière d\'autres). Cliquer une pièce du dessin prépare l\'enregistrement de son état suivant. Posture « home » de la marche fournie, contours tirés du modèle de simulation.</p><div class="duck-wrap">' + duckSvg(st, 'side', 300) + duckSvg(st, 'front', 300) + '</div>' + duckLegend(st) + '<div class="duck-cap" aria-live="polite"></div></div>';
     h += '<div class="kpis"><div class="kpi"><div class="v">' + st.piecesImprimees + '<small>/ ' + st.piecesTotal + '</small></div><div class="l">Imprimées</div><div class="d">imprimée, contrôlée ou montée</div></div>';
     var cnt = {}; Object.keys(st.pieces).forEach(function (k) { var x = st.pieces[k].statut; cnt[x] = (cnt[x] || 0) + 1; });
     ['controlee', 'montee', 'a_refaire'].forEach(function (x) { h += '<div class="kpi"><div class="v">' + (cnt[x] || 0) + '</div><div class="l">' + PIECE_LABELS[x] + '</div><div class="d">exemplaires</div></div>'; });
@@ -7193,18 +7299,73 @@ Ce que j'ai vu, quand, combien de fois.
     }
     return h;
   }
+  var artFilter = { etat: 'tous', site: '' };
+  function uniqueTitre(st, t) { var used = {}; st.achats.forEach(function (a) { used[slug(a.titre)] = true; }); var x = t, i = 2; while (used[slug(x)]) x = '(' + (i++) + ') ' + t; return x; }
+  function eurTxt(n) { return (Math.round(n * 100) / 100).toFixed(2).replace('.', ','); }
+  // Pré-remplissage d'une commande d'un ou plusieurs articles (quantité conseillée, prix indicatif, site commun)
+  function artPre(ids, st) {
+    var lines = [], arts = [], montant = 0, servos = 0, phase = 99, sites = null, noms = [];
+    ids.forEach(function (id) {
+      var A = articleOf(id); if (!A) return; var c = st.cover[A.id], q = artSuggest(A, c) || A.qte;
+      arts.push(A.id + ' x' + q); noms.push(A.nom); lines.push('- ' + q + ' × ' + A.nom + ' (' + A.ref + ')');
+      if (A.prix != null) montant += A.prix * q / A.qte; if (A.id === 'sts3215') servos += q; phase = Math.min(phase, artPhases(A)[0]);
+      sites = sites ? sites.filter(function (s) { return A.sites.indexOf(s) >= 0; }) : A.sites.slice();
+    });
+    var site = sites && sites.length ? sites[0] : '', d = new Date(), dd = pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1);
+    var titre = arts.length === 1 ? noms[0] + (parseInt(arts[0].split(' x')[1], 10) > 1 ? ' × ' + arts[0].split(' x')[1] : '') : (site || 'Commande') + ' ' + dd + ' : ' + noms.join(', ');
+    return { titre: uniqueTitre(st, titre.length > 90 ? titre.slice(0, 88) + '…' : titre), fournisseur: site, montant: montant ? eurTxt(montant) : '', phase: phase === 99 ? '' : phase, statut: 'commande', servos: servos, articles: arts.join(', '), lignes: lines.join('\n') };
+  }
+  function achatEdit(a, statut) { return { titre: a.titre, fournisseur: a.fournisseur, montant: a.montant ? eurTxt(a.montant) : '', phase: a.phase == null ? '' : a.phase, statut: statut || a.statut, servos: a.servos, articles: a.articlesRaw, lignes: a.body }; }
+  var ART_FILTRES = [['tous', 'Tous'], ['a_commander', 'À commander'], ['commande', 'Commandés'], ['recu', 'Reçus']];
+  function artRow(st, A) {
+    var c = st.cover[A.id], et = artEtat(A, c), have = c.recu + c.commande, sug = artSuggest(A, c), ph = artPhases(A);
+    var etTxt = et === 'recu' ? 'reçu' : et === 'commande' ? (c.recu ? 'commandé · ' + c.recu + '/' + A.qte + ' reçu' + (c.recu > 1 ? 's' : '') : 'commandé') : et === 'partiel' ? have + '/' + A.qte + ' commandé' + (have > 1 ? 's' : '') + (c.recu ? ' · ' + c.recu + ' reçu' + (c.recu > 1 ? 's' : '') : '') : 'à commander';
+    var filtre = et === 'recu' ? 'recu' : et === 'commande' ? 'commande' : 'a_commander';
+    var attente = c.achats.filter(function (a) { return a.statut === 'commande'; }).slice(-1)[0];
+    var acts = (sug > 0 ? '<button type="button" class="btn sm primary" data-act="form" data-form="achat"' + preAttr(artPre([A.id], st)) + '>' + svgUse('i-cart') + 'Commander' + (sug !== A.qte ? ' ' + sug : '') + '</button>' : '')
+      + (attente ? '<button type="button" class="btn sm" data-act="form" data-form="achat"' + preAttr(achatEdit(attente, 'recu')) + ' title="' + esc('Passer « ' + attente.titre + ' » à reçu') + '">' + svgUse('i-check') + 'Reçu</button>' : '');
+    var hist = c.achats.map(function (a) { return '« ' + esc(a.titre) + ' »' + (a.fournisseur ? ' chez ' + esc(a.fournisseur) : '') + ', ' + frDate(a.date) + ' : ' + (ACHAT_LABELS[a.statut] || a.statut); });
+    return '<div class="task art-row ae-' + et + '" data-anchor="art-' + A.id + '" data-etat="' + filtre + '" data-sites="|' + A.sites.map(norm).join('|') + '|">'
+      + '<div class="art-main">' + (sug > 0 ? '<input type="checkbox" class="art-sel" value="' + A.id + '" aria-label="' + esc('Sélectionner ' + A.nom) + '">' : '<span class="art-sel-x" aria-hidden="true">' + (et === 'recu' ? '✓' : '') + '</span>')
+      + '<div class="art-txt"><strong>' + esc(A.nom) + '</strong> <span class="muted">' + esc(A.ref) + '</span><small>' + A.qte + (A.unite ? ' ' + A.unite : '') + ' · ' + (ph.length > 1 ? 'phases ' + ph[0] + ' à ' + ph[ph.length - 1] : 'phase ' + ph[0]) + (A.prix != null ? ' · ≈ ' + eur(A.prix) : '') + (A.note ? ' · ' + esc(A.note) : '') + '</small></div>'
+      + pill({ recu: 'ok', commande: 'info', partiel: 'warn', a_commander: 'mute' }[et], etTxt) + '</div>'
+      + '<div class="art-foot"><span class="chips">' + A.sites.map(function (s) { return '<button type="button" class="chip" data-act="art-site" data-site="' + esc(norm(s)) + '" title="' + esc('Montrer les articles disponibles chez ' + s) + '">' + esc(s) + '</button>'; }).join('') + '</span><span class="task-acts">' + acts + '</span></div>'
+      + (hist.length ? '<small class="art-hist">' + hist.join(' · ') + '</small>' : '') + '</div>';
+  }
+  function artSelected() { return $$('#page-achats .art-sel:checked').map(function (x) { return x.value; }); }
+  function artBar() {
+    var bar = $('#page-achats .art-bar'); if (!bar) return; var ids = artSelected(); bar.hidden = !ids.length; if (!ids.length) return;
+    var pre = artPre(ids, data.state || fold([]));
+    bar.querySelector('.art-bar-t').textContent = ids.length + ' article' + (ids.length > 1 ? 's' : '') + ' sélectionné' + (ids.length > 1 ? 's' : '') + (pre.montant ? ' · ≈ ' + pre.montant + ' €' : '') + (pre.fournisseur ? ' · tous chez ' + pre.fournisseur : ' · pas de site commun');
+  }
+  function artApply() {
+    var any = false;
+    $$('#page-achats .art-row').forEach(function (r) { var v = (artFilter.etat === 'tous' || artFilter.etat === r.getAttribute('data-etat')) && (!artFilter.site || r.getAttribute('data-sites').indexOf('|' + artFilter.site + '|') >= 0); r.hidden = !v; if (v) any = true; });
+    $$('#page-achats [data-act="art-etat"]').forEach(function (b) { b.classList.toggle('go', b.getAttribute('data-etat') === artFilter.etat); });
+    $$('#page-achats .art-filters [data-act="art-site"]').forEach(function (b) { b.classList.toggle('go', b.getAttribute('data-site') === artFilter.site); });
+    var em = $('#page-achats .art-empty'); if (em) em.hidden = any;
+  }
   function viewAchats(st) {
     var h = '<div class="row" style="justify-content:space-between"><div class="data-status"></div><button type="button" class="btn primary" data-act="form" data-form="achat">' + svgUse('i-cart') + 'Nouvel achat</button></div>' + slotHtml();
     var prevu = st.achats.filter(function (a) { return a.statut === 'prevu'; }).reduce(function (s, a) { return s + a.montant; }, 0);
-    h += '<div class="kpis"><div class="kpi"><div class="v">' + eur(st.depense).replace(' €', '<small>€</small>') + '</div><div class="l">Engagé</div><div class="d">commandé, reçu ou remboursé</div></div><div class="kpi"><div class="v">' + eur(PLAN.budget).replace(' €', '<small>€</small>') + '</div><div class="l">Plan (socle)</div><div class="d">' + Math.round(100 * st.depense / PLAN.budget) + ' % engagé</div></div><div class="kpi"><div class="v">' + eur(prevu).replace(' €', '<small>€</small>') + '</div><div class="l">Prévu, pas commandé</div><div class="d">à valider par le bureau</div></div><div class="kpi"><div class="v">' + st.servosRecus + '<small>/ 14</small></div><div class="l">Servos reçus</div><div class="d">champ « servos » des achats reçus</div></div></div>';
-    h += '<div class="card"><h3>' + svgUse('i-cal') + 'Les six commandes du plan</h3><p class="sub">Une commande par phase, prête à enregistrer avec ses lignes ; le trésorier-acheteur ajuste le fournisseur et le montant réel. L\'écart compare le plan au montant engagé.</p><div class="tw"><table><thead><tr><th>Phase</th><th class="num">Plan</th><th class="num">Engagé</th><th class="num">Écart</th><th>État</th><th></th></tr></thead><tbody>';
-    PLAN.phases.forEach(function (p) { var e = st.achats.filter(function (a) { return a.phase === p.n && a.statut !== 'prevu' && a.statut !== 'annule'; }).reduce(function (s, a) { return s + a.montant; }, 0); if (!p.montant && !e) return; var ec = e - p.montant, ap = achatPhase(st, p.n); h += '<tr><td>Phase ' + p.n + ' · ' + esc(p.titre) + '</td><td class="num">' + eur(p.montant) + '</td><td class="num">' + eur(e) + '</td><td class="num" style="color:' + (ec > 0 ? 'var(--color-alert)' : 'var(--color-battery)') + '">' + (ec > 0 ? '+' : '') + eur(ec) + '</td><td>' + esc(ap.info) + '</td><td class="nw">' + (ap.pct < 50 ? '<button type="button" class="btn sm primary" data-act="form" data-form="achat"' + preAttr(achatPre(p.n)) + '>Enregistrer la commande</button>' : '') + '</td></tr>'; });
+    h += '<div class="kpis"><div class="kpi"><div class="v">' + eur(st.depense).replace(' €', '<small>€</small>') + '</div><div class="l">Engagé</div><div class="d">commandé, reçu ou remboursé</div></div><div class="kpi"><div class="v">' + eur(PLAN.budget).replace(' €', '<small>€</small>') + '</div><div class="l">Plan (socle)</div><div class="d">' + Math.round(100 * st.depense / PLAN.budget) + ' % engagé</div></div><div class="kpi"><div class="v">' + eur(prevu).replace(' €', '<small>€</small>') + '</div><div class="l">Prévu, pas commandé</div><div class="d">à valider par le bureau</div></div><div class="kpi"><div class="v">' + st.servosRecus + '<small>/ 14</small></div><div class="l">Servos reçus</div><div class="d">STS3215 des achats reçus</div></div></div>';
+    // La liste d'articles : chacun se commande seul, ou plusieurs ensemble sur le même site
+    var arts = PLAN.articles.slice().sort(function (a, b) { return artPhases(a)[0] - artPhases(b)[0]; });
+    var cnt = { tous: arts.length, a_commander: 0, commande: 0, recu: 0 }, sites = {};
+    arts.forEach(function (A) { var e = artEtat(A, st.cover[A.id]); cnt[e === 'partiel' ? 'a_commander' : e]++; A.sites.forEach(function (s) { sites[s] = (sites[s] || 0) + 1; }); });
+    h += '<div class="card" data-anchor="articles"><h3>' + svgUse('i-cart') + 'Articles à commander</h3><p class="sub">Un article par ligne, à commander sur le site de son choix. « Commander » enregistre un achat pour cet article seul ; pour une commande groupée sur un même site, cocher les articles puis « Commander la sélection ». Cliquer un site filtre ce qu\'on peut y prendre. Prix indicatifs vérifiés le 1er octobre 2026, à reconfirmer ; la phase dit quand l\'article sert.</p>';
+    h += '<div class="art-filters"><span class="chips">' + ART_FILTRES.map(function (f) { return '<button type="button" class="chip" data-act="art-etat" data-etat="' + f[0] + '">' + f[1] + ' · ' + cnt[f[0]] + '</button>'; }).join('') + '</span><span class="chips"><small class="muted">Site :</small>' + Object.keys(sites).sort(function (a, b) { return sites[b] - sites[a] || (a < b ? -1 : 1); }).map(function (s) { return '<button type="button" class="chip" data-act="art-site" data-site="' + esc(norm(s)) + '">' + esc(s) + ' · ' + sites[s] + '</button>'; }).join('') + '</span></div>';
+    h += '<div class="task art-bar" data-anchor="art-bar" hidden><span class="art-bar-t"></span><button type="button" class="btn sm" data-act="art-none">Tout décocher</button><button type="button" class="btn sm primary" data-act="art-order">' + svgUse('i-cart') + 'Commander la sélection</button></div>';
+    h += '<div class="chklist art-list">' + arts.map(function (A) { return artRow(st, A); }).join('') + '</div><p class="muted art-empty" hidden>Aucun article pour ce filtre.</p></div>';
+    // Le budget par phase, en repère
+    h += '<div class="card"><h3>' + svgUse('i-cal') + 'Budget par phase</h3><p class="sub">Repère du plan de septembre : le montant engagé se range dans la phase indiquée sur chaque achat ; « articles reçus » compte les articles dont la phase a besoin.</p><div class="tw"><table><thead><tr><th>Phase</th><th class="num">Plan</th><th class="num">Engagé</th><th class="num">Écart</th><th>Articles</th></tr></thead><tbody>';
+    PLAN.phases.forEach(function (p) { var e = st.achats.filter(function (a) { return a.phase === p.n && a.statut !== 'prevu' && a.statut !== 'annule'; }).reduce(function (s, a) { return s + a.montant; }, 0); if (!p.montant && !e) return; var ec = e - p.montant, ap = achatPhase(st, p.n); h += '<tr><td>Phase ' + p.n + ' · ' + esc(p.titre) + '</td><td class="num">' + eur(p.montant) + '</td><td class="num">' + eur(e) + '</td><td class="num" style="color:' + (ec > 0 ? 'var(--color-alert)' : 'var(--color-battery)') + '">' + (ec > 0 ? '+' : '') + eur(ec) + '</td><td>' + esc(ap.info) + '</td></tr>'; });
     var sans = st.achats.filter(function (a) { return a.phase == null && a.statut !== 'prevu' && a.statut !== 'annule'; }).reduce(function (s, a) { return s + a.montant; }, 0);
-    if (sans) h += '<tr><td>Sans phase</td><td class="num">—</td><td class="num">' + eur(sans) + '</td><td></td><td></td><td></td></tr>';
-    h += '</tbody><tfoot><tr><td>Total</td><td class="num">' + eur(PLAN.budget) + '</td><td class="num">' + eur(st.depense) + '</td><td class="num">' + (st.depense - PLAN.budget > 0 ? '+' : '') + eur(st.depense - PLAN.budget) + '</td><td></td><td></td></tr></tfoot></table></div></div>';
+    if (sans) h += '<tr><td>Sans phase</td><td class="num">—</td><td class="num">' + eur(sans) + '</td><td></td><td></td></tr>';
+    h += '</tbody><tfoot><tr><td>Total</td><td class="num">' + eur(PLAN.budget) + '</td><td class="num">' + eur(st.depense) + '</td><td class="num">' + (st.depense - PLAN.budget > 0 ? '+' : '') + eur(st.depense - PLAN.budget) + '</td><td></td></tr></tfoot></table></div></div>';
     if (!st.achats.length) return h + emptyState('Un enregistrement par commande : fournisseur, montant, phase, statut (prévu → commandé → reçu → remboursé).', 'achat');
     h += '<div class="card"><h3>' + svgUse('i-cart') + 'Toutes les commandes</h3><div class="tw"><table><thead><tr><th>Date</th><th>Objet</th><th>Fournisseur</th><th class="num">Montant</th><th>Phase</th><th>Statut</th><th>Par</th><th></th></tr></thead><tbody>';
-    st.achats.slice().reverse().forEach(function (a, i) { h += '<tr><td class="nw">' + frDate(a.date) + '</td><td>' + esc(a.titre) + (a.body ? ' <button type="button" class="lnk" data-act="toggle" data-target="ac-' + i + '" data-open="détail" data-close="replier">détail</button><div id="ac-' + i + '" class="md" hidden>' + md(a.body) + '</div>' : '') + '</td><td>' + esc(a.fournisseur) + '</td><td class="num">' + eur(a.montant) + '</td><td>' + (a.phase != null ? a.phase : '—') + '</td><td>' + statutPill(a.statut, ACHAT_LABELS) + '</td><td>' + esc(a.par) + '</td><td class="nw"><button type="button" class="lnk" data-act="form" data-form="achat"' + preAttr({ date: a.date > todayISO() ? a.date : '', titre: a.titre, fournisseur: a.fournisseur, montant: a.montant, phase: a.phase == null ? '' : a.phase, statut: a.statut, servos: a.servos, par: a.par, lignes: a.body }) + '>modifier</button> · ' + fileLnk(a.path) + '</td></tr>'; });
+    st.achats.slice().reverse().forEach(function (a, i) { h += '<tr><td class="nw">' + frDate(a.date) + '</td><td>' + esc(a.titre) + (a.body ? ' <button type="button" class="lnk" data-act="toggle" data-target="ac-' + i + '" data-open="détail" data-close="replier">détail</button><div id="ac-' + i + '" class="md" hidden>' + md(a.body) + '</div>' : '') + '</td><td>' + esc(a.fournisseur) + '</td><td class="num">' + eur(a.montant) + '</td><td>' + (a.phase != null ? a.phase : '—') + '</td><td>' + statutPill(a.statut, ACHAT_LABELS) + '</td><td>' + esc(a.par) + '</td><td class="nw"><button type="button" class="lnk" data-act="form" data-form="achat"' + preAttr({ date: a.date > todayISO() ? a.date : '', titre: a.titre, fournisseur: a.fournisseur, montant: a.montant, phase: a.phase == null ? '' : a.phase, statut: a.statut, servos: a.servos, par: a.par, articles: a.articlesRaw, lignes: a.body }) + '>modifier</button> · ' + fileLnk(a.path) + '</td></tr>'; });
     h += '</tbody></table></div></div>';
     return h;
   }
@@ -7273,9 +7434,9 @@ Ce que j'ai vu, quand, combien de fois.
     piece: { titre: 'Enregistrer l\'état d\'une pièce', dir: 'pieces', page: 'pieces', icon: 'i-printer', aide: 'Un enregistrement par exemplaire et par changement d\'état. La pesée sert à comparer avec le modèle de simulation.',
       fields: [['piece', 'Pièce', 'piece'], ['exemplaire', 'Exemplaire n°', 'number', '1'], ['statut', 'État', 'select', PIECE_STATUTS.map(function (s) { return s + '|' + PIECE_LABELS[s]; })], ['masse_g', 'Masse pesée (g, facultatif)', 'text'], ['rev', 'Révision (amont, b1, b2…)', 'text', 'amont'], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['note', 'Note (orientation, supports, défaut…)', 'textarea']],
       build: function (v) { if (v.piece === 'autre') v.piece = slug(v.piece_autre || 'piece'); return { name: v.date + '-' + nowHHMM() + '-' + slug(v.piece) + '-' + (v.exemplaire || 1) + '.md', text: '---\ntype: piece\npiece: ' + v.piece + '\nexemplaire: ' + (v.exemplaire || 1) + '\nstatut: ' + v.statut + '\nmasse_g: ' + (v.masse_g || '') + '\nrev: ' + (v.rev || 'amont') + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n' + (v.note || '') + '\n' }; } },
-    achat: { titre: 'Enregistrer un achat', dir: 'achats', page: 'achats', icon: 'i-cart', aide: 'Une entrée par commande, au moment où elle est passée. Quand son statut change (commandé → reçu → remboursé), bouton « modifier » sur la ligne : même objet, nouveau statut. Le dernier enregistrement l\'emporte, rien n\'est compté deux fois.',
-      fields: [['titre', 'Objet (en quelques mots)', 'text'], ['fournisseur', 'Fournisseur', 'text'], ['montant', 'Montant TTC, port compris (€)', 'text'], ['phase', 'Phase', 'phase'], ['statut', 'Statut', 'select', ACHAT_STATUTS.map(function (s) { return s + '|' + ACHAT_LABELS[s]; })], ['servos', 'Nombre de servos STS3215 dans cette commande', 'number', '0'], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['lignes', 'Lignes de la commande', 'textarea', '- 1 × …']],
-      build: function (v) { return { name: v.date + '-' + nowHHMM() + '-' + slug(v.titre) + '.md', text: '---\ntype: achat\ntitre: ' + v.titre + '\nfournisseur: ' + v.fournisseur + '\nmontant: ' + v.montant + '\nphase: ' + v.phase + '\nstatut: ' + v.statut + '\nservos: ' + (v.servos || 0) + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n' + (v.lignes || '') + '\n' }; } },
+    achat: { titre: 'Enregistrer un achat', dir: 'achats', page: 'achats', icon: 'i-cart', aide: 'Une entrée par commande, au moment où elle est passée, sur n\'importe quel site. Quand son statut change (commandé → reçu → remboursé), bouton « modifier » sur la ligne : même objet, nouveau statut. Le dernier enregistrement l\'emporte, rien n\'est compté deux fois.',
+      fields: [['titre', 'Objet (en quelques mots)', 'text'], ['fournisseur', 'Fournisseur', 'text'], ['montant', 'Montant TTC, port compris (€)', 'text'], ['phase', 'Phase', 'phase'], ['statut', 'Statut', 'select', ACHAT_STATUTS.map(function (s) { return s + '|' + ACHAT_LABELS[s]; })], ['servos', 'Nombre de servos STS3215 dans cette commande', 'number', '0'], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['articles', 'Articles de la liste (rempli par la page : code × quantité)', 'text'], ['lignes', 'Lignes de la commande', 'textarea', '- 1 × …']],
+      build: function (v) { return { name: v.date + '-' + nowHHMM() + '-' + slug(v.titre) + '.md', text: '---\ntype: achat\ntitre: ' + v.titre + '\nfournisseur: ' + v.fournisseur + '\nmontant: ' + v.montant + '\nphase: ' + v.phase + '\nstatut: ' + v.statut + '\nservos: ' + (v.servos || 0) + (v.articles ? '\narticles: ' + v.articles : '') + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n' + (v.lignes || '') + '\n' }; } },
     test: { titre: 'Fiche de test', dir: 'tests', page: 'tests', icon: 'i-check', aide: 'Le critère de réussite est chiffré et écrit AVANT l\'essai. Le résultat GO d\'une fiche de phase ouvre la phase suivante.',
       fields: [['titre', 'Titre', 'text'], ['phase', 'Phase', 'phase'], ['resultat', 'Résultat', 'select', ['GO|GO', 'NO-GO|NO-GO', 'PARTIEL|partiel', '|pas encore réalisé']], ['date', 'Date', 'date'], ['par', 'Par', 'me'], ['objectif', 'Objectif', 'textarea'], ['montage', 'Montage', 'textarea'], ['procedure', 'Procédure', 'textarea'], ['critere', 'Critère de réussite (chiffré)', 'textarea'], ['resultat_txt', 'Résultat obtenu', 'textarea'], ['decision', 'Décision', 'textarea']],
       build: function (v) { return { name: v.date + '-' + nowHHMM() + '-' + slug(v.titre) + '.md', text: '---\ntype: test\ntitre: ' + v.titre + '\nphase: ' + v.phase + '\nresultat: ' + v.resultat + '\ndate: ' + v.date + '\npar: ' + v.par + '\n---\n## Objectif\n' + (v.objectif || '') + '\n\n## Montage\n' + (v.montage || '') + '\n\n## Procédure\n' + (v.procedure || '') + '\n\n## Critère de réussite\n' + (v.critere || '') + '\n\n## Résultat\n' + (v.resultat_txt || '') + '\n\n## Décision\n' + (v.decision || '') + '\n' }; } },

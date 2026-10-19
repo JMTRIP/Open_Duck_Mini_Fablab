@@ -16,7 +16,7 @@ import re
 
 ROOT = Path(__file__).resolve().parent   # = biscalab/docs/dossier-canard/
 SRC = ROOT / "src"
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 
 parts = sorted(SRC.glob("*.html"))
 body = "\n".join(p.read_text(encoding="utf-8") for p in parts)

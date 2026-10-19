@@ -1,4 +1,4 @@
-# Dossier Canard BiscaLab (v2.0)
+# Dossier Canard BiscaLab (v2.1)
 
 Outil de suivi du projet Open Duck Mini V2 au BiscaLab, et dossier de référence : tableau de bord,
 travaux par phase, registres (séances, pièces, achats, fiches de test, mesures, décisions, équipe),

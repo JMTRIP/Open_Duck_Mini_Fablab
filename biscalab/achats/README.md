@@ -1,6 +1,6 @@
 # Achats
 
-Une entrée par commande, créée au moment où elle est passée. `statut` vaut prevu, commande, recu, rembourse ou annule : quand il change, on ré-enregistre l'achat depuis la page avec le **même titre** (bouton « modifier ») : le fichier le plus récent l'emporte, l'achat n'est compté qu'une fois. `servos` = nombre de STS3215 dans la commande (compteur du tableau de bord). Les factures vont sur le Nextcloud, jamais ici.
+Une entrée par commande, créée au moment où elle est passée. `statut` vaut prevu, commande, recu, rembourse ou annule : quand il change, on ré-enregistre l'achat depuis la page avec le **même titre** (bouton « modifier ») : le fichier le plus récent l'emporte, l'achat n'est compté qu'une fois. `servos` = nombre de STS3215 dans la commande (compteur du tableau de bord). `articles` = les articles de la liste « Articles à commander » couverts par cet achat, avec leur quantité (`code xN`, séparés par des virgules) : la page le remplit quand on commande depuis la liste ; s'il manque, elle reconnaît les articles d'après l'objet et les lignes. Les factures vont sur le Nextcloud, jamais ici.
 
 Chaque fichier de ce dossier est **un enregistrement**, créé depuis la page du dossier Canard (bouton « Enregistrer… ») : la page prépare le fichier et ouvre l'éditeur GitHub déjà rempli ; il ne reste qu'à cliquer *Commit changes*. On peut aussi l'écrire à la main en respectant le modèle ci-dessous. Le nom du fichier commence toujours par la date et l'heure (AAAA-MM-JJ-HHMM). Pour corriger ou changer le statut, on ré-enregistre depuis la page (bouton « Modifier », formulaire pré-rempli) : même titre, nouveau fichier, et le plus récent l'emporte. Ce README n'est pas lu par la page.
 
@@ -15,6 +15,7 @@ montant: 58,40
 phase: 1
 statut: commande
 servos: 0
+articles: filament x1, inserts x1, 608zz x3
 date: 2026-10-20
 par: Jean-Marie
 ---
