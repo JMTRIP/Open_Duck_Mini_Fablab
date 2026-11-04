@@ -19,6 +19,15 @@ export interface Vue {
   etat: Etat | null; // dernier message « etat »
   latence: number | null; // aller-retour en ms
   moi: boolean; // c'est ce téléphone qui pilote
+  bascule: Bascule | null; // le canard change de réseau : où le retrouver
+}
+
+/** Annoncé par le canard juste avant de changer de réseau (le Wi-Fi coupe quelques secondes après). */
+export interface Bascule {
+  vers: 'canard' | 'wifi';
+  wifi: string | null; // réseau à rejoindre, s'il est connu
+  adresse: string | null; // adresse de l'appli ensuite, si elle est connue
+  texte: string;
 }
 
 export interface Annonce {
@@ -54,6 +63,7 @@ class Liaison {
     etat: null,
     latence: null,
     moi: false,
+    bascule: null,
   };
   private abonnes = new Set<() => void>();
   private auditeurs = new Set<(a: Annonce) => void>();
@@ -191,7 +201,10 @@ class Liaison {
         this.surEtat(m);
         break;
       case 'evenement':
-        this.surEvenement(m.e, m.texte ?? '');
+        if (m.e === 'reseau' && (m.vers === 'canard' || m.vers === 'wifi')) {
+          retour('alarme');
+          this.maj({ bascule: { vers: m.vers, wifi: m.wifi ?? null, adresse: m.adresse ?? null, texte: m.texte ?? '' } });
+        } else this.surEvenement(m.e, m.texte ?? '');
         break;
       case 'erreur':
         if (m.code === 'id_invalide') this.idTel = this.nouvelleIdentite();
@@ -305,6 +318,16 @@ class Liaison {
   passer(num: number): void {
     retour('clic');
     this.envoyer({ t: 'passer', a: num });
+  }
+
+  /** Faire passer le canard sur son réseau, ou sur le Wi-Fi existant : code administrateur. */
+  reseau(vers: 'canard' | 'wifi', code: string): void {
+    retour('clic');
+    if (!this.envoyer({ t: 'reseau', vers, code })) this.annoncer('Pas de liaison avec le canard.', true);
+  }
+
+  oublierBascule(): void {
+    this.maj({ bascule: null });
   }
 
   /** Un joystick (ou une flèche du clavier) est-il poussé ? Même seuil que le canard. */

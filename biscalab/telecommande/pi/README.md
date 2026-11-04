@@ -52,6 +52,12 @@ bash ~/Open_Duck_Mini_Fablab/biscalab/telecommande/pi/mettre-a-jour.sh
 
 L'appli React n'est pas construite sur le Pi (pas de Node) : on envoie `appli-react/dist`, construit sur un PC, dans le dépôt.
 
+## Changer de réseau depuis l'appli
+
+Dans les Réglages, section **RÉSEAU** (seulement quand l'appli vient du Pi) : le réseau en cours et un bouton **PASSER SUR « … »** (Wi-Fi du club) ou **CRÉER LE RÉSEAU DU CANARD**. Il faut le code administrateur. Tous les téléphones sont prévenus : une fenêtre dit quel Wi-Fi rejoindre et quelle adresse ouvrir ensuite (lien à toucher). Le Pi change de réseau trois secondes après ; le canard est mis en pause.
+
+Le Wi-Fi du club n'est pas un Wi-Fi « maison » : au prochain démarrage au club, le Pi recrée son réseau.
+
 ## Changer de réseau à la main
 
 ```

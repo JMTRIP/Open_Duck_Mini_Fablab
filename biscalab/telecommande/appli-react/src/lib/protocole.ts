@@ -32,6 +32,14 @@ export interface Canard {
   chutes?: number;
 }
 
+/** Wi-Fi du Pi : son propre réseau (point d'accès) ou un Wi-Fi existant. Absent sur un PC. */
+export interface Reseau {
+  mode: 'canard' | 'wifi' | 'aucun';
+  nom: string; // nom du réseau (SSID)
+  adresse: string; // adresse du Pi sur ce réseau
+  wifi_connu: string | null; // dernier Wi-Fi existant vu (club, maison)
+}
+
 export interface Etat {
   t: 'etat';
   seq: number;
@@ -45,11 +53,12 @@ export interface Etat {
   sprint: boolean;
   accessoires: Record<string, boolean>;
   canard: Canard;
+  reseau?: Reseau | null;
 }
 
 export type Message =
   | { t: 'bienvenue'; num: number; version: string; limites: Record<string, number> }
   | Etat
-  | { t: 'evenement'; e: string; texte?: string }
+  | { t: 'evenement'; e: string; texte?: string; vers?: 'canard' | 'wifi'; wifi?: string | null; adresse?: string | null }
   | { t: 'erreur'; code: string; texte?: string }
   | { t: 'pong'; ts: number };

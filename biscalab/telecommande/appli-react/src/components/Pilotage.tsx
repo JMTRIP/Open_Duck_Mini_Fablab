@@ -29,6 +29,7 @@ import BoutonAccessoire from './BoutonAccessoire';
 import BoutonCarre from './BoutonCarre';
 import BoutonStop from './BoutonStop';
 import Decor from './Decor';
+import BasculeReseau from './BasculeReseau';
 import DialogueCode from './DialogueCode';
 import Joystick from './Joystick';
 import MenuPilote from './MenuPilote';
@@ -425,6 +426,7 @@ export default function Pilotage() {
         <Annonces />
         <Reglages ouvert={panneau !== null} section={panneau ?? 'tout'} onFermer={() => setPanneau(null)} />
         <DialogueCode ouvert={code} onFermer={() => setCode(false)} />
+        <BasculeReseau />
       </Scene>
       <Orientation />
     </>

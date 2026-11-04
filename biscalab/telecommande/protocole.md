@@ -45,6 +45,7 @@ Le verrou évite qu'un canard reparte seul derrière un STOP, une reconnexion ou
 | `pause` | — | pilote | pause verrouillée (ancienne appli) |
 | `bouton` | `b` : `projecteur`, `antennes` ou `son` | pilote | bascule l'accessoire (ou joue le son) |
 | `ping` | `ts` | tous | réponse `pong` avec le même `ts`, pour mesurer la latence |
+| `reseau` | `vers` : `canard` ou `wifi`, `code` | tous, avec le code administrateur | sur le Pi seulement : passe sur le réseau du canard, ou sur le Wi-Fi existant (club, maison), trois secondes après avoir prévenu tous les téléphones (événement `reseau`) ; met le canard en pause |
 
 Les consignes et boutons d'un téléphone qui n'a pas le jeton sont ignorés. Le STOP, lui, est toujours accepté.
 
@@ -58,9 +59,9 @@ Les consignes et boutons d'un téléphone qui n'a pas le jeton sont ignorés. Le
 | `erreur` | `code`, `texte` | au seul téléphone concerné |
 | `pong` | `ts` | réponse à `ping` |
 
-Événements (`e`) : `jeton` (changement de pilote), `stop`, `pause` (pause demandée par l'ancienne appli, batterie vide, personne ne pilote), `reprise` (message `marche`), `liaison` (pilote perdu), `bouton` (accessoire ou son), `chute` (le canard est tombé : pause, puis il est remis debout).
+Événements (`e`) : `jeton` (changement de pilote), `stop`, `pause` (pause demandée par l'ancienne appli, batterie vide, personne ne pilote), `reprise` (message `marche`), `liaison` (pilote perdu), `bouton` (accessoire ou son), `chute` (le canard est tombé : pause, puis il est remis debout), `reseau` (le canard change de réseau ; champs en plus : `vers`, `wifi` = réseau à rejoindre, `adresse` = adresse de l'appli ensuite, chacun `null` s'il n'est pas connu).
 
-Erreurs (`code`) : `bonjour_attendu`, `id_invalide`, `json`, `inconnu`, `pas_pilote`, `occupe`, `code` (code administrateur faux, réponse retardée d'une seconde), `destinataire`, `batterie`, `au_sol` (`marche` pendant que le canard est tombé).
+Erreurs (`code`) : `bonjour_attendu`, `id_invalide`, `json`, `inconnu`, `pas_pilote`, `occupe`, `code` (code administrateur faux, réponse retardée d'une seconde), `destinataire`, `batterie`, `au_sol` (`marche` pendant que le canard est tombé), `reseau` (changement de réseau impossible : serveur sur un PC, déjà sur ce réseau, changement en cours).
 
 ### Message `etat`
 
@@ -78,10 +79,12 @@ Erreurs (`code`) : `bonjour_attendu`, `id_invalide`, `json`, `inconnu`, `pas_pil
     "temperatures": {"genoux": 24.1, "hanches": 23.5, "chevilles": 23.2, "tete": 22.4},
     "temp_max": 24.1, "contacts": {"gauche": true, "droit": true},
     "pose": {"x": 0.0, "y": 0.0, "cap": 0.0}, "en_mouvement": false
-  }
+  },
+  "reseau": {"mode": "canard", "nom": "Canard-BiscaLab", "adresse": "10.42.0.1", "wifi_connu": "biscalab 3"}
 }
 ```
 
+- `reseau` vaut `null` quand le serveur ne tourne pas sur le Pi. `mode` : `canard` (son propre réseau), `wifi` (Wi-Fi existant) ou `aucun` ; `wifi_connu` : dernier Wi-Fi existant où le Pi est passé, `null` s'il n'en connaît pas.
 - `pret` vaut `true` quand le canard est en pause mais qu'un coup de joystick du pilote suffit pour le faire partir (pilote connecté, pas de verrou, canard debout, batterie correcte). En pause avec `pret` à `false`, `raison` dit pourquoi.
 - `raison` : `démarrage`, `repos`, `STOP par …`, `liaison perdue`, `pilote déconnecté`, `nouveau pilote : …`, `personne ne pilote`, `chute`, `batterie vide`, `pause par …`, `erreur interne` ; vide en marche.
 - `pilote` vaut `null` quand personne ne pilote.

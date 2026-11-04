@@ -307,8 +307,73 @@ async def principal() -> None:
         await b.envoyer(t="ping", ts=123.5)
         verifier((await b.attendre("pong"))["ts"] == 123.5, "ping / pong")
 
+        # --- réseau : sur un PC, pas de bascule ---
+        e = await b.etat_frais()
+        verifier("reseau" in e and e["reseau"] is None, "sur un PC, pas de section réseau")
+        vider(b)
+        await b.envoyer(t="reseau", vers="wifi", code=CODE)
+        verifier((await b.attendre("erreur"))["code"] == "reseau", "sur un PC, changement de réseau refusé")
+
         for t in (a2, b):
             t.actif = False
+            await t.ws.close()
+    await runner.cleanup()
+    await essais_reseau()
+
+
+class FauxReseau(cs.Reseau):
+    """Le Pi sur son propre réseau, sans NetworkManager : on note les bascules demandées."""
+
+    def __init__(self) -> None:
+        super().__init__(dispo=False)
+        self.dispo = True
+        self.mode, self.nom, self.adresse = "canard", "Canard-BiscaLab", "10.42.0.1"
+        self.dernier_wifi = {"nom": "biscalab 3", "adresse": "192.168.1.19"}
+        self.lances: list[str] = []
+
+    async def lire(self) -> None:
+        pass
+
+    async def ssid_de(self, profil: str) -> str:
+        return "Canard-BiscaLab"
+
+    async def lancer(self, vers: str) -> bool:
+        self.lances.append(vers)
+        self.bascule_a = cs.time.monotonic()
+        return True
+
+
+async def essais_reseau() -> None:
+    reseau = FauxReseau()
+    app = cs.creer_app(CODE, reseau=reseau)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "127.0.0.1", 0)
+    await site.start()
+    url = f"http://127.0.0.1:{site._server.sockets[0].getsockname()[1]}/ws"
+    async with aiohttp.ClientSession() as s:
+        a, b = Tel(s, url, "Alice"), Tel(s, url, "Bob")
+        await a.connecter()
+        await b.connecter()
+        e = await a.etat_frais()
+        verifier(e["reseau"] == {"mode": "canard", "nom": "Canard-BiscaLab", "adresse": "10.42.0.1", "wifi_connu": "biscalab 3"},
+                 "sur le Pi : réseau en cours et dernier Wi-Fi connu diffusés")
+        await a.envoyer(t="reseau", vers="wifi", code="0000")
+        verifier((await a.attendre("erreur"))["code"] == "code" and not reseau.lances, "changement de réseau : code faux refusé")
+        await a.envoyer(t="reseau", vers="canard", code=CODE)
+        verifier((await a.attendre("erreur"))["code"] == "reseau" and not reseau.lances, "déjà sur le réseau du canard : refusé")
+        vider(a, b)
+        await a.envoyer(t="reseau", vers="wifi", code=CODE)
+        ev = await b.attendre("evenement", e="reseau")
+        verifier(reseau.lances == ["wifi"] and ev["wifi"] == "biscalab 3" and ev["adresse"] == "192.168.1.19"
+                 and "192.168.1.19" in ev["texte"], "bon code : bascule lancée, tous les téléphones prévenus")
+        e = await b.etat_frais()
+        verifier(e["pause"] and e["raison"] == "changement de réseau", "canard en pause pendant le changement de réseau")
+        reseau.mode = "wifi"
+        await a.envoyer(t="reseau", vers="canard", code=CODE)
+        verifier((await a.attendre("erreur"))["code"] == "reseau" and reseau.lances == ["wifi"],
+                 "deux changements de suite : le second est refusé")
+        for t in (a, b):
             await t.ws.close()
     await runner.cleanup()
 

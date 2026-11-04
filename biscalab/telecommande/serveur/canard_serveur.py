@@ -23,6 +23,7 @@ import mimetypes
 import os
 import re
 import secrets
+import shutil
 import socket
 import sys
 import time
@@ -51,6 +52,10 @@ SEUIL_GESTE = 0.05        # consigne réduite au-delà de laquelle un joystick e
 ACCESSOIRES = ("projecteur", "antennes")
 BOUTONS = ACCESSOIRES + ("son",)
 RE_ID = re.compile(r"[A-Za-z0-9_-]{8,64}")
+CANARD_RESEAU = Path("/usr/local/sbin/canard-reseau")  # installé par ../pi/installer.sh
+PROFIL_CANARD = "canard-wifi"  # profil NetworkManager du réseau du canard
+DELAI_BASCULE = 3              # s : le temps de prévenir les téléphones avant de couper le Wi-Fi
+PERIODE_RESEAU = 5.0           # s entre deux lectures du réseau
 
 # Windows associe parfois .js à text/plain : on fixe les types nous-mêmes.
 mimetypes.add_type("text/javascript", ".js")
@@ -77,6 +82,109 @@ def nettoyer_nom(nom: object) -> str:
     return texte[:20] or "Anonyme"
 
 
+class Reseau:
+    """Wi-Fi du Pi, lu avec NetworkManager : son propre réseau (point d'accès) ou un Wi-Fi existant
+    (club, maison). La bascule passe par canard-reseau (../pi/canard-reseau.sh), lancé à part pour
+    survivre à la coupure. Sur un PC rien de tout ça : dispo est faux, l'appli cache la section Réseau."""
+
+    def __init__(self, dispo: bool | None = None) -> None:
+        if dispo is None:
+            dispo = sys.platform.startswith("linux") and CANARD_RESEAU.is_file() and shutil.which("nmcli") is not None
+        self.dispo = dispo
+        self.mode = "aucun"    # canard (point d'accès), wifi (Wi-Fi existant) ou aucun
+        self.nom = ""          # nom du réseau (SSID)
+        self.adresse = ""      # adresse du Pi sur ce réseau
+        self.adresse_canard = "10.42.0.1"
+        self.fichier = Path.home() / ".local" / "state" / "canard-telecommande" / "dernier-wifi.json"
+        self.dernier_wifi: dict | None = self._charger() if dispo else None  # pour dire où aller
+        self.bascule_a = -1e9  # instant de la dernière bascule lancée
+        self._ssid: dict[str, str] = {}
+
+    def vue(self) -> dict | None:
+        if not self.dispo:
+            return None
+        retour = self.dernier_wifi["nom"] if self.dernier_wifi else None
+        return {"mode": self.mode, "nom": self.nom, "adresse": self.adresse, "wifi_connu": retour}
+
+    def _charger(self) -> dict | None:
+        try:
+            d = json.loads(self.fichier.read_text(encoding="utf-8"))
+            return {"nom": str(d["nom"]), "adresse": str(d["adresse"])}
+        except (OSError, ValueError, KeyError, TypeError):
+            return None
+
+    def _garder(self) -> None:
+        try:
+            self.fichier.parent.mkdir(parents=True, exist_ok=True)
+            self.fichier.write_text(json.dumps(self.dernier_wifi, ensure_ascii=False), encoding="utf-8")
+        except OSError as exc:
+            LOG.debug("Wi-Fi non mémorisé : %s", exc)
+
+    @staticmethod
+    async def _commande(*args: str, timeout: float = 10.0) -> tuple[int, str]:
+        p = await asyncio.create_subprocess_exec(*args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT)
+        try:
+            sortie, _ = await asyncio.wait_for(p.communicate(), timeout)
+        except asyncio.TimeoutError:
+            p.kill()
+            await p.wait()
+            return -1, "délai dépassé"
+        return p.returncode or 0, sortie.decode(errors="replace").strip()
+
+    async def ssid_de(self, profil: str) -> str:
+        if profil not in self._ssid:
+            code, s = await self._commande("nmcli", "-g", "802-11-wireless.ssid", "connection", "show", profil)
+            if code != 0 or not s:
+                return profil
+            self._ssid[profil] = s.splitlines()[0].replace("\\:", ":")
+        return self._ssid[profil]
+
+    async def lire(self) -> None:
+        code, s = await self._commande("nmcli", "-g", "GENERAL.CONNECTION,IP4.ADDRESS", "device", "show", "wlan0")
+        if code != 0:
+            return
+        lignes = s.splitlines() + ["", ""]
+        profil = lignes[0].strip()
+        adresse = lignes[1].split("|")[0].strip().split("/")[0]
+        if profil == PROFIL_CANARD:
+            self.mode, self.nom = "canard", await self.ssid_de(profil)
+            self.adresse_canard = adresse or self.adresse_canard
+        elif profil:
+            self.mode, self.nom = "wifi", await self.ssid_de(profil)
+            nouveau = {"nom": self.nom, "adresse": adresse}
+            if adresse and nouveau != self.dernier_wifi:
+                self.dernier_wifi = nouveau
+                self._garder()
+        else:
+            self.mode, self.nom = "aucun", ""
+        self.adresse = adresse
+
+    async def suivre(self) -> None:
+        while True:
+            try:
+                await self.lire()
+            except Exception:
+                LOG.exception("Lecture du réseau impossible")
+            await asyncio.sleep(PERIODE_RESEAU)
+
+    async def cible(self, vers: str) -> tuple[str | None, str | None]:
+        """Réseau à rejoindre et adresse de l'appli après la bascule (None si on ne sait pas)."""
+        if vers == "canard":
+            return await self.ssid_de(PROFIL_CANARD), self.adresse_canard
+        if self.dernier_wifi:
+            return self.dernier_wifi["nom"], self.dernier_wifi["adresse"]
+        return None, None
+
+    async def lancer(self, vers: str) -> bool:
+        code, s = await self._commande("sudo", "-n", "systemd-run", "--quiet", "--collect",
+                                       f"--on-active={DELAI_BASCULE}", str(CANARD_RESEAU), vers)
+        if code != 0:
+            LOG.error("Changement de réseau impossible : %s", s)
+            return False
+        self.bascule_a = time.monotonic()
+        return True
+
+
 @dataclass(eq=False)
 class Client:
     ws: web.WebSocketResponse
@@ -94,9 +202,10 @@ class Controleur:
     il ne repart qu'une fois les joysticks lâchés, puis poussés de nouveau.
     """
 
-    def __init__(self, canard: FauxCanard, code_admin: str) -> None:
+    def __init__(self, canard: FauxCanard, code_admin: str, reseau: Reseau | None = None) -> None:
         self.canard = canard
         self.code_admin = code_admin
+        self.reseau = reseau or Reseau()
         self.clients: dict[str, Client] = {}
         self.prochain_num = 1
         self.pilote: str | None = None   # id secret du pilote
@@ -194,6 +303,38 @@ class Controleur:
             await asyncio.sleep(1.0)  # freine les essais au hasard
             await self.erreur(cl, "code", "Code administrateur faux.")
 
+    async def basculer_reseau(self, cl: Client, vers: object, code: object) -> None:
+        """Passer du réseau du canard au Wi-Fi existant, ou l'inverse : réservé à l'administrateur."""
+        r = self.reseau
+        if not r.dispo:
+            await self.erreur(cl, "reseau", "Ce serveur ne change pas de réseau : il ne tourne pas sur le Pi.")
+            return
+        if vers not in ("canard", "wifi"):
+            await self.erreur(cl, "inconnu", f"Réseau inconnu : {vers!r}")
+            return
+        if code is None or not secrets.compare_digest(str(code).encode(), self.code_admin.encode()):
+            await asyncio.sleep(1.0)  # freine les essais au hasard
+            await self.erreur(cl, "code", "Code administrateur faux.")
+            return
+        if r.mode == vers:
+            await self.erreur(cl, "reseau", "Le canard est déjà sur ce réseau.")
+            return
+        if time.monotonic() - r.bascule_a < 30:
+            await self.erreur(cl, "reseau", "Changement de réseau déjà en cours.")
+            return
+        wifi, adresse = await r.cible(vers)
+        if not await r.lancer(vers):
+            await self.erreur(cl, "reseau", "Le changement de réseau n'a pas pu être lancé.")
+            return
+        lieu = f"le Wi-Fi « {wifi} »" if wifi else "le Wi-Fi du club ou de la maison"
+        quoi = "son propre réseau" if vers == "canard" else lieu
+        texte = (f"{cl.nom} fait passer le canard sur {quoi}. Rejoins {lieu}, "
+                 f"puis ouvre http://{adresse or 'canard.local'}.")
+        LOG.warning("Changement de réseau vers %s demandé par %s", vers, cl.nom)
+        self.mettre_en_pause("changement de réseau", annoncer=False)
+        await self.diffuser(json.dumps({"t": "evenement", "e": "reseau", "texte": texte, "vers": vers,
+                                        "wifi": wifi, "adresse": adresse}, ensure_ascii=False))
+
     async def bouton(self, cl: Client, b: object) -> None:
         if b not in BOUTONS:
             await self.erreur(cl, "inconnu", f"Bouton inconnu : {b!r}")
@@ -233,6 +374,8 @@ class Controleur:
             await self.envoyer(cl, {"t": "pong", "ts": m.get("ts")})
         elif t == "prendre":
             await self.prendre(cl, m.get("code"))
+        elif t == "reseau":
+            await self.basculer_reseau(cl, m.get("vers"), m.get("code"))
         elif t in ("rendre", "passer", "marche", "pause", "bouton"):
             if not est_pilote:
                 await self.erreur(cl, "pas_pilote", "Il faut d'abord prendre les commandes.")
@@ -343,6 +486,7 @@ class Controleur:
             "sprint": self.sprint,
             "accessoires": dict(self.accessoires),
             "canard": self.canard.etat(),
+            "reseau": self.reseau.vue(),
         }
 
     # ---------- envois ----------
@@ -427,9 +571,10 @@ async def gerer_fichier(request: web.Request) -> web.FileResponse:
     return web.FileResponse(chemin, headers={"Cache-Control": cache})
 
 
-def creer_app(code_admin: str, canard: FauxCanard | None = None, appli: Path | None = None) -> web.Application:
+def creer_app(code_admin: str, canard: FauxCanard | None = None, appli: Path | None = None,
+              reseau: Reseau | None = None) -> web.Application:
     app = web.Application()
-    ctl = Controleur(canard or FauxCanard(), code_admin)
+    ctl = Controleur(canard or FauxCanard(), code_admin, reseau)
     app[CTL] = ctl
     app[DOSSIER] = (appli or DOSSIER_APPLI).resolve()
     app.router.add_get("/ws", gerer_ws)
@@ -438,6 +583,8 @@ def creer_app(code_admin: str, canard: FauxCanard | None = None, appli: Path | N
 
     async def demarrer(app: web.Application) -> None:
         app[TACHES] = [asyncio.create_task(ctl.boucle()), asyncio.create_task(ctl.diffusion())]
+        if ctl.reseau.dispo:
+            app[TACHES].append(asyncio.create_task(ctl.reseau.suivre()))
 
     async def arreter(app: web.Application) -> None:
         for tache in app[TACHES]:

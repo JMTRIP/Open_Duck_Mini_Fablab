@@ -10,6 +10,7 @@ import { liaison, useLiaison, VERSION } from '../lib/liaison';
 import type { Canard } from '../lib/protocole';
 import { reglages, regler, retour } from '../lib/retours';
 import { ConseilIPhone } from './Accueil';
+import DialogueCode from './DialogueCode';
 import Touche from './Touche';
 
 interface Props {
@@ -80,6 +81,7 @@ export default function Reglages({ ouvert, section, onFermer }: Props) {
   const [sons, setSons] = useState(reglages.sons);
   const [vib, setVib] = useState(reglages.vibrations);
   const [prenom, setPrenom] = useState(liaison.nom);
+  const [versReseau, setVersReseau] = useState<null | 'canard' | 'wifi'>(null);
   const zoneTel = useRef<HTMLDivElement>(null);
   const voile = useAppui<HTMLDivElement>(() => onFermer(), { actif: ouvert, direct: true });
 
@@ -103,6 +105,8 @@ export default function Reglages({ ouvert, section, onFermer }: Props) {
   const c: Canard = e?.canard ?? {};
   const v = e?.vitesse;
   const temps = Object.entries(c.temperatures ?? {});
+  const r = e?.reseau;
+  const wifiConnu = r?.wifi_connu ? `« ${r.wifi_connu} »` : 'le Wi-Fi du club';
 
   const changerPrenom = (ev: FormEvent) => {
     ev.preventDefault();
@@ -258,6 +262,27 @@ export default function Reglages({ ouvert, section, onFermer }: Props) {
                   </ul>
                 </div>
 
+                {r && (
+                  <>
+                    <Titre>RÉSEAU</Titre>
+                    <p className="text-[21px] font-bold leading-snug" style={{ color: VALEUR }}>
+                      {r.mode === 'canard' ? `Son réseau « ${r.nom} »` : r.mode === 'wifi' ? `Wi-Fi « ${r.nom} »` : 'Pas de Wi-Fi'}
+                    </p>
+                    {r.adresse && (
+                      <p className="font-mono text-[19px]" style={{ color: NEON.grisBleu }}>
+                        {r.adresse}
+                      </p>
+                    )}
+                    <Touche
+                      action={() => setVersReseau(r.mode === 'canard' ? 'wifi' : 'canard')}
+                      className="coupe mt-2 self-start px-3 py-2 text-left text-[18px] font-bold leading-tight tracking-[0.06em]"
+                      style={{ background: alpha(NEON.rose, 0.16), color: NEON.roseClair, boxShadow: `inset 0 0 0 2px ${alpha(NEON.rose, 0.6)}` }}
+                    >
+                      {r.mode === 'canard' ? `PASSER SUR ${wifiConnu.toUpperCase()}` : 'CRÉER LE RÉSEAU DU CANARD'}
+                    </Touche>
+                  </>
+                )}
+
                 {estIOS && !enModeAppli() && (
                   <div className="mt-5">
                     <ConseilIPhone />
@@ -318,6 +343,18 @@ export default function Reglages({ ouvert, section, onFermer }: Props) {
           </motion.aside>
         )}
       </AnimatePresence>
+      <DialogueCode
+        ouvert={ouvert && versReseau !== null}
+        onFermer={() => setVersReseau(null)}
+        titre="CHANGER DE RÉSEAU"
+        texte={
+          versReseau === 'wifi'
+            ? `Le canard quitte son réseau pour ${wifiConnu}. Tous les téléphones perdent la liaison et devront le rejoindre. Code administrateur :`
+            : 'Le canard crée son propre réseau. Tous les téléphones perdent la liaison et devront le rejoindre. Code administrateur :'
+        }
+        bouton="CHANGER"
+        onCode={(code) => versReseau && liaison.reseau(versReseau, code)}
+      />
     </div>
   );
 }
