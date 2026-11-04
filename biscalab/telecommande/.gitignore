@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 appli-react/node_modules/
 serveur/journal/
+# Le .gitignore du dépôt ignore les *.txt : on garde celui-ci, le Pi en a besoin.
+!serveur/requirements.txt
