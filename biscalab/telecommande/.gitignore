@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+appli-react/node_modules/
+serveur/journal/

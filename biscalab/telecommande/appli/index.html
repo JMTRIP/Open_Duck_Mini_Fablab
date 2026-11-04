@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#111418">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Canard — pilotage</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section id="accueil" class="accueil">
+  <form id="form-accueil" class="carte-accueil" autocomplete="off">
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M12 40 q-7 -6 -9 1 q6 3 11 5z" fill="#d9a900"/>
+      <ellipse cx="29" cy="42" rx="20" ry="13" fill="#f5c518"/>
+      <circle cx="40" cy="22" r="11" fill="#f5c518"/>
+      <path d="M50 21 l11 3 -11 4z" fill="#ff8a1f"/>
+      <circle cx="43" cy="19" r="2.3" fill="#111418"/>
+      <path d="M22 40 q8 8 18 0" stroke="#d9a900" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+    <h1>Pilotage du canard</h1>
+    <p class="discret">BiscaLab · Open Duck Mini</p>
+    <label for="prenom">Ton prénom</label>
+    <input id="prenom" name="prenom" maxlength="20" autocomplete="given-name" enterkeyhint="go" required>
+    <button type="submit" class="bouton principal">Se connecter</button>
+  </form>
+</section>
+
+<section id="pilotage" class="pilotage" hidden>
+  <header class="barre">
+    <span id="p-liaison" class="pastille">Connexion…</span>
+    <span id="p-batterie" class="pastille">Batterie –</span>
+    <span id="p-temp" class="pastille">Servos –</span>
+    <span id="p-simule" class="pastille simule" hidden>Faux canard</span>
+  </header>
+
+  <button id="bandeau" class="bandeau" type="button" hidden></button>
+
+  <div class="jeton">
+    <div class="jeton-texte">
+      <strong id="j-texte">…</strong>
+      <span id="j-raison" class="discret"></span>
+    </div>
+    <button id="btn-jeton" class="bouton" type="button">…</button>
+  </div>
+
+  <main class="commandes">
+    <div id="zone-dep" class="zone">
+      <div class="socle"><div class="manche"></div></div>
+      <span class="legende">Avancer · pas de côté</span>
+    </div>
+    <div class="centre">
+      <button id="btn-marche" class="bouton marche go" type="button" disabled>Marche</button>
+      <div class="accessoires">
+        <button class="bouton petit" type="button" data-bouton="antennes" aria-pressed="false">Antennes</button>
+        <button class="bouton petit" type="button" data-bouton="son">Coin coin</button>
+        <button class="bouton petit" type="button" data-bouton="projecteur" aria-pressed="false">Projecteur</button>
+        <button class="bouton petit" type="button" id="btn-sprint" aria-pressed="false">Sprint (maintenir)</button>
+      </div>
+      <canvas id="trace" aria-label="Trajet du canard"></canvas>
+    </div>
+    <div id="zone-rot" class="zone rotation">
+      <div class="socle"><div class="manche"></div></div>
+      <span class="legende">Tourner</span>
+    </div>
+    <p class="voile">Prends les commandes pour piloter</p>
+  </main>
+
+  <details id="infos" class="infos">
+    <summary>Détails</summary>
+    <div class="infos-grille">
+      <section>
+        <h2>Téléphones connectés</h2>
+        <ul id="liste-tel"></ul>
+      </section>
+      <section>
+        <h2>Canard</h2>
+        <dl id="capteurs"></dl>
+      </section>
+      <section>
+        <h2>Réglages</h2>
+        <label class="case"><input type="checkbox" id="r-sons"> Sons</label>
+        <label class="case"><input type="checkbox" id="r-vibrations"> Vibrations (Android)</label>
+        <button id="btn-prenom" class="bouton petit" type="button">Changer de prénom</button>
+        <p class="discret">Au clavier : Échap ou Espace = STOP.</p>
+        <p id="version" class="discret"></p>
+      </section>
+    </div>
+  </details>
+
+  <button id="btn-stop" class="stop" type="button">STOP</button>
+</section>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

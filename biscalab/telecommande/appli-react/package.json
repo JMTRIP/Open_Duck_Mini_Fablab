@@ -1,0 +1,29 @@
+{
+  "name": "telecommande-canard",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Télécommande du canard (Open Duck Mini V2, BiscaLab) — React + Vite + Tailwind + Framer Motion",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "apercu": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource/rajdhani": "^5.3.0",
+    "@fontsource/share-tech-mono": "^5.3.0",
+    "framer-motion": "^12.43.0",
+    "lucide-react": "^1.67.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "tailwindcss": "^4.3.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.7"
+  }
+}

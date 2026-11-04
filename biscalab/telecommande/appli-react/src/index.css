@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@theme {
+  --font-titre: "Rajdhani", system-ui, sans-serif;
+  --font-mono: "Share Tech Mono", ui-monospace, monospace;
+  --color-nuit: #04070f;
+  --color-cyan-neon: #00f0ff;
+  --color-cyan-clair: #7ff8ff;
+  --color-rose-neon: #ff2a6d;
+  --color-rose-clair: #ff8fb1;
+  --color-jaune-neon: #f9f002;
+  --color-vert-neon: #39ff9c;
+  --color-gris-bleu: #6c86a3;
+}
+
+@layer base {
+  html,
+  body,
+  #racine {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--color-nuit);
+    color: #e6f7ff;
+    font-family: var(--font-titre);
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  input {
+    -webkit-user-select: text;
+    user-select: text;
+    touch-action: auto;
+  }
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* Coins coupés du design Néon */
+.coupe {
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+.coupe-l {
+  clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+}
+.onglet {
+  clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 100%, 18px 100%);
+}
+
+/* Manche de joystick en métal, rainures concentriques */
+.capuchon {
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.055) 0 1px, transparent 1px 3px),
+    radial-gradient(circle at 36% 30%, #6a7486 0%, #2b313d 42%, #0d1016 100%);
+}
+
+.lignes-balayage {
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.015) 0 1px, transparent 1px 3px);
+}
+.vignette {
+  background: radial-gradient(ellipse at center, transparent 62%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+/* Mode plein soleil : fond noir uni, plus de décor ni d'animation de fond ; les composants
+   passent eux-mêmes en couleurs denses et bords épais (useSoleil).
+   Pas de « filter » sur toute la scène : coûteux sur téléphone, et suspect n° 1 du bouton soleil
+   qui ne s'éteignait plus sur iPhone (c'était la seule différence entre les deux états). */
+html.soleil body {
+  background: #000;
+}
+html.soleil .decor,
+html.soleil .balayage {
+  display: none;
+}
+html.soleil .pulse-stop {
+  animation: none;
+  filter: drop-shadow(0 0 14px rgba(255, 42, 109, 0.9));
+}
+
+@keyframes pulsation-rose {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 10px rgba(255, 42, 109, 0.55));
+  }
+  50% {
+    filter: drop-shadow(0 0 24px rgba(255, 42, 109, 0.95));
+  }
+}
+.pulse-stop {
+  animation: pulsation-rose 1.6s ease-in-out infinite;
+}
+
+@keyframes clignote {
+  50% {
+    opacity: 0.35;
+  }
+}
+.clignote {
+  animation: clignote 1.4s ease-in-out infinite;
+}
+
+.defile {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 240, 255, 0.4) transparent;
+  touch-action: pan-y;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-stop,
+  .clignote {
+    animation: none;
+  }
+}

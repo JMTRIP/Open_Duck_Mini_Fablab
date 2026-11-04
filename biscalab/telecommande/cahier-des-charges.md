@@ -35,13 +35,13 @@ Point important : une page sécurisée (HTTPS) n'a pas le droit de parler à une
 - Joystick tactile virtuel pour avancer/reculer et faire des pas de côté ; second contrôle (ou glissière) pour la rotation.
 - Plages calquées sur la simulation : vitesse avant ±0,15 m/s, pas de côté ±0,2 m/s, rotation ±1 rad/s.
 - Envoi des consignes au moins 20 fois par seconde, comme la manette d'origine.
-- Boutons équivalents à la manette : pause/reprise, projecteur, son, antennes, sprint (×1,3), tête (mode expert seulement, car fragile).
+- Boutons équivalents à la manette : pause/reprise (remplacé par la marche à l'homme mort, voir 3.3), projecteur, son, antennes, sprint (×1,3), tête (mode expert seulement, car fragile).
 
 ### 3.3 Sécurité
 
 - **Bouton STOP toujours visible**, sur tous les écrans, actif pour tous les téléphones connectés, même sans le jeton.
 - **Chien de garde** : si le Pi ne reçoit plus rien du pilote pendant 1 seconde (valeur à régler), il met le canard en pause.
-- Au démarrage, le canard est en pause (`start_paused`) ; il faut une action volontaire pour lancer la marche.
+- Au démarrage, le canard est en pause (`start_paused`) ; il faut une action volontaire pour lancer la marche : pousser un joystick (marche « à l'homme mort », pas de bouton Marche). Joysticks lâchés 2 s : il se pose. Après un STOP, une coupure, un changement de pilote ou une chute, il faut lâcher les joysticks puis les repousser.
 - Alerte à l'écran si la batterie est basse ou si un servo chauffe.
 
 ### 3.4 Plusieurs téléphones : le jeton de pilote
@@ -214,7 +214,7 @@ Règle : on ne passe à l'étape suivante que lorsque le test de fin d'étape es
 ## 7. Points ouverts
 
 - Nom de domaine et accès DNS pour le certificat.
-- Bascule entre le point d'accès et le Wi-Fi maison ou FabLab.
+- Bascule entre le point d'accès et le Wi-Fi maison ou FabLab : première solution en place (au démarrage, Wi-Fi maison s'il est à portée, sinon réseau du canard ; voir `pi/README.md`), à valider à l'usage.
 - Reconnaissance vocale hors ligne : solution à choisir après essais.
 - Voix de synthèse : choix de la voix et de sa licence.
 - Qui écrit les phrases, et qui les relit (public enfant).
